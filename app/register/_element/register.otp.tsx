@@ -1,0 +1,73 @@
+import { CE_Button } from "@/components/Button"
+import { OTPInput } from "@/components/OTP"
+import { useEffect, useState } from "react"
+import { ActivityIndicator, Text, View } from "react-native"
+
+interface Props {
+    setNext: (step: number) => void
+    isLoading: boolean
+}
+
+export function RegisterOTP(props: Props) {
+    const [otp, setOtp] = useState("")
+    const [loadingSendSMS, setLoadingSendSMS] = useState(true)
+    const [otpInput, setOtpInput] = useState("")
+    const [warning, setWarning] = useState("")
+
+    const sendOtpToSMS = () => {
+        setLoadingSendSMS(true)
+        setTimeout(() => {
+            setLoadingSendSMS(false)
+            setOtp("1234")
+        }, 2000)
+    }
+
+    useEffect(() => {
+        sendOtpToSMS()
+    }, [])
+
+    const matchingOTP = () => {
+        if(otpInput !== otp) {
+            setWarning("Wrong OTP")
+            return
+        }
+
+        props.setNext(4)
+    }
+
+    return (
+        <View>
+            {loadingSendSMS ? (
+                <View className="flex flex-col items-center justify-center mb-10 mt-6">
+                    <ActivityIndicator size="large" color="#16B8A8" />
+                    <Text className="mt-4 text-base text-primary font-semibold">Sending OTP to SMS...</Text>
+                </View>
+            ) : (
+                <View className="flex flex-col gap-2 mb-10 items-center justify-center">
+                    {warning !== '' ? (
+                        <Text className="text-danger font-semibold">{warning}</Text>
+                    ) : (
+                        <Text className="text-primary font-semibold">OTP Sent to SMS</Text>
+                    )}
+                    
+                    <OTPInput setOtp={(otp) => setOtpInput(otp)} isLoading={props.isLoading}/>
+                </View>
+            )}
+
+            <CE_Button
+                title="Next"
+                disabled={otpInput.length < 4 || loadingSendSMS}
+                isLoading={props.isLoading}
+                onPress={() => matchingOTP()}
+                className="mb-2"
+            />
+
+            <CE_Button
+                title="Cancel"
+                bgColor="bg-secondary"
+                onPress={() => props.setNext(1)}
+                disabled={loadingSendSMS || props.isLoading}
+            />
+        </View>
+    )
+}
