@@ -2,13 +2,15 @@ import { CE_Alert } from "@/components/Alert";
 import { CE_Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { isPhoneValid } from "@/services/function/isPhoneValid";
-import { useRouter } from "expo-router";
+import { CommonActions } from "@react-navigation/native";
+import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { doLogin } from "../_function/do.login";
 
 export function LoginForm() {
     const router = useRouter()
+    const navigation = useNavigation();
     const [phoneNumber, setPhoneNumber] = useState('')
     const [password, setPassword] = useState('')
     const [phoneNumebrWarning, setPhoneNumberWarning] = useState('')
@@ -36,7 +38,12 @@ export function LoginForm() {
             const result = await doLogin(phoneNumber, password);
             
             if (result.success) {
-                router.replace("../home" as const)
+                navigation.dispatch(
+                    CommonActions.reset({
+                        index: 0,
+                        routes: [{ name: "(tabs)" }], // ganti ini sesuai nama grup layout kamu
+                    })
+                );
             } else {
                 setShowAlert(true)
                 setLoginMsg(result.message)

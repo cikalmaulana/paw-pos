@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Text, View } from "react-native";
 
+
 export default function Home() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
