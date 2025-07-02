@@ -19,21 +19,20 @@ export function RegisterMain(){
     const [isLoading, setIsLoading] = useState(false)
 
     const nextStep = async (newStep: number) => {
-        console.log("NEW STEP: ", newStep)
         if (newStep === 4) {
             setIsLoading(true)
-            setTimeout(() => {
-                const result = doRegister({ name, password, phone: phoneNumber });
-                if (result.success) {
+            setTimeout(async () => {
+                const result = await doRegister({ name, password, phone: phoneNumber });
+                if (result.meta.status === "success") {
                     router.replace({
                         pathname: "../welcome",
                         params: {
                         isSuccess: "true",
-                        message: "Register successful!",
+                        message: result.meta.message,
                         },
                     } as const);
                 } else {
-                    setAlertMsg(result.message);
+                    setAlertMsg(result.meta.message);
                     setShowAlert(true);
                 }
                 setIsLoading(false)

@@ -1,21 +1,24 @@
-export interface I_RegisterForm{
-    name: string,
-    password: string,
-    phone: string
-}
+import { API_Register } from "@/services/api/api.register";
+import { I_RegisterRequest, I_RegisterResponse } from "@/services/api/api.register.int";
 
-export interface I_Response {
-    success: boolean
-    message: string
-}
-
-export const doRegister = (props: I_RegisterForm): I_Response => {
-    return {
-        success: true,
-        message: "Registered successfully"
+export const doRegister = async (params: I_RegisterRequest): Promise<I_RegisterResponse> => {
+    try{
+        const result = await API_Register(params)
+        if(result) return result 
+        return {
+            meta: {
+                status: "failed",
+                code: 404,
+                message: "Failed to connect with server"
+            }
+        }
+    } catch(error){
+        return {
+            meta: {
+                status: "failed",
+                code: 404,
+                message: "Failed to connect with server"
+            }
+        }
     }
-    // return {
-    //     success: false,
-    //     message: "Register Failed. Please try again later."
-    // }
 }

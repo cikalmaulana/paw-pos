@@ -1,5 +1,6 @@
 import { CE_Alert } from "@/components/Alert";
 import { CE_Button } from "@/components/Button";
+import { CE_Checkbox } from "@/components/Checkbox";
 import { Input } from "@/components/Input";
 import { isPhoneValid } from "@/services/function/isPhoneValid";
 import { CommonActions } from "@react-navigation/native";
@@ -18,6 +19,7 @@ export function LoginForm() {
     const [isLoading, setIsLoading] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
     const [loginMsg, setLoginMsg] = useState('')
+    const [remember, setRemember] = useState(false)
 
     useEffect(() => {
         if(first) {
@@ -35,18 +37,23 @@ export function LoginForm() {
     const login = async () => {
         setIsLoading(true)
         setTimeout(async () => {
-            const result = await doLogin(phoneNumber, password);
+            const loginPayload = {
+                phone: phoneNumber,
+                password: password
+            }
+
+            const result = await doLogin(loginPayload, remember);
             
-            if (result.success) {
+            if (result.meta.status === "success") {
                 navigation.dispatch(
                     CommonActions.reset({
                         index: 0,
-                        routes: [{ name: "(tabs)" }], // ganti ini sesuai nama grup layout kamu
+                        routes: [{ name: "(tabs)" }],
                     })
                 );
             } else {
                 setShowAlert(true)
-                setLoginMsg(result.message)
+                setLoginMsg(result.meta.message)
             }
             setIsLoading(false);
         }, 2000);
@@ -78,6 +85,7 @@ export function LoginForm() {
                         onChangeText={setPassword}
                     />
                 </View>
+                <CE_Checkbox checked={remember} onChange={() => setRemember(prev => !prev)} label="Remember me" className="mb-2"/>
                 <CE_Button title="sign in" disabled={!isPhoneValid(phoneNumber) || !password} onPress={() => login()} isLoading={isLoading}/>
                 <View className="flex-row items-center w-full my-4">
                     <View className="flex-1 h-px bg-gray-300" />

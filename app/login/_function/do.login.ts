@@ -1,56 +1,54 @@
+import { API_Login } from "@/services/api/api.login";
+import { I_LoginData, I_LoginRequest, I_LoginResponse } from "@/services/api/api.login.int";
+import { API_GetStoreByOwner } from "@/services/api/api.store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-export interface I_LoginRequest{
-    phone: string,
-    password: string
-}
-
-export interface I_LoginResponse{
-    success: boolean,
-    message: string,
-    login_data?: I_LoginData
-}
-
-export interface I_LoginData{
-    token: string,
-    user: {
-        id: string,
-        name: string,
-        phone: string
-    }
-}
 
 const KEY_LOGIN = process.env.KEY_LOGIN ?? "KEY_LOGIN";
 
-export const doLogin = async (phone: string, password: string): Promise<I_LoginResponse> => {
+export const doLogin = async (params: I_LoginRequest, remember: boolean): Promise<I_LoginResponse> => {
     try {
-        const result = true // nanti ini manggil API_Login()
+        const result = await API_Login(params)
         if(result) {
-            const loginData = {
-                token: "ThIsIstOKEnForvserLogin",
-                user: {
-                    id: "user_123",
-                    name: "John Doe",
-                    phone,
-                },
-            };
-    
-            await AsyncStorage.setItem(KEY_LOGIN, JSON.stringify(loginData));
-    
+            if(result.meta.status === "success" && result.user) {
+                const store = await API_GetStoreByOwner(result.user.id)
+                if(store.meta.status === "success"){
+                    const loginData: I_LoginData & { expiredAt: number } = {
+                        token: "ThIsIstOKEnForvserLogin",
+                        user: result.user,
+                        store: store.data,
+                        expiredAt: Date.now() + (remember ? 24 * 60 * 60 * 1000 : 60 * 60 * 1000) 
+                    }
+            
+                    await AsyncStorage.setItem(KEY_LOGIN, JSON.stringify(loginData));
+            
+                    return result
+                }
+                return {
+                    meta: store.meta,
+                    user: null
+                }
+            }
             return {
-                success: true,
-                message: "Login successfully",
-                login_data: loginData
-            };
+                meta: result.meta,
+                user: null
+            }
         }
         return {
-            success: false,
-            message: "Failed to login. Please try again later.",
+            meta: {
+                status: "failed",
+                code: 404,
+                message: "Failed to connect with server."
+            },
+            user: null
         }; 
     } catch (error) {
         return {
-            success: false,
-            message: "Failed to login. Please try again later.",
-        };
+            meta: {
+                status: "failed",
+                code: 404,
+                message: "Failed to connect with server."
+            },
+            user: null
+        }; 
     }
 };
