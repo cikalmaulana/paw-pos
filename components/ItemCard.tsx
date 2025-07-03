@@ -22,26 +22,33 @@ export function CE_ItemCard({
     className,
 }: I_Props) {
     return (
-        <View className={`bg-white rounded-2xl p-4 space-y-2 ${className}`}>
-            <Image
-                source={image}
-                className="w-full h-40 rounded-xl"
-                resizeMode="cover"
-            />
-            <Text className="text-primary text-lg font-semibold">{title}</Text>
-            <Text className="text-black text-sm font-bold">{price}</Text>
-            <Text
-                className="text-gray-500 text-xs"
-                numberOfLines={2}
-                ellipsizeMode="tail"
-            >
-                {description}
-            </Text>
-            <CE_Button
-                title={buttonLabel}
-                onPress={onPressButton}
-                className="mt-2"
-            />
+        <View className={`bg-white rounded-2xl p-4 h-[325px] ${className}`}>
+            <View className="flex-1 justify-between space-y-2">
+                <View>
+                    <Image
+                        source={image}
+                        className="w-full h-40 rounded-xl mb-2"
+                        resizeMode="cover"
+                    />
+                    <Text 
+                        className="text-primary text-lg font-bold mb-1" 
+                        numberOfLines={2}
+                        style={{ lineHeight: 22 }} 
+                    >
+                        {title}
+                    </Text>
+                    <Text className="text-black text-sm font-bold mb-1">{price}</Text>
+                    <Text
+                        className="text-gray-500 text-xs"
+                        numberOfLines={2}
+                        ellipsizeMode="tail"
+                    >
+                        {description}
+                    </Text>
+                </View>
+
+                <CE_Button title={buttonLabel} onPress={onPressButton} className="mt-2" />
+            </View>
         </View>
     )
 }

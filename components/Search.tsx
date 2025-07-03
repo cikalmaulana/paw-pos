@@ -10,18 +10,24 @@ interface I_Props extends TextInputProps {
 
 export function CE_Search({ value, onChangeText, placeholder = "Search...", className, ...props }: I_Props) {
     return (
-        <View className={`flex-row items-center bg-white rounded-2xl px-4 py-3 h-12 shadow-md border-none ${className}`} >
+        <View className={`flex flex-row items-center bg-white rounded-2xl px-4 py-3 h-12 shadow-md border-none ${className}`} >
             <Image
                 source={SearchIcon}
-                style={{ width: 20, height: 20, marginRight: 8 }}
+                style={{ width: 18, height: 18, marginRight: 8 }}
                 resizeMode="contain"
             />
             <TextInput
-                className="flex-1 text-base text-black"
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
                 placeholderTextColor="#A0A0A0"
+                style={{
+                    flex: 1,
+                    fontSize: 16,
+                    color: "black",
+                    padding: 0,
+                    textAlignVertical: "center",
+                }}
                 {...props}
             />
         </View>

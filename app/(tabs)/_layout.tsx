@@ -12,6 +12,7 @@ import { Tabs, useRouter } from "expo-router"
 import React, { useEffect, useState } from 'react'
 
 import { Image } from "react-native"
+import { TAB_HEIGHT } from "./constant"
 
 
 const _Layout = () => {
@@ -69,7 +70,7 @@ const _Layout = () => {
                 tabBarStyle: {
                     backgroundColor: 'white',
                     borderTopColor: '#B2C6D5',
-                    height: 64,
+                    height: TAB_HEIGHT,
                     position: 'absolute',
                     overflow: 'hidden',
                     borderWidth: 1
