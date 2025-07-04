@@ -8,6 +8,7 @@ export interface I_GetMenuResponse {
 
 export interface I_Menu{
     id: string
+    code: string
     name: string
     description: string
     image: number

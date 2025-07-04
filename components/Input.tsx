@@ -19,7 +19,7 @@ export function Input({ label, type = "text", ...props }: Props) {
 
             <View className="relative w-full">
                 <TextInput
-                    className="w-full border rounded-2xl py-4 px-4 pr-12 border-primary text-black bg-white"
+                    className="w-full border rounded-2xl px-4 py-3 pr-12 border-primary text-black bg-white"
                     placeholderTextColor="#999"
                     secureTextEntry={isPasswordType && !isPasswordVisible}
                     {...props}
