@@ -18,7 +18,7 @@ export default function AccountSettingList(props: I_Props){
                 <View className="flex flex-col ">
                     <Pressable 
                         className="flex flex-row items-center justify-between border-b border-b-gray-200 py-3" 
-                        onPress={() => props.setManageOpen('profile')}
+                        onPress={() => props.setManageOpen('detail')}
                     >
                         <View className="flex flex-row items-center gap-3">
                             <Image 

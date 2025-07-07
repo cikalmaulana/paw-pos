@@ -1,9 +1,10 @@
 import { I_User } from "@/services/api/api.user.get.int";
-import { View } from "lucide-react-native";
 import { useState } from "react";
+import { Pressable, Text, View } from "react-native";
 
 interface I_Props{
     userData: I_User
+    handleBack:()=>void
 }
 
 export default function AccountDetails(props: I_Props){
@@ -11,7 +12,12 @@ export default function AccountDetails(props: I_Props){
     
     return (
         <View>
-            {/* <CE_Button title="Edit" onPress={} /> */}
+            <View className="flex flex-row gap-2 items-center mb-8">
+                <Text className="text-primary font-bold text-2xl">
+                    Edit Profile
+                </Text>
+                <Pressable onPress={() => props.handleBack()}><Text>Back</Text></Pressable>
+            </View>
         </View>
     )
 }

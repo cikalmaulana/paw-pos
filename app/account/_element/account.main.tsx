@@ -6,8 +6,10 @@ import { I_User } from "@/services/api/api.user.get.int"
 import { priceFormat } from "@/services/function/formatPrice"
 import { doLogout } from "@/services/function/logout"
 import { CommonActions, useNavigation } from "@react-navigation/native"
+import { useRouter } from "expo-router"
 import { useState } from "react"
 import { Image, Modal, Text, View } from "react-native"
+import AccountDetails from "./account.detail"
 import AccountSettingList from "./account.setting.list"
 
 interface I_Props {
@@ -17,6 +19,7 @@ interface I_Props {
 
 export default function AccountMain(props: I_Props) {
     const navigation = useNavigation();
+    const router = useRouter()
     const [showAlert, setShowAlert] = useState(false)
     const [alertMsg, setAlertMsg] = useState('')
     const [manageOpen, setManageOpen] = useState('')
@@ -47,24 +50,31 @@ export default function AccountMain(props: I_Props) {
                     onClose={() => setShowAlert(false)}               
                 />
             )}
-            <View className="flex flex-row gap-2 items-center mb-8">
-                <Text className="text-primary font-bold text-2xl">
-                    {props.userData.name.length > 20
-                        ? props.userData.name.slice(0, 20) + '...'
-                        : props.userData.name}
-                </Text>
-                <Text>|</Text>
-                <Text className="text-secondary font-semibold text-lg">
-                    {props.userData.id === props.storeData.owner_id ? "Owner" : "Cashier"}
-                </Text>
-            </View>
 
-            <CE_Card className="bg-primary p-5 flex justify-center mb-8">
-                <Text className="text-white font-semibold text-lg">Store Balance</Text>
-                <Text className="text-white font-bold text-3xl">{priceFormat(props.storeData.balance, "IDR")}</Text>
-            </CE_Card>
-
-            <AccountSettingList setManageOpen={setManageOpen} doLogout={() => setIsModalOpen(true)}/>
+            {manageOpen === '' ? (
+                <>
+                    <View className="flex flex-row gap-2 items-center mb-8">
+                        <Text className="text-primary font-bold text-2xl">
+                            {props.userData.name.length > 20
+                                ? props.userData.name.slice(0, 20) + '...'
+                                : props.userData.name}
+                        </Text>
+                        <Text>|</Text>
+                        <Text className="text-secondary font-semibold text-lg">
+                            {props.userData.id === props.storeData.owner_id ? "Owner" : "Cashier"}
+                        </Text>
+                    </View>
+        
+                    <CE_Card className="bg-primary p-5 flex justify-center mb-8">
+                        <Text className="text-white font-semibold text-lg">Store Balance</Text>
+                        <Text className="text-white font-bold text-3xl">{priceFormat(props.storeData.balance, "IDR")}</Text>
+                    </CE_Card>
+        
+                    <AccountSettingList setManageOpen={(page) => setManageOpen(page)} doLogout={() => setIsModalOpen(true)}/>
+                </>
+            ) : 
+                manageOpen === 'detail' && (<AccountDetails userData={props.userData} handleBack={() => setManageOpen('')}/>)
+            }
 
             <Modal
                 visible={isModalOpen}
