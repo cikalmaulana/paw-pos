@@ -1,4 +1,5 @@
 import { CE_Alert } from "@/components/Alert"
+import { CE_Button } from "@/components/Button"
 import { CE_Card } from "@/components/Card"
 import { I_Store } from "@/services/api/api.store.int"
 import { I_User } from "@/services/api/api.user.get.int"
@@ -6,7 +7,7 @@ import { priceFormat } from "@/services/function/formatPrice"
 import { doLogout } from "@/services/function/logout"
 import { CommonActions, useNavigation } from "@react-navigation/native"
 import { useState } from "react"
-import { Pressable, Text, View } from "react-native"
+import { Image, Modal, Text, View } from "react-native"
 import AccountSettingList from "./account.setting.list"
 
 interface I_Props {
@@ -19,6 +20,7 @@ export default function AccountMain(props: I_Props) {
     const [showAlert, setShowAlert] = useState(false)
     const [alertMsg, setAlertMsg] = useState('')
     const [manageOpen, setManageOpen] = useState('')
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const logout = async () => {
         const result = await doLogout();
@@ -62,11 +64,43 @@ export default function AccountMain(props: I_Props) {
                 <Text className="text-white font-bold text-3xl">{priceFormat(props.storeData.balance, "IDR")}</Text>
             </CE_Card>
 
-            <AccountSettingList setManageOpen={setManageOpen}/>
+            <AccountSettingList setManageOpen={setManageOpen} doLogout={() => setIsModalOpen(true)}/>
 
-            <Pressable className="mt-10 items-center" onPress={() => logout()}>
-                <Text className="text-danger text-lg font-semibold">Logout</Text>
-            </Pressable>
+            <Modal
+                visible={isModalOpen}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setIsModalOpen(false)}
+            >
+                <View className="flex-1 bg-black/50 justify-center items-center px-6">
+                    <View className="bg-white p-5 rounded-xl w-full">
+                        <View className="w-full flex items-center justify-center mb-3">
+                            <Image 
+                                source={require('@/assets/icons/warning.png')}
+                                style={{width: 52, height: 52}}
+                            />
+                        </View>
+                        <Text className="text-lg font-semibold text-center mb-4">Are you sure you want to logout?</Text>
+                        <View className="flex flex-row justify-between gap-3">
+                            <CE_Button 
+                                title="Cancel" 
+                                onPress={() => setIsModalOpen(false)} 
+                                className="flex-1" 
+                            />
+                            <CE_Button
+                                title="Logout"
+                                bgColor="bg-danger"
+                                onPress={() => {
+                                    logout()
+                                    setIsModalOpen(false)
+                                }}
+                                className="flex-1"
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
         </View>
     )
 }
