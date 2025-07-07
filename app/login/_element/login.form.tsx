@@ -2,6 +2,7 @@ import { CE_Alert } from "@/components/Alert";
 import { CE_Button } from "@/components/Button";
 import { CE_Checkbox } from "@/components/Checkbox";
 import { Input } from "@/components/Input";
+import { I_User } from "@/services/api/api.user.get.int";
 import { isPhoneValid } from "@/services/function/isPhoneValid";
 import { CommonActions } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
@@ -9,7 +10,13 @@ import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { doLogin } from "../_function/do.login";
 
-export function LoginForm() {
+interface I_Props{
+    setMemberExpired:(data: boolean) => void
+    setIsMembershipOpen:(isOpen: boolean) => void
+    setUserData:(user: I_User) => void
+}
+
+export function LoginForm(props: I_Props) {
     const router = useRouter()
     const navigation = useNavigation();
     const [phoneNumber, setPhoneNumber] = useState('')
@@ -42,22 +49,38 @@ export function LoginForm() {
                 password: password
             }
 
-            const result = await doLogin(loginPayload, remember);
+            const result = await doLogin(loginPayload, remember)
+
+            if (!result || (result.user && !result.user.membership)) {
+                setShowAlert(true)
+                setLoginMsg("Connection error. Please try again in 5 minutes.")
+                return
+            }
             
             if (result.meta.status === "success") {
-                navigation.dispatch(
-                    CommonActions.reset({
-                        index: 0,
-                        routes: [{ name: "(tabs)" }],
-                    })
-                );
+                if (result.user && !result.user.membership.is_member) { // if not a member : member expired (check on be API_Login when hit nestjs) or trial ends will makes isMember false, redirect to purchase page
+                    props.setMemberExpired(true)
+                    props.setUserData(result.user)
+                    return 
+                } else if (result.user && result.user.membership.member_type === ''){ //firt time login after register (not even a trial member)
+                    props.setIsMembershipOpen(true)
+                    props.setUserData(result.user)
+                    return
+                } else { // isMember true (even a trial member)
+                    navigation.dispatch(
+                        CommonActions.reset({
+                            index: 0,
+                            routes: [{ name: "(tabs)" }],
+                        })
+                    )
+                }
             } else {
                 setShowAlert(true)
                 setLoginMsg(result.meta.message)
             }
-            setIsLoading(false);
-        }, 2000);
-    };
+            setIsLoading(false)
+        }, 2000)
+    }
 
     return (
         <>
@@ -66,6 +89,7 @@ export function LoginForm() {
                     showAlert={showAlert}
                     message={loginMsg}
                     isSuccess={false}
+                    onClose={() => setShowAlert(false)}
                 />
             )}
             <View className="flex-1">

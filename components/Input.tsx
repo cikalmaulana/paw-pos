@@ -4,6 +4,7 @@ import { Text, TextInput, TextInputProps, TouchableOpacity, View } from "react-n
 
 interface Props extends TextInputProps {
     label: string
+    optional?: boolean
     type?: "text" | "password"
 }
 
@@ -13,8 +14,9 @@ export function Input({ label, type = "text", ...props }: Props) {
 
     return (
         <View className="flex flex-col w-full gap-2">
-            <View className="w-full">
+            <View className="flex flex-row w-full">
                 <Text className="text-base text-primary font-semibold">{label}</Text>
+                {props.optional && (<Text className="me-1 text-base text-gray-700 font-semibold">*optional</Text>)}
             </View>
 
             <View className="relative w-full">

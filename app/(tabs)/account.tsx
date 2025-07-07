@@ -1,9 +1,7 @@
-import { Text, View } from "react-native";
+import AccountPage from "../account";
 
 export default function Account() {
     return (
-        <View>
-            <Text>Profile Page</Text>
-        </View>
+        <AccountPage />
     )
 }
