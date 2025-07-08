@@ -1,5 +1,4 @@
 import { CE_Alert } from "@/components/Alert"
-import { CE_Button } from "@/components/Button"
 import { CE_Card } from "@/components/Card"
 import { I_Store } from "@/services/api/api.store.int"
 import { I_User } from "@/services/api/api.user.get.int"
@@ -9,8 +8,13 @@ import { updateStoreData } from "@/services/function/updateStoreData"
 import { updateUserData } from "@/services/function/updateUserData"
 import { CommonActions, useNavigation } from "@react-navigation/native"
 import { useEffect, useState } from "react"
-import { Dimensions, Image, Modal, RefreshControl, ScrollView, Text, View } from "react-native"
+import { Dimensions, RefreshControl, ScrollView, Text, View } from "react-native"
 import AccountDetails from "./account.detail"
+import { ManageAdmin } from "./account.manage.admin"
+import { ManageItem } from "./account.manage.item"
+import { ManageStore } from "./account.manage.store"
+import { LogoutModal } from "./account.modal.logout"
+import { AccountReport } from "./account.report"
 import AccountSettingList from "./account.setting.list"
 
 interface I_Props {
@@ -97,17 +101,6 @@ export default function AccountMain(props: I_Props) {
                     />
                 </View>
             )}
-            <View className="flex flex-row gap-2 items-center mb-4 mt-4">
-                <Text className="text-primary font-bold text-2xl">
-                {userData.name.length > 20
-                    ? userData.name.slice(0, 20) + '...'
-                    : userData.name}
-                </Text>
-                <Text>|</Text>
-                <Text className="text-secondary font-semibold text-lg">
-                {userData.id === props.storeData.owner_id ? "Owner" : "Cashier"}
-                </Text>
-            </View>
 
             <ScrollView
                 refreshControl={
@@ -124,6 +117,17 @@ export default function AccountMain(props: I_Props) {
             >
                 {manageOpen === '' ? (
                         <>
+                            <View className="flex flex-row gap-2 items-center mb-4 mt-4">
+                                <Text className="text-primary font-bold text-2xl">
+                                {userData.name.length > 20
+                                    ? userData.name.slice(0, 20) + '...'
+                                    : userData.name}
+                                </Text>
+                                <Text>|</Text>
+                                <Text className="text-secondary font-semibold text-lg">
+                                {userData.id === props.storeData.owner_id ? "Owner" : "Cashier"}
+                                </Text>
+                            </View>
                             <CE_Card className="bg-primary p-5 flex justify-center mb-8">
                                 <Text className="text-white font-semibold text-lg">Store Balance</Text>
                                 <Text className="text-white font-bold text-3xl">{priceFormat(balance, "IDR")}</Text>
@@ -131,8 +135,7 @@ export default function AccountMain(props: I_Props) {
                 
                             <AccountSettingList setManageOpen={(page) => setManageOpen(page)} doLogout={() => setIsModalOpen(true)}/>
                         </>
-                    ) : 
-                    manageOpen === 'detail' && (
+                    ) : manageOpen === 'detail' ? (
                         <AccountDetails 
                             userData={userData} 
                             handleBack={() => handleBack()}
@@ -140,46 +143,31 @@ export default function AccountMain(props: I_Props) {
                             setAlertMsg={setAlertMsg}
                             setAlertSuccess={setAlertSuccess}
                         />
+                    ) : manageOpen === 'item' ? (
+                        <ManageItem 
+                            handleBack={() => handleBack()}
+                        />
+                    ) : manageOpen === 'admin' ? (
+                        <ManageAdmin 
+                            handleBack={() => handleBack()}
+                        />
+                    ) : manageOpen === 'store' ? (
+                        <ManageStore 
+                            handleBack={() => handleBack()}
+                        />
+                    ) : (
+                        <AccountReport 
+                            handleBack={() => handleBack()}
+                        />
                     )
                 }
             </ScrollView>
 
-
-            <Modal
-                visible={isModalOpen}
-                transparent
-                animationType="fade"
-                onRequestClose={() => setIsModalOpen(false)}
-            >
-                <View className="flex-1 bg-black/50 justify-center items-center px-6">
-                    <View className="bg-white p-5 rounded-xl w-full">
-                        <View className="w-full flex items-center justify-center mb-3">
-                            <Image 
-                                source={require('@/assets/icons/warning.png')}
-                                style={{width: 52, height: 52}}
-                            />
-                        </View>
-                        <Text className="text-lg font-semibold text-center mb-4">Are you sure you want to logout?</Text>
-                        <View className="flex flex-row justify-between gap-3">
-                            <CE_Button 
-                                title="Cancel" 
-                                onPress={() => setIsModalOpen(false)} 
-                                className="flex-1" 
-                            />
-                            <CE_Button
-                                title="Logout"
-                                bgColor="bg-danger"
-                                onPress={() => {
-                                    logout()
-                                    setIsModalOpen(false)
-                                }}
-                                className="flex-1"
-                            />
-                        </View>
-                    </View>
-                </View>
-            </Modal>
-
+            <LogoutModal 
+                isModalOpen={isModalOpen}
+                setIsModalOpen={setIsModalOpen}
+                logout={logout}
+            />
         </View>
     )
 }
