@@ -12,7 +12,7 @@ export const doLogin = async (params: I_LoginRequest, remember: boolean): Promis
             if(result.meta.status === "success" && result.user) {
                 const store = await API_GetStoreByOwner(result.user.id)
                 if(store.meta.status === "success"){
-                    const loginData: I_LoginData & { expiredAt: number } = {
+                    const loginData: I_LoginData = {
                         token: "ThIsIstOKEnForvserLogin",
                         user: result.user,
                         store: store.data,

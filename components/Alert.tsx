@@ -13,9 +13,10 @@ interface CE_AlertProps {
     isSuccess: boolean;
     showAlert: boolean;
     onClose?: () => void;
+    className?: string
 }
 
-export function CE_Alert({ message, isSuccess, showAlert, onClose }: CE_AlertProps) {
+export function CE_Alert({ message, isSuccess, showAlert, onClose, className }: CE_AlertProps) {
     const opacity = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(-20)).current;
     const [visible, setVisible] = useState(showAlert);
@@ -67,7 +68,7 @@ export function CE_Alert({ message, isSuccess, showAlert, onClose }: CE_AlertPro
     if (!visible) return null;
 
     return (
-        <SafeAreaView className="absolute top-0 left-0 right-0 z-50">
+        <SafeAreaView className={`absolute top-0 left-0 right-0 z-50 ${className}`}>
             <Animated.View
                 style={{
                     opacity,

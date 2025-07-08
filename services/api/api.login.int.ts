@@ -16,4 +16,5 @@ export interface I_LoginData{
     token: string
     user: I_User
     store: I_Store
+    expiredAt: number
 }

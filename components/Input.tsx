@@ -16,7 +16,7 @@ export function Input({ label, type = "text", ...props }: Props) {
         <View className="flex flex-col w-full gap-2">
             <View className="flex flex-row w-full">
                 <Text className="text-base text-primary font-semibold">{label}</Text>
-                {props.optional && (<Text className="me-1 text-base text-gray-700 font-semibold">*optional</Text>)}
+                {props.optional && (<Text className="ms-1 text-sm text-gray-400 font-semibold">*optional</Text>)}
             </View>
 
             <View className="relative w-full">
