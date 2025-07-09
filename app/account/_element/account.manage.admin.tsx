@@ -5,7 +5,7 @@ interface I_Props {
     handleBack:()=>void
 }
 
-export function ManageAdmin(props: I_Props){
+export default function ManageAdmin(props: I_Props){
     return (
         <View>
             <CE_BackButton lable="Manage Admin" onPress={props.handleBack}/>

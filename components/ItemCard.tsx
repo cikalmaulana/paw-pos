@@ -1,3 +1,4 @@
+import { priceFormat } from "@/services/function/formatPrice"
 import React from "react"
 import { Image, Text, View } from "react-native"
 import { CE_Button } from "./Button"
@@ -10,6 +11,7 @@ interface I_Props {
     buttonLabel: "Add" | "Edit"
     onPressButton: () => void
     className?: string
+    stock?: string
 }
 
 export function CE_ItemCard({
@@ -52,3 +54,64 @@ export function CE_ItemCard({
         </View>
     )
 }
+
+interface I_HorizontalCardProps{
+    image: number 
+    title: string
+    price: string
+    stock: number
+    key: string
+    className?: string
+    deleteOnClick: () => void
+    editOnClick: () => void
+}
+
+export function CE_ItemCardHorizontal({
+    image,
+    title,
+    price,
+    deleteOnClick,
+    editOnClick,
+    className,
+    stock,
+    key
+}: I_HorizontalCardProps) {
+    return (
+        <View className={`bg-white rounded-2xl p-4 h-36 ${className}`} key={key}>
+            <View className="flex flex-1 flex-row gap-4">
+                <Image
+                    source={image}
+                    className="w-28 h-28 rounded-xl mb-2"
+                    resizeMode="cover"
+                />
+                <View className="flex flex-col">
+                    <Text 
+                        className="text-primary text-lg font-bold mb-1" 
+                        numberOfLines={2}
+                        style={{ lineHeight: 22 }} 
+                    >
+                        {title}
+                    </Text>
+                    <Text className="text-black text-sm font-bold mb-1">{priceFormat(price, "IDR")}</Text>
+                    <Text className="text-sm font-semibold mb-1">{stock} pcs</Text>
+                    <View className="flex flex-row justify-between gap-2 mt-1">
+                        <CE_Button 
+                            title="Delete" 
+                            className="!py-2 !px-4 justify-center items-center" 
+                            btnClassName="!text-sm"
+                            bgColor="bg-danger"
+                            onPress={() => deleteOnClick()}
+                        />
+                        <CE_Button 
+                            title="Edit Item" 
+                            className="!py-2 !px-4 justify-center items-center" 
+                            btnClassName="!text-sm"
+                            onPress={() => editOnClick()}
+                        />
+                    </View>
+                </View>
+            </View>
+        </View>
+    )
+}
+

@@ -31,6 +31,7 @@ export function LoginMain(){
                             <CE_Button 
                                 title="Forgot Password" 
                                 onPress={() => setForgotOpen(true)} bgColor="bg-secondary"
+                                className="mt-3"
                             />
                         </>
                     ) : (

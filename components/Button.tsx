@@ -6,11 +6,13 @@ interface Props extends PressableProps {
     className?: string
     bgColor?: string 
     isLoading?: boolean
+    btnClassName?: string
 }
 
 export function CE_Button({ 
     title, 
     className = '', 
+    btnClassName = '',
     bgColor, 
     disabled, 
     isLoading = false, 
@@ -40,7 +42,7 @@ export function CE_Button({
             {isLoading ? (
                 <ActivityIndicator color="white" />
             ) : (
-                <Text className="text-white text-base font-semibold uppercase">{title}</Text>
+                <Text className={`text-white text-base font-semibold uppercase ${btnClassName}`}>{title}</Text>
             )}
         </Pressable>
     )

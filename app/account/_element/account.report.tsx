@@ -5,7 +5,7 @@ interface I_Props {
     handleBack:()=>void
 }
 
-export function AccountReport(props: I_Props){
+export default function AccountReport(props: I_Props){
     return (
         <View>
             <CE_BackButton lable="Report" onPress={props.handleBack}/>

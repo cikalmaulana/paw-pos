@@ -1,5 +1,6 @@
 import { CE_Alert } from "@/components/Alert"
 import { CE_Card } from "@/components/Card"
+import { CE_Loading } from "@/components/Loading"
 import { I_Store } from "@/services/api/api.store.int"
 import { I_User } from "@/services/api/api.user.get.int"
 import { priceFormat } from "@/services/function/formatPrice"
@@ -7,15 +8,16 @@ import { doLogout } from "@/services/function/logout"
 import { updateStoreData } from "@/services/function/updateStoreData"
 import { updateUserData } from "@/services/function/updateUserData"
 import { CommonActions, useNavigation } from "@react-navigation/native"
-import { useEffect, useState } from "react"
+import { lazy, Suspense, useEffect, useState } from "react"
 import { Dimensions, RefreshControl, ScrollView, Text, View } from "react-native"
-import AccountDetails from "./account.detail"
-import { ManageAdmin } from "./account.manage.admin"
-import { ManageItem } from "./account.manage.item"
-import { ManageStore } from "./account.manage.store"
 import { LogoutModal } from "./account.modal.logout"
-import { AccountReport } from "./account.report"
 import AccountSettingList from "./account.setting.list"
+
+const ManageItem = lazy(() => import("./account.manage.item"));
+const ManageAdmin = lazy(() => import("./account.manage.admin"));
+const ManageStore = lazy(() => import("./account.manage.store"));
+const AccountDetails = lazy(() => import("./account.detail"));
+const AccountReport = lazy(() => import("./account.report"));
 
 interface I_Props {
     userData: I_User
@@ -39,6 +41,7 @@ export default function AccountMain(props: I_Props) {
         setRefreshing(true)
         await getNewUserData()
         await getNewStoreData()
+        await getNewAdminData()
         setRefreshing(false)
     }
 
@@ -66,6 +69,10 @@ export default function AccountMain(props: I_Props) {
             setAlertSuccess(false)
             setShowAlert(true)
         }
+    }
+
+    const getNewAdminData = async () => {
+
     }
 
     const logout = async () => {
@@ -102,26 +109,25 @@ export default function AccountMain(props: I_Props) {
                 </View>
             )}
 
-            <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                        colors={["#16B8A8"]}       
-                        tintColor="#16B8A8"        
-                        title="Loading..."         
-                        titleColor="#16B8A8"        
-                    />
-                }
-                showsVerticalScrollIndicator={false}
-            >
                 {manageOpen === '' ? (
-                        <>
+                        <ScrollView
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={onRefresh}
+                                    colors={["#16B8A8"]}       
+                                    tintColor="#16B8A8"        
+                                    title="Loading..."         
+                                    titleColor="#16B8A8"        
+                                />
+                            }
+                            showsVerticalScrollIndicator={false}
+                        >
                             <View className="flex flex-row gap-2 items-center mb-4 mt-4">
                                 <Text className="text-primary font-bold text-2xl">
-                                {userData.name.length > 20
-                                    ? userData.name.slice(0, 20) + '...'
-                                    : userData.name}
+                                    {userData.name.length > 20
+                                        ? userData.name.slice(0, 20) + '...'
+                                        : userData.name}
                                 </Text>
                                 <Text>|</Text>
                                 <Text className="text-secondary font-semibold text-lg">
@@ -133,35 +139,53 @@ export default function AccountMain(props: I_Props) {
                                 <Text className="text-white font-bold text-3xl">{priceFormat(balance, "IDR")}</Text>
                             </CE_Card>
                 
-                            <AccountSettingList setManageOpen={(page) => setManageOpen(page)} doLogout={() => setIsModalOpen(true)}/>
-                        </>
+                            <AccountSettingList 
+                                setManageOpen={(page) => setManageOpen(page)} 
+                                doLogout={() => setIsModalOpen(true)}
+                            />
+                        </ScrollView>
                     ) : manageOpen === 'detail' ? (
-                        <AccountDetails 
-                            userData={userData} 
-                            handleBack={() => handleBack()}
-                            setShowAlert={setShowAlert}
-                            setAlertMsg={setAlertMsg}
-                            setAlertSuccess={setAlertSuccess}
-                        />
+                        <Suspense fallback={
+                            <CE_Loading />
+                        }>
+                            <AccountDetails 
+                                userData={userData} 
+                                handleBack={() => handleBack()}
+                                setShowAlert={setShowAlert}
+                                setAlertMsg={setAlertMsg}
+                                setAlertSuccess={setAlertSuccess}
+                            />
+                        </Suspense>
                     ) : manageOpen === 'item' ? (
-                        <ManageItem 
-                            handleBack={() => handleBack()}
-                        />
+                        <Suspense fallback={<CE_Loading />}>
+                            <ManageItem 
+                                handleBack={() => handleBack()}
+                                storeData={props.storeData}
+                                setShowAlert={setShowAlert}
+                                setAlertMsg={setAlertMsg}
+                                setAlertSuccess={setAlertSuccess}
+                            />
+                        </Suspense>
                     ) : manageOpen === 'admin' ? (
-                        <ManageAdmin 
-                            handleBack={() => handleBack()}
-                        />
+                        <Suspense fallback={<CE_Loading />}>
+                            <ManageAdmin 
+                                handleBack={() => handleBack()}
+                            />
+                        </Suspense>
                     ) : manageOpen === 'store' ? (
-                        <ManageStore 
-                            handleBack={() => handleBack()}
-                        />
+                        <Suspense fallback={<CE_Loading />}>
+                            <ManageStore 
+                                handleBack={() => handleBack()}
+                            />
+                        </Suspense>
                     ) : (
-                        <AccountReport 
-                            handleBack={() => handleBack()}
-                        />
+                        <Suspense fallback={<CE_Loading />}>
+                            <AccountReport 
+                                handleBack={() => handleBack()}
+                            />
+                        </Suspense>
                     )
                 }
-            </ScrollView>
 
             <LogoutModal 
                 isModalOpen={isModalOpen}

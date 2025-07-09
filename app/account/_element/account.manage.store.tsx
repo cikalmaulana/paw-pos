@@ -5,7 +5,7 @@ interface I_Props {
     handleBack:()=>void
 }
 
-export function ManageStore(props: I_Props){
+export default function ManageStore(props: I_Props){
     return (
         <View>
             <CE_BackButton lable="Manage Store" onPress={props.handleBack}/>

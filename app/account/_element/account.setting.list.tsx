@@ -38,6 +38,7 @@ export default function AccountSettingList(props: I_Props){
                                     !isLast ? "border-b border-b-gray-200" : ""
                                 }`}
                                 onPress={() => props.setManageOpen(item.key)}
+                                key={item.key}
                             >
                                 <View className="flex flex-row items-center gap-3">
                                     <Image 
@@ -67,6 +68,7 @@ export default function AccountSettingList(props: I_Props){
                                     !isLast ? "border-b border-b-gray-200" : ""
                                 }`}
                                 onPress={() => props.setManageOpen('detail')}
+                                key={item.key}
                             >
                                 <View className="flex flex-row items-center gap-3">
                                     <Image 
