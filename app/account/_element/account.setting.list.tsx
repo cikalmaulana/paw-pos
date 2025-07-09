@@ -8,7 +8,7 @@ interface I_Props{
 
 export default function AccountSettingList(props: I_Props){
     const manageAccStoreList = [
-        { key: 'detail', label: 'Profile Detail', image:require("@/assets/icons/user2.png") },
+        { key: 'detail', label: 'Edit Profile', image:require("@/assets/icons/user2.png") },
         { key: 'item', label: 'Manage Item', image:require("@/assets/icons/items.png")  },
         { key: 'admin', label: 'Manage Admin', image:require("@/assets/icons/admins.png")  },
         { key: 'store', label: 'Manage Store', image:require("@/assets/icons/store.png")  },
@@ -24,7 +24,7 @@ export default function AccountSettingList(props: I_Props){
     return (
         <ScrollView
             className="flex flex-col gap-3"
-            contentContainerStyle={{ paddingBottom: 300 }}
+            contentContainerStyle={{ paddingBottom: 500 }}
         >
 
             <Text className="text-description mb-2 font-semibold">Manage Account & Store</Text>

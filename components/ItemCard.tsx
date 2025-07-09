@@ -60,7 +60,6 @@ interface I_HorizontalCardProps{
     title: string
     price: string
     stock: number
-    key: string
     className?: string
     deleteOnClick: () => void
     editOnClick: () => void
@@ -74,10 +73,9 @@ export function CE_ItemCardHorizontal({
     editOnClick,
     className,
     stock,
-    key
 }: I_HorizontalCardProps) {
     return (
-        <View className={`bg-white rounded-2xl p-4 h-36 ${className}`} key={key}>
+        <View className={`bg-white rounded-2xl p-4 h-36 ${className}`}>
             <View className="flex flex-1 flex-row gap-4">
                 <Image
                     source={image}

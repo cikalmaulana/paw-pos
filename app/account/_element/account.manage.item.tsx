@@ -1,9 +1,9 @@
 import { CE_BackButton } from "@/components/BackButton";
 import { CE_Card } from "@/components/Card";
-import { I_Menu } from "@/services/api/api.item.get.int";
+import { API_GetTotalItem } from "@/services/api/api.item.get";
 import { I_Store } from "@/services/api/api.store.int";
-import { useState } from "react";
-import { Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { ManageItemList } from "./account.manage.item.list";
 import ManageItemView from "./account.manage.item.view";
 
@@ -24,12 +24,30 @@ export default function ManageItem(props: I_Props){
         { key: 'lowStock', label: 'View low stock', image:require("@/assets/icons/lowStock.png")  },
     ]
 
-    const [itemData, setItemData] = useState<I_Menu[] | null>(null)
-    const [totalData, setTotalData] = useState(0)
-    const [deletItemModalOpen, setDeleteItemModalOpen] = useState(false)
     const [manageItemOpen, setManageItemOpen] = useState('')
+    const [refreshing, setRefreshing] = useState(false)
+    const [totalItem, setTotalItem] = useState(0)
 
+    const onRefresh = async() => {
+        setRefreshing(true)
+        await getTotalItem()
+        setRefreshing(false)
+    }
 
+    const getTotalItem = async () => {
+        const result = await API_GetTotalItem()
+        if(result && result.meta.status === 'success') {
+            setTotalItem(result.totalItem)
+        } else {
+            props.setAlertMsg("Connection error.")
+            props.setAlertSuccess(false)
+            props.setShowAlert(true)
+        }
+    }
+
+    useEffect(() => {
+        onRefresh()
+    },[])
 
     return (
         <View>
@@ -37,18 +55,33 @@ export default function ManageItem(props: I_Props){
             {manageItemOpen === '' ? (
                 <>
                     <CE_BackButton lable="Manage Item" onPress={props.handleBack}/>
-                    <View className="flex flex-row gap-4 w-full mb-8 px-2">
-                        <CE_Card className="bg-primary p-5 flex justify-center flex-1">
-                            <Text className="text-white font-semibold text-lg">Total Item</Text>
-                            <Text className="text-white font-semibold text-3xl">100</Text>
-                        </CE_Card>
-                        <CE_Card className="bg-white p-5 flex justify-center flex-1">
-                            <Text className="text-primary font-semibold text-lg">Total Low Stock</Text>
-                            <Text className="text-primary font-semibold text-3xl">4</Text>
-                        </CE_Card>
-                    </View>
+                    <ScrollView
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                                colors={["#16B8A8"]}       
+                                tintColor="#16B8A8"        
+                                title="Loading..."         
+                                titleColor="#16B8A8"        
+                            />
+                        }
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ paddingBottom: 500 }}
+                    >
+                        <View className="flex flex-row gap-4 w-full mb-8 px-2">
+                            <CE_Card className="bg-primary p-5 flex justify-center flex-1">
+                                <Text className="text-white font-semibold text-lg">Total Item</Text>
+                                <Text className="text-white font-semibold text-3xl">{totalItem}</Text>
+                            </CE_Card>
+                            <CE_Card className="bg-white p-5 flex justify-center flex-1">
+                                <Text className="text-primary font-semibold text-lg">Total Low Stock</Text>
+                                <Text className="text-primary font-semibold text-3xl">4</Text>
+                            </CE_Card>
+                        </View>
 
-                    <ManageItemList setManageItemOpen={setManageItemOpen} manageItemList={itemList}/>
+                        <ManageItemList setManageItemOpen={setManageItemOpen} manageItemList={itemList}/>
+                    </ScrollView>
                 </>
             ) : manageItemOpen === 'viewItem' ? (
                 <ManageItemView 

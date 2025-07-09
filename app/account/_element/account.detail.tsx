@@ -96,7 +96,6 @@ export default function AccountDetails(props: I_Props){
         }
 
         const result = await API_ChangePassword(payload)
-        console.log("Result: ", result)
         if(result) {
             if(result.meta.status !== 'success') {
                 props.setAlertMsg(result.meta.message)

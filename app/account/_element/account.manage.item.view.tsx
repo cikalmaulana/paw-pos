@@ -1,10 +1,15 @@
 import { CE_BackButton } from "@/components/BackButton"
 import { CE_Button } from "@/components/Button"
+import { Input } from "@/components/Input"
 import { CE_ItemCardHorizontal } from "@/components/ItemCard"
+import { API_DeleteItem } from "@/services/api/api.item.delete"
+import { API_EditItem } from "@/services/api/api.item.edit"
+import { I_EditItemRequest } from "@/services/api/api.item.edit.int"
 import { API_GetAllItem } from "@/services/api/api.item.get"
 import { I_Menu } from "@/services/api/api.item.get.int"
+import * as ImagePicker from 'expo-image-picker'
 import { useEffect, useState } from "react"
-import { Image, Modal, RefreshControl, ScrollView, Text, View } from "react-native"
+import { Dimensions, Image, KeyboardAvoidingView, Modal, Platform, Pressable, RefreshControl, ScrollView, Text, View } from "react-native"
 
 interface I_Props{
     handleBack:()=>void
@@ -14,35 +19,69 @@ interface I_Props{
 }
 
 export default function ManageItemView(props: I_Props) {
+    const { width, height } = Dimensions.get("window");
+    
     const [itemData, setItemData] = useState<I_Menu[] | null>(null)
     const [totalData, setTotalData] = useState(0)
     const [deletItemModalOpen, setDeleteItemModalOpen] = useState(false)
+    const [editItemModalOpen, setEditItemModalOpen] = useState(false)
+    const [currentItemName, setCurrentItemName] = useState('')
+    const [currentItemImg, setCurrentItemImg] = useState<number | string>('')
+    const [currentItemPrice, setCurrentItemPrice] = useState('')
+    const [currentItemDesc, setCurrentItemDesc] = useState('')
+    const [selectedItem, setSelectedItem] = useState<I_Menu | null>(null)
     const [refreshing, setRefreshing] = useState(false)
+
+    useEffect(() => {
+        if (selectedItem) {
+            setCurrentItemName(selectedItem.name)
+            setCurrentItemImg(selectedItem.image)
+            setCurrentItemPrice(String(selectedItem.price))
+            setCurrentItemDesc(selectedItem.description || '')
+        }
+    }, [selectedItem])
+
+    const pickImage = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 0.7,
+        })
+    
+        if (!result.canceled) {
+            setCurrentItemImg(result.assets[0].uri)
+        }
+    }
+    
+    const takePhoto = async () => {
+        const result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            quality: 0.7,
+        })
+    
+        if (!result.canceled) {
+            setCurrentItemImg(result.assets[0].uri)
+        }
+    }
 
     const getItemData = async () => {
         try{
             const result = await API_GetAllItem()
             if(result){
                 if(result.meta.status !== 'success' || result.data == null ) {
-                    props.setAlertMsg("Connection lost.")
-                    props.setAlertSuccess(false)
-                    props.setShowAlert(true)
+                    alertSetup("Connection lost.", false)
                     return
                 }
 
                 setItemData(result.data)
                 setTotalData(result.data.length)
             } else {
-                props.setAlertMsg("Connection lost.")
-                props.setAlertSuccess(false)
-                props.setShowAlert(true)
+                alertSetup("Connection lost.", false)
                 return
             }
         } catch(error) {
             console.error("Failed to get item data on Manage Item.")
-            props.setAlertMsg("Connection lost.")
-            props.setAlertSuccess(false)
-            props.setShowAlert(true)
+            alertSetup("Connection lost.", false)
         }
     }
 
@@ -50,7 +89,53 @@ export default function ManageItemView(props: I_Props) {
         getItemData()
     },[])
 
-    const doDelete = (id: string) => {
+    const doDelete = async (id: string) => {
+        const result = await API_DeleteItem(id)
+        if (result && result.meta.status === 'success'){
+            alertSetup("Item deleted!", true)
+        } else {
+            alertSetup("Connection lost.", false)
+        }
+        await onRefresh()
+        safetyClose()
+    }
+
+    const doEditItem = async (id: string) => {
+        const payload: I_EditItemRequest = {
+            id: id,
+            name: currentItemName,
+            image: typeof currentItemImg === 'number' ? currentItemImg : null,
+            price: currentItemPrice,
+            description: currentItemDesc
+        }
+        const result = await API_EditItem(payload)
+        if (result && result.meta.status === 'success'){
+            alertSetup("Update item success!", true)
+        } else {
+            alertSetup("Connection lost.", false)
+        }
+        await onRefresh()
+        safetyClose()
+    }
+
+    const alertSetup = (msg: string, isSuccess: boolean) => {
+        props.setAlertMsg(msg)
+        props.setAlertSuccess(isSuccess)
+        props.setShowAlert(true)
+    }
+
+    const cancelEdit = async () => {
+        safetyClose()
+    }
+
+    const safetyClose = () => {
+        setEditItemModalOpen(false)
+        setCurrentItemImg('')
+        setCurrentItemName('')
+        setCurrentItemPrice('')
+        setCurrentItemDesc('')
+        setSelectedItem(null)
+
         setDeleteItemModalOpen(false)
     }
 
@@ -75,67 +160,170 @@ export default function ManageItemView(props: I_Props) {
                         titleColor="#16B8A8"        
                     />
                 }
+                contentContainerStyle={{ paddingBottom: 500 }}
             >
                 <Text className="text-primary text-lg font-semibold mb-2">Total : {totalData} {totalData > 1 ? "items" : "item"}</Text>
                 {itemData !== null && itemData.map((item, index) => {
                     return (
-                        <View key={item.id} className="mb-4">
+                        <View key={index} className="mb-4">
                             <CE_ItemCardHorizontal 
                                 image={item.image}
                                 price={item.price}
                                 title={item.name}
-                                deleteOnClick={() => setDeleteItemModalOpen(true)}
-                                editOnClick={() => {}}
+                                deleteOnClick={() => {
+                                    setSelectedItem(item)
+                                    setDeleteItemModalOpen(true)
+                                }}
+                                editOnClick={() => {
+                                    setSelectedItem(item)
+                                    setEditItemModalOpen(true)
+                                }}
                                 stock={item.stock}
-                                key={item.id}
                             />
-                            <Modal
-                                visible={deletItemModalOpen}
-                                transparent
-                                animationType="fade"
-                                onRequestClose={() => setDeleteItemModalOpen(false)}
-                            >
-                                <View className="flex-1 bg-black/50 justify-center items-center px-6">
-                                    <View className="bg-white p-6 rounded-2xl w-full max-w-md">
-                                        
-                                        <View className="items-center justify-center mb-4">
-                                            <Image 
-                                                source={require('@/assets/icons/warning.png')}
-                                                style={{ width: 52, height: 52 }}
-                                            />
-                                        </View>
-
-                                        <Text className="text-xl font-bold text-center text-primary mb-2">
-                                            {item.name}
-                                        </Text>
-
-                                        <Text className="text-base text-center font-medium text-black mb-6">
-                                            Are you sure you want to delete this item?
-                                        </Text>
-
-                                        <View className="flex-row gap-3">
-                                            <CE_Button
-                                                title="Delete"
-                                                bgColor="bg-danger"
-                                                onPress={() => doDelete(item.id)}
-                                                className="flex-1 py-2"
-                                                btnClassName="text-sm"
-                                            />
-                                            <CE_Button 
-                                                title="Cancel" 
-                                                onPress={() => setDeleteItemModalOpen(false)} 
-                                                className="flex-1 py-2"
-                                                btnClassName="text-sm"
-                                            />
-                                        </View>
-                                    </View>
-                                </View>
-                            </Modal>
-
                         </View>
                     )
                 })}
+
             </ScrollView>   
+
+            {selectedItem && (
+                <Modal
+                    visible={deletItemModalOpen}
+                    transparent
+                    animationType="fade"
+                    onRequestClose={() => setDeleteItemModalOpen(false)}
+                >
+                    <Pressable 
+                        onPress={() => setDeleteItemModalOpen(false)} 
+                        className="flex-1 bg-black/50 justify-center items-center px-6"
+                    >
+                        <Pressable 
+                            onPress={(e) => e.stopPropagation()} 
+                            className="bg-white p-6 rounded-2xl w-full max-w-md"
+                        >
+                            <View className="items-center justify-center mb-4">
+                                <Image 
+                                    source={require('@/assets/icons/warning.png')}
+                                    style={{ width: 52, height: 52 }}
+                                />
+                            </View>
+                
+                            <Text className="text-xl font-bold text-center text-primary mb-2">
+                                {selectedItem.name}
+                            </Text>
+                
+                            <Text className="text-base text-center font-medium text-black mb-6">
+                                Are you sure you want to delete this item?
+                            </Text>
+                
+                            <View className="flex-row gap-3">
+                                <CE_Button
+                                    title="Delete"
+                                    bgColor="bg-danger"
+                                    onPress={() => doDelete(selectedItem.id)}
+                                    className="flex-1 py-2"
+                                    btnClassName="text-sm"
+                                />
+                                <CE_Button 
+                                    title="Cancel" 
+                                    onPress={() => setDeleteItemModalOpen(false)} 
+                                    className="flex-1 py-2"
+                                    btnClassName="text-sm"
+                                />
+                            </View>
+                        </Pressable>
+                    </Pressable>
+                </Modal>
+            
+            )}
+
+            {selectedItem && (
+                <Modal
+                    visible={editItemModalOpen}
+                    transparent
+                    animationType="fade"
+                    onRequestClose={cancelEdit}
+                >
+                    <Pressable onPress={cancelEdit} className="flex-1 bg-black/50 justify-center items-center px-6">
+                        <Pressable
+                            onPress={(e) => e.stopPropagation()}
+                            style={{ maxHeight: height * 0.8, width: width * 0.9 }}
+                            className="bg-white rounded-2xl p-4 w-full"
+                        >
+                            <KeyboardAvoidingView
+                                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                                keyboardVerticalOffset={80}
+                            >
+                                <ScrollView
+                                    contentContainerStyle={{ paddingBottom: 16 }}
+                                    keyboardShouldPersistTaps="handled"
+                                >
+                                    <Text className="text-xl text-primary font-bold mb-4">Edit Item</Text>
+
+                                    <View className="relative w-full h-52 mb-4">
+                                        <Image
+                                            source={typeof currentItemImg === 'string' ? { uri: currentItemImg } : currentItemImg}
+                                            className="w-full h-full rounded-xl"
+                                            resizeMode="cover"
+                                        />
+                                        <Pressable
+                                            onPress={pickImage}
+                                            className="absolute inset-0 items-center justify-center"
+                                        >
+                                            <Text className="text-secondary border border-secondary px-3 py-1 rounded-full bg-white/60 text-lg">
+                                                Change Image
+                                            </Text>
+                                        </Pressable>
+                                    </View>
+
+                                    <View className="flex flex-col gap-4 mb-4">
+                                        <Input
+                                            label="Name"
+                                            placeholder="Item Name"
+                                            value={currentItemName}
+                                            onChangeText={setCurrentItemName}
+                                        />
+
+                                        <Input
+                                            label="Price"
+                                            placeholder="Price"
+                                            keyboardType="numeric"
+                                            value={currentItemPrice}
+                                            onChangeText={setCurrentItemPrice}
+                                        />
+
+                                        <Input
+                                            label="Description"
+                                            placeholder="Description"
+                                            multiline
+                                            numberOfLines={3}
+                                            value={currentItemDesc}
+                                            onChangeText={setCurrentItemDesc}
+                                        />
+                                    </View>
+                                </ScrollView>
+
+                                <View className="flex-row gap-3 mt-4">
+                                    <CE_Button
+                                        title="Cancel"
+                                        bgColor="bg-primary"
+                                        onPress={cancelEdit}
+                                        className="flex-1 py-2"
+                                        btnClassName="text-sm"
+                                    />
+                                    <CE_Button
+                                        title="Save"
+                                        onPress={() => doEditItem(selectedItem.id)}
+                                        className="flex-1 py-2"
+                                        btnClassName="text-sm"
+                                        bgColor="bg-secondary"
+                                    />
+                                </View>
+                            </KeyboardAvoidingView>
+                        </Pressable>
+                    </Pressable>
+                </Modal>
+            )}
         </View>
     )
 }

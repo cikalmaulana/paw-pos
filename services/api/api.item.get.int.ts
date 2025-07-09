@@ -16,3 +16,8 @@ export interface I_Menu{
     category: I_Category
     stock: number
 }
+
+export interface I_GetTotalItemResponse {
+    meta: I_CommonMeta
+    totalItem: number
+}

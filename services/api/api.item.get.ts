@@ -1,4 +1,4 @@
-import { I_GetMenuResponse, I_Menu } from "./api.item.get.int";
+import { I_GetMenuResponse, I_GetTotalItemResponse, I_Menu } from "./api.item.get.int";
 
 export async function API_GetItemByCode(code: string, item: I_Menu[]): Promise<I_Menu> {
     const foundItem = item.find((itm) => itm.code === code);
@@ -23,6 +23,13 @@ export async function API_GetItemById(id: string): Promise<I_GetMenuResponse>{
             category: { id: "c1", name: "Coffee" },
             stock: 20,
         }],
+    }
+}
+
+export async function API_GetTotalItem(): Promise<I_GetTotalItemResponse> {
+    return {
+        meta: { status: "success", code: 200, message: "OK" },
+        totalItem: 11
     }
 }
 

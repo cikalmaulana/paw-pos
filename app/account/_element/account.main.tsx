@@ -110,6 +110,19 @@ export default function AccountMain(props: I_Props) {
             )}
 
                 {manageOpen === '' ? (
+                    <View>
+                        <View className="flex flex-row gap-2 items-center mb-4 mt-4">
+                            <Text className="text-primary font-bold text-2xl">
+                                {userData.name.length > 20
+                                    ? userData.name.slice(0, 20) + '...'
+                                    : userData.name}
+                            </Text>
+                            <Text>|</Text>
+                            <Text className="text-secondary font-semibold text-lg">
+                            {userData.id === props.storeData.owner_id ? "Owner" : "Cashier"}
+                            </Text>
+                        </View>
+                        
                         <ScrollView
                             refreshControl={
                                 <RefreshControl
@@ -123,17 +136,7 @@ export default function AccountMain(props: I_Props) {
                             }
                             showsVerticalScrollIndicator={false}
                         >
-                            <View className="flex flex-row gap-2 items-center mb-4 mt-4">
-                                <Text className="text-primary font-bold text-2xl">
-                                    {userData.name.length > 20
-                                        ? userData.name.slice(0, 20) + '...'
-                                        : userData.name}
-                                </Text>
-                                <Text>|</Text>
-                                <Text className="text-secondary font-semibold text-lg">
-                                {userData.id === props.storeData.owner_id ? "Owner" : "Cashier"}
-                                </Text>
-                            </View>
+                            <Text className="text-secondary text-3xl font-bold mb-3">{props.storeData.name}</Text>
                             <CE_Card className="bg-primary p-5 flex justify-center mb-8">
                                 <Text className="text-white font-semibold text-lg">Store Balance</Text>
                                 <Text className="text-white font-bold text-3xl">{priceFormat(balance, "IDR")}</Text>
@@ -144,6 +147,7 @@ export default function AccountMain(props: I_Props) {
                                 doLogout={() => setIsModalOpen(true)}
                             />
                         </ScrollView>
+                    </View>
                     ) : manageOpen === 'detail' ? (
                         <Suspense fallback={
                             <CE_Loading />
