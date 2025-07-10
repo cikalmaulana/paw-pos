@@ -15,5 +15,5 @@
     "expo-env.d.ts",
     "nativewind-env.d.ts",
     "declarations.d.ts"
-  ]
+, "app/account/_element/_view/manage.item.view.main.tsx"  ]
 }

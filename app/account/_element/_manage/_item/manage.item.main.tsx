@@ -5,12 +5,12 @@ import { API_GetTotalItem } from "@/services/api/api.item.get";
 import { I_Store } from "@/services/api/api.store.int";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
-import AddNewItem from "./account.manage.item.add";
-import { ManageItemList } from "./account.manage.item.list";
+import AddNewItem from "./_add/manage.item.add";
+import { ManageItemList } from "./manage.item.list";
 
-const ManageItemView = lazy(() => import("./account.manage.item.view"));
-const ManageItemEditStock = lazy(() => import("./account.manage.item.stock.edit"))
-const ManageItemCategories = lazy(() => import("./account.manage.item.categories"))
+const ManageItemView = lazy(() => import("../_item/_view/manage.item.view.main"));
+const ManageItemEditStock = lazy(() => import("../_item/_stock/manage.stock.main"))
+const ManageItemCategories = lazy(() => import("../_item/_category/manage.category.main"))
 
 interface I_Props {
     handleBack:()=>void

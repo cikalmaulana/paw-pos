@@ -12,7 +12,7 @@ import { I_Menu } from "@/services/api/api.item.get.int"
 import * as ImagePicker from 'expo-image-picker'
 import { useEffect, useState } from "react"
 import { Alert, Dimensions, Image, KeyboardAvoidingView, Modal, Platform, Pressable, RefreshControl, ScrollView, Text, View } from "react-native"
-import { searchItemByName } from "../_function/do.searchItem"
+import { searchItemByName } from "../../_function/do.searchItem"
 
 interface I_Props{
     handleBack:()=>void

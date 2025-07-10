@@ -25,3 +25,9 @@ export async function API_EditCategory(payload:I_EditCategoryRequest): Promise<I
         meta: { status: "success", code: 200, message: "OK" },
     }
 }
+
+export async function API_AddCategory(name: string): Promise<I_EditCategoryResponse>{
+    return {
+        meta: { status: "success", code: 200, message: "OK" },
+    }
+}
