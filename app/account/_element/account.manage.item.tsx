@@ -10,6 +10,7 @@ import { ManageItemList } from "./account.manage.item.list";
 
 const ManageItemView = lazy(() => import("./account.manage.item.view"));
 const ManageItemEditStock = lazy(() => import("./account.manage.item.stock.edit"))
+const ManageItemCategories = lazy(() => import("./account.manage.item.categories"))
 
 interface I_Props {
     handleBack:()=>void
@@ -117,9 +118,16 @@ export default function ManageItem(props: I_Props){
                     />
                 </Suspense>
             ) : manageItemOpen === 'categories' ? (
-                <View>
-                    <CE_BackButton lable="Manage Categories" onPress={() => setManageItemOpen('')}/>
-                </View> 
+                <Suspense fallback={
+                    <CE_Loading />
+                }>
+                    <ManageItemCategories 
+                        handleBack={() => setManageItemOpen('')}
+                        setShowAlert={props.setShowAlert}
+                        setAlertMsg={props.setAlertMsg}
+                        setAlertSuccess={props.setAlertSuccess}
+                    />
+                </Suspense>
             ) : manageItemOpen === 'lowStock' && (
                 <View>
                     <CE_BackButton lable="View Low Stock" onPress={() => setManageItemOpen('')}/>

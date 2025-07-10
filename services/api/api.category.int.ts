@@ -9,3 +9,12 @@ export interface I_Category{
     id: string
     name: string
 }
+
+export interface I_EditCategoryRequest{
+    id: string
+    name: string
+}
+
+export interface I_EditCategoryResponse{
+    meta: I_CommonMeta
+}
