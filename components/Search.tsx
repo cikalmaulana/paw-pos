@@ -1,5 +1,5 @@
 import SearchIcon from "@/assets/icons/search.png"; // pastikan icon ada
-import { Image, TextInput, TextInputProps, View } from "react-native";
+import { Image, Pressable, Text, TextInput, TextInputProps, View } from "react-native";
 
 interface I_Props extends TextInputProps {
     value: string
@@ -30,6 +30,12 @@ export function CE_Search({ value, onChangeText, placeholder = "Search...", clas
                 }}
                 {...props}
             />
+
+            {value.length > 0 && (
+                <Pressable onPress={() => onChangeText("")} className="flex items-center justify-center h-full mb-1">
+                    <Text className="text-gray-400 text-lg ml-2 font-bold">X</Text>
+                </Pressable>
+            )}
         </View>
     );
 }

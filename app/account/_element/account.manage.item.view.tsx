@@ -2,6 +2,8 @@ import { CE_BackButton } from "@/components/BackButton"
 import { CE_Button } from "@/components/Button"
 import { Input } from "@/components/Input"
 import { CE_ItemCardHorizontal } from "@/components/ItemCard"
+import { CE_Loading } from "@/components/Loading"
+import { CE_Search } from "@/components/Search"
 import { API_DeleteItem } from "@/services/api/api.item.delete"
 import { API_EditItem } from "@/services/api/api.item.edit"
 import { I_EditItemRequest } from "@/services/api/api.item.edit.int"
@@ -10,6 +12,7 @@ import { I_Menu } from "@/services/api/api.item.get.int"
 import * as ImagePicker from 'expo-image-picker'
 import { useEffect, useState } from "react"
 import { Alert, Dimensions, Image, KeyboardAvoidingView, Modal, Platform, Pressable, RefreshControl, ScrollView, Text, View } from "react-native"
+import { searchItemByName } from "../_function/do.searchItem"
 
 interface I_Props{
     handleBack:()=>void
@@ -21,6 +24,7 @@ interface I_Props{
 export default function ManageItemView(props: I_Props) {
     const { width, height } = Dimensions.get("window");
     
+    const [search, setSearch] = useState("");
     const [itemData, setItemData] = useState<I_Menu[] | null>(null)
     const [totalData, setTotalData] = useState(0)
     const [deletItemModalOpen, setDeleteItemModalOpen] = useState(false)
@@ -31,6 +35,33 @@ export default function ManageItemView(props: I_Props) {
     const [currentItemDesc, setCurrentItemDesc] = useState('')
     const [selectedItem, setSelectedItem] = useState<I_Menu | null>(null)
     const [refreshing, setRefreshing] = useState(false)
+    const [isLoading, setLoading] = useState(false)
+    const [filteredItems, setFilteredItems] = useState<I_Menu[]>([]);
+
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            filterItems(search)
+        }, 500);
+    
+        return () => clearTimeout(timeout)
+    }, [search])
+
+    const filterItems = (searchTerm: string) => {
+        setLoading(true);
+    
+        setTimeout(() => {
+            let result = itemData ?? [];
+    
+            if (searchTerm.trim() !== '') {
+                result = searchItemByName(searchTerm, result);
+            }
+    
+            setFilteredItems(result);
+            setTotalData(result.length)
+            setLoading(false);
+        }, 300);
+    };
 
     useEffect(() => {
         if (selectedItem) {
@@ -96,6 +127,7 @@ export default function ManageItemView(props: I_Props) {
                 }
 
                 setItemData(result.data)
+                setFilteredItems(result.data);
                 setTotalData(result.data.length)
             } else {
                 alertSetup("Connection lost.", false)
@@ -170,43 +202,53 @@ export default function ManageItemView(props: I_Props) {
     return (
         <View>
             <CE_BackButton lable="View All Item" onPress={() => props.handleBack()}/>
-            <ScrollView 
-                className="min-h-screen"
-                refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                        colors={["#16B8A8"]}       
-                        tintColor="#16B8A8"        
-                        title="Loading..."         
-                        titleColor="#16B8A8"        
+            <View className="flex flex-row items-center mb-4 gap-4">
+                <View className="flex-1">
+                    <CE_Search
+                        value={search}
+                        onChangeText={(text) => setSearch(text)}
                     />
-                }
-                contentContainerStyle={{ paddingBottom: 500 }}
-            >
-                <Text className="text-primary text-lg font-semibold mb-2">Total : {totalData} {totalData > 1 ? "items" : "item"}</Text>
-                {itemData !== null && itemData.map((item, index) => {
-                    return (
-                        <View key={index} className="mb-4">
-                            <CE_ItemCardHorizontal 
-                                image={item.image}
-                                price={item.price}
-                                title={item.name}
-                                deleteOnClick={() => {
-                                    setSelectedItem(item)
-                                    setDeleteItemModalOpen(true)
-                                }}
-                                editOnClick={() => {
-                                    setSelectedItem(item)
-                                    setEditItemModalOpen(true)
-                                }}
-                                stock={item.stock}
-                            />
-                        </View>
-                    )
-                })}
-
-            </ScrollView>   
+                </View>
+            </View>
+            
+            {isLoading ? <CE_Loading /> : (
+                <ScrollView 
+                    className="min-h-screen"
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            colors={["#16B8A8"]}       
+                            tintColor="#16B8A8"        
+                            title="Loading..."         
+                            titleColor="#16B8A8"        
+                        />
+                    }
+                    contentContainerStyle={{ paddingBottom: 500 }}
+                >
+                    <Text className="text-primary text-lg font-semibold mb-2">Total : {totalData} {totalData > 1 ? "items" : "item"}</Text>
+                    {filteredItems !== null && filteredItems.map((item, index) => {
+                        return (
+                            <View key={index} className="mb-4">
+                                <CE_ItemCardHorizontal 
+                                    image={item.image}
+                                    price={item.price}
+                                    title={item.name}
+                                    deleteOnClick={() => {
+                                        setSelectedItem(item)
+                                        setDeleteItemModalOpen(true)
+                                    }}
+                                    editOnClick={() => {
+                                        setSelectedItem(item)
+                                        setEditItemModalOpen(true)
+                                    }}
+                                    stock={item.stock}
+                                />
+                            </View>
+                        )
+                    })}
+                </ScrollView>   
+            )}
 
             {selectedItem && (
                 <Modal
