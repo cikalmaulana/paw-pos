@@ -60,8 +60,9 @@ interface I_HorizontalCardProps{
     title: string
     price: string
     stock: number
+    editLabel?: string
     className?: string
-    deleteOnClick: () => void
+    deleteOnClick?: () => void
     editOnClick: () => void
 }
 
@@ -71,6 +72,7 @@ export function CE_ItemCardHorizontal({
     price,
     deleteOnClick,
     editOnClick,
+    editLabel,
     className,
     stock,
 }: I_HorizontalCardProps) {
@@ -93,15 +95,17 @@ export function CE_ItemCardHorizontal({
                     <Text className="text-black text-sm font-bold mb-1">{priceFormat(price, "IDR")}</Text>
                     <Text className="text-sm font-semibold mb-1">{stock} pcs</Text>
                     <View className="flex flex-row justify-between gap-2 mt-1">
+                        {deleteOnClick && (
+                            <CE_Button 
+                                title="Delete" 
+                                className="!py-2 !px-4 justify-center items-center" 
+                                btnClassName="!text-sm"
+                                bgColor="bg-danger"
+                                onPress={() => deleteOnClick()}
+                            />
+                        )}
                         <CE_Button 
-                            title="Delete" 
-                            className="!py-2 !px-4 justify-center items-center" 
-                            btnClassName="!text-sm"
-                            bgColor="bg-danger"
-                            onPress={() => deleteOnClick()}
-                        />
-                        <CE_Button 
-                            title="Edit Item" 
+                            title={editLabel ?? "Edit Item"}
                             className="!py-2 !px-4 justify-center items-center" 
                             btnClassName="!text-sm"
                             onPress={() => editOnClick()}

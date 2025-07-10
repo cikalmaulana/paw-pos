@@ -1,12 +1,15 @@
 import { CE_BackButton } from "@/components/BackButton";
 import { CE_Card } from "@/components/Card";
+import { CE_Loading } from "@/components/Loading";
 import { API_GetTotalItem } from "@/services/api/api.item.get";
 import { I_Store } from "@/services/api/api.store.int";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import AddNewItem from "./account.manage.item.add";
 import { ManageItemList } from "./account.manage.item.list";
-import ManageItemView from "./account.manage.item.view";
+
+const ManageItemView = lazy(() => import("./account.manage.item.view"));
+const ManageItemEditStock = lazy(() => import("./account.manage.item.stock.edit"))
 
 interface I_Props {
     handleBack:()=>void
@@ -85,12 +88,16 @@ export default function ManageItem(props: I_Props){
                     </ScrollView>
                 </>
             ) : manageItemOpen === 'viewItem' ? (
-                <ManageItemView 
-                    handleBack={() => setManageItemOpen('')}
-                    setShowAlert={props.setShowAlert}
-                    setAlertMsg={props.setAlertMsg}
-                    setAlertSuccess={props.setAlertSuccess}
-                />
+                <Suspense fallback={
+                    <CE_Loading />
+                }>
+                    <ManageItemView 
+                        handleBack={() => setManageItemOpen('')}
+                        setShowAlert={props.setShowAlert}
+                        setAlertMsg={props.setAlertMsg}
+                        setAlertSuccess={props.setAlertSuccess}
+                    />
+                </Suspense>
             ) : manageItemOpen === 'addItem' ? (
                 <AddNewItem 
                     hahandleBack={() => setManageItemOpen('')}
@@ -99,9 +106,16 @@ export default function ManageItem(props: I_Props){
                     setAlertSuccess={props.setAlertSuccess}
                 />
             ) : manageItemOpen === 'editStock' ? (
-                <View>
-                    <CE_BackButton lable="Edit Stock" onPress={() => setManageItemOpen('')}/>
-                </View> 
+                <Suspense fallback={
+                    <CE_Loading />
+                }>
+                    <ManageItemEditStock 
+                        handleBack={() => setManageItemOpen('')}
+                        setShowAlert={props.setShowAlert}
+                        setAlertMsg={props.setAlertMsg}
+                        setAlertSuccess={props.setAlertSuccess}
+                    />
+                </Suspense>
             ) : manageItemOpen === 'categories' ? (
                 <View>
                     <CE_BackButton lable="Manage Categories" onPress={() => setManageItemOpen('')}/>

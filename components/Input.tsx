@@ -1,16 +1,33 @@
 import { Eye, EyeOff } from "lucide-react-native"
 import { useState } from "react"
 import { Text, TextInput, TextInputProps, TouchableOpacity, View } from "react-native"
+import { CE_Button } from "./Button"
 
 interface Props extends TextInputProps {
     label: string
     optional?: boolean
-    type?: "text" | "password"
+    type?: "text" | "password" | "number"
+    stepperButtons?: boolean
 }
 
-export function Input({ label, type = "text", ...props }: Props) {
+export function Input({ label, type = "text", stepperButtons = false, ...props }: Props) {
     const [isPasswordVisible, setPasswordVisible] = useState(false)
     const isPasswordType = type === "password"
+    const isNumberType = type === "number" && stepperButtons
+
+    const [value, setValue] = useState(String(props.value ?? ''))
+
+    const handleIncrement = () => {
+        const num = parseInt(value) || 0
+        setValue(String(num + 1))
+        props.onChangeText?.(String(num + 1))
+    }
+
+    const handleDecrement = () => {
+        const num = parseInt(value) || 0
+        setValue(String(num - 1))
+        props.onChangeText?.(String(num - 1))
+    }
 
     return (
         <View className="flex flex-col w-full gap-2">
@@ -19,11 +36,17 @@ export function Input({ label, type = "text", ...props }: Props) {
                 {props.optional && (<Text className="ms-1 text-sm text-gray-400 font-semibold">*optional</Text>)}
             </View>
 
-            <View className="relative w-full">
+            <View className="relative w-full flex-row items-center">
                 <TextInput
-                    className="w-full border rounded-2xl px-4 py-3 pr-12 border-primary text-black bg-white"
+                    className={`flex-1 border rounded-2xl px-4 py-3 ${isPasswordType || isNumberType ? 'pr-20' : ''} border-primary text-black bg-white`}
                     placeholderTextColor="#999"
                     secureTextEntry={isPasswordType && !isPasswordVisible}
+                    keyboardType={type === 'number' ? 'numeric' : 'default'}
+                    value={value}
+                    onChangeText={(text) => {
+                        setValue(text)
+                        props.onChangeText?.(text)
+                    }}
                     {...props}
                 />
 
@@ -34,10 +57,28 @@ export function Input({ label, type = "text", ...props }: Props) {
                     >
                         {isPasswordVisible ? (
                             <Eye className="text-gray-500" size={20} />
-                            ) : (
+                        ) : (
                             <EyeOff className="text-gray-500" size={20} />
                         )}
                     </TouchableOpacity>
+                )}
+
+                {isNumberType && (
+                    <View className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-row gap-1">
+                        <CE_Button 
+                            title="-" 
+                            className="!py-1 !px-5 !h-8" 
+                            btnClassName="text-sm !text-white" 
+                            onPress={handleDecrement}
+                            bgColor="bg-danger"
+                        />
+                        <CE_Button 
+                            title="+" 
+                            className="!py-1 !px-5 !h-8" 
+                            btnClassName="text-sm" 
+                            onPress={handleIncrement}
+                        />
+                    </View>
                 )}
             </View>
         </View>

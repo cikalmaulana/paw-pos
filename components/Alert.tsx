@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
     Animated,
     Easing,
+    Image,
     Pressable,
     Text,
     View,
@@ -80,12 +81,22 @@ export function CE_Alert({ message, isSuccess, showAlert, onClose, className }: 
             >
                 <View className="flex-row items-center gap-2">
                     <Text className="text-white text-lg font-bold">
-                        {isSuccess ? "V" : "X"}
+                        {isSuccess ? (
+                            <Image 
+                                source={require("@/assets/icons/check.png")}
+                                style={{width:18, height:18}}
+                            />
+                        ) : (
+                            <Image 
+                                source={require("@/assets/icons/warning.png")}
+                                style={{width:18, height:18}}
+                            />
+                        )}
                     </Text>
-                    <Text className="text-white text-sm">{message}</Text>
+                    <Text className="text-white text-sm font-semibold">{message}</Text>
                 </View>
-                <Pressable onPress={handleClose}>
-                    <Text className="text-white font-bold">×</Text>
+                <Pressable onPress={handleClose} className="px-3">
+                    <Text className="text-white font-bold">X</Text>
                 </Pressable>
             </Animated.View>
         </SafeAreaView>

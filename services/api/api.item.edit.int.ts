@@ -11,3 +11,8 @@ export interface I_EditItemRequest{
 export interface I_EditItemResponse{
     meta: I_CommonMeta
 }
+
+export interface I_EditStockRequest{
+    id: string
+    stock: number
+}

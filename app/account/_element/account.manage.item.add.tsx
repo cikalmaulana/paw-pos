@@ -211,8 +211,10 @@ export default function AddNewItem(props: I_Props){
 
                         <Input
                             label="Stock"
-                            placeholder="Stock"
                             keyboardType="numeric"
+                            placeholder="Stock"
+                            type="number" 
+                            stepperButtons 
                             value={stock}
                             onChangeText={setStock}
                         />
