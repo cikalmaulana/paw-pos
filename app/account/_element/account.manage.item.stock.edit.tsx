@@ -33,10 +33,15 @@ export default function ManageItemEditStock(props: I_Props) {
     const [currentStock, setCurrentStock] = useState('')
     const [stockWarn, setStockWarn] = useState('')
     const [isLoading, setLoading] = useState(false)
-    const [filteredItems, setFilteredItems] = useState<I_Menu[]>([]);
-
+    const [filteredItems, setFilteredItems] = useState<I_Menu[]>([])
+    const [firstOpen, setFirstOpen] = useState(true)
 
     useEffect(() => {
+        if(firstOpen) {
+            setFirstOpen(false)
+            return
+        }
+
         const timeout = setTimeout(() => {
             filterItems(search)
         }, 500);
@@ -167,7 +172,7 @@ export default function ManageItemEditStock(props: I_Props) {
                             titleColor="#16B8A8"        
                         />
                     }
-                    contentContainerStyle={{ paddingBottom: 500 }}
+                    contentContainerStyle={{ paddingBottom: 700 }}
                 >
                     <Text className="text-primary text-lg font-semibold mb-2">Total : {totalData} {totalData > 1 ? "items" : "item"}</Text>
                     {filteredItems !== null && filteredItems.map((item, index) => {
