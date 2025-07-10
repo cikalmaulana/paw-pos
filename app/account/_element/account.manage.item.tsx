@@ -4,6 +4,7 @@ import { API_GetTotalItem } from "@/services/api/api.item.get";
 import { I_Store } from "@/services/api/api.store.int";
 import { useEffect, useState } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
+import AddNewItem from "./account.manage.item.add";
 import { ManageItemList } from "./account.manage.item.list";
 import ManageItemView from "./account.manage.item.view";
 
@@ -91,9 +92,12 @@ export default function ManageItem(props: I_Props){
                     setAlertSuccess={props.setAlertSuccess}
                 />
             ) : manageItemOpen === 'addItem' ? (
-                <View>
-                    <CE_BackButton lable="Add New Item" onPress={() => setManageItemOpen('')}/>
-                </View> 
+                <AddNewItem 
+                    hahandleBack={() => setManageItemOpen('')}
+                    setShowAlert={props.setShowAlert}
+                    setAlertMsg={props.setAlertMsg}
+                    setAlertSuccess={props.setAlertSuccess}
+                />
             ) : manageItemOpen === 'editStock' ? (
                 <View>
                     <CE_BackButton lable="Edit Stock" onPress={() => setManageItemOpen('')}/>

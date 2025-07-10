@@ -9,7 +9,7 @@ import { API_GetAllItem } from "@/services/api/api.item.get"
 import { I_Menu } from "@/services/api/api.item.get.int"
 import * as ImagePicker from 'expo-image-picker'
 import { useEffect, useState } from "react"
-import { Dimensions, Image, KeyboardAvoidingView, Modal, Platform, Pressable, RefreshControl, ScrollView, Text, View } from "react-native"
+import { Alert, Dimensions, Image, KeyboardAvoidingView, Modal, Platform, Pressable, RefreshControl, ScrollView, Text, View } from "react-native"
 
 interface I_Props{
     handleBack:()=>void
@@ -42,27 +42,49 @@ export default function ManageItemView(props: I_Props) {
     }, [selectedItem])
 
     const pickImage = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            quality: 0.7,
-        })
-    
-        if (!result.canceled) {
-            setCurrentItemImg(result.assets[0].uri)
+        const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+        if (permissionResult.status !== 'granted') {
+            alert('Permission to access camera is required!');
+            return;
         }
-    }
-    
-    const takePhoto = async () => {
-        const result = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            quality: 0.7,
-        })
-    
-        if (!result.canceled) {
-            setCurrentItemImg(result.assets[0].uri)
-        }
-    }
+
+        Alert.alert(
+            "Change Image",
+            "Select image source",
+            [
+                {
+                    text: "Camera",
+                    onPress: async () => {
+                        const result = await ImagePicker.launchCameraAsync({
+                        allowsEditing: true,
+                        quality: 1,
+                        });
+            
+                        if (!result.canceled) {
+                            const asset = result.assets[0];
+                            setCurrentItemImg(asset.uri);
+                        }
+                    },
+                },
+                {
+                    text: "Gallery",
+                    onPress: async () => {
+                        const result = await ImagePicker.launchImageLibraryAsync({
+                        allowsEditing: true,
+                        quality: 1,
+                        });
+            
+                        if (!result.canceled) {
+                        const asset = result.assets[0];
+                        setCurrentItemImg(asset.uri);
+                        }
+                    },
+                },
+                { text: "Cancel", style: "cancel" }
+            ]
+        );
+    };
 
     const getItemData = async () => {
         try{
@@ -260,7 +282,7 @@ export default function ManageItemView(props: I_Props) {
                                 >
                                     <Text className="text-xl text-primary font-bold mb-4">Edit Item</Text>
 
-                                    <View className="relative w-full h-52 mb-4">
+                                    <View className="relative w-full h-56 mb-4">
                                         <Image
                                             source={typeof currentItemImg === 'string' ? { uri: currentItemImg } : currentItemImg}
                                             className="w-full h-full rounded-xl"

@@ -103,7 +103,7 @@ const Overlay = () => {
 
       <View className="flex-1 bg-black/60 items-center pt-4">
         <Text className="text-white text-sm font-medium">
-          AAlign barcode inside the box
+          Align barcode inside the box
         </Text>
       </View>
     </View>
