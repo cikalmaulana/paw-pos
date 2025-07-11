@@ -7,9 +7,9 @@ import { API_GetAllItem } from "@/services/api/api.item.get";
 import { I_Menu } from "@/services/api/api.item.get.int";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { searchItemByName } from "../../_function/do.searchItem";
-import StockEdit from "./manage.stock.item.edit";
-import StockItemList from "./manage.stock.item.list";
+import StockEdit from "./_element/stock.item.edit";
+import StockItemList from "./_element/stock.item.list";
+import { searchItemByName } from "./_function/do.searchItem";
 
 interface I_Props{
     handleBack:()=>void

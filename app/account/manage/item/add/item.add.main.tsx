@@ -1,0 +1,62 @@
+import { CE_BackButton } from "@/components/BackButton";
+import { API_AddItem } from "@/services/api/api.item.add";
+import { I_AddItemRequest } from "@/services/api/api.item.add.int";
+import { useRef } from "react";
+import { View } from "react-native";
+import ItemAddForm, { ItemAddFormHandles } from "./_element/item.add.form";
+
+interface I_Props {
+    hahandleBack: (item: string) => void
+    setShowAlert: (open: boolean) => void
+    setAlertMsg: (msg: string) => void
+    setAlertSuccess: (success: boolean) => void
+}
+
+export default function AddNewItem(props: I_Props) {
+    const formRef = useRef<ItemAddFormHandles>(null)
+
+    const saveItem = async (formData: {
+        name: string;
+        price: string;
+        stock: string;
+        desc: string;
+        image: string | number;
+        code: string;
+    }) => {
+        const payload: I_AddItemRequest = {
+            name: formData.name,
+            price: formData.price,
+            stock: formData.stock,
+            description: formData.desc,
+            image: typeof formData.image === "number" ? formData.image : undefined,
+            code: formData.code
+        }
+
+        const result = await API_AddItem(payload);
+        if (result && result.meta.status === "success") {
+            alertSetup("Add new item success!", true)
+            safetyBack()
+            return
+        }
+
+        alertSetup("Connection lost.", false)
+    }
+
+    const safetyBack = () => {
+        formRef.current?.resetForm()
+        props.hahandleBack("")
+    }
+
+    const alertSetup = (msg: string, isSuccess: boolean) => {
+        props.setAlertMsg(msg);
+        props.setAlertSuccess(isSuccess)
+        props.setShowAlert(true)
+    }
+
+    return (
+        <View>
+            <CE_BackButton lable="Add New Item" onPress={safetyBack} />
+            <ItemAddForm ref={formRef} onSubmit={saveItem} />
+        </View>
+    );
+}

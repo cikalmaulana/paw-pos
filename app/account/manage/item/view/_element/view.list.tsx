@@ -4,20 +4,17 @@ import { RefreshControl, ScrollView, Text, View } from "react-native"
 
 interface I_Props{
     refreshing: boolean
-    totalData: number
     filteredItems: I_Menu[]
+    totalData: number
     onRefresh:()=>void
     setSelectedItem:(item: I_Menu)=>void
-    setEditStockState: React.Dispatch<React.SetStateAction<{
-        editItemModalOpen: boolean
-        currentItemImg: string | number
-        currentItemName: string
-        currentStock: string
-        stockWarn: string
+    setOpenModal: React.Dispatch<React.SetStateAction<{
+        editItem: boolean,
+        deleteItem: boolean
     }>>
 }
 
-export default function StockItemList(props: I_Props) {
+export default function ItemList(props: I_Props){
     return (
         <ScrollView 
             className="min-h-screen"
@@ -32,6 +29,7 @@ export default function StockItemList(props: I_Props) {
                 />
             }
             contentContainerStyle={{ paddingBottom: 700 }}
+            showsVerticalScrollIndicator={false}
         >
             <Text className="text-primary text-lg font-semibold mb-2">Total : {props.totalData} {props.totalData > 1 ? "items" : "item"}</Text>
             {props.filteredItems !== null && props.filteredItems.map((item, index) => {
@@ -41,20 +39,19 @@ export default function StockItemList(props: I_Props) {
                             image={item.image}
                             price={item.price}
                             title={item.name}
-                            editLabel="Edit Stock"
+                            deleteOnClick={() => {
+                                props.setSelectedItem(item)
+                                props.setOpenModal(prev => ({ ...prev, deleteItem: true }))
+                            }}
                             editOnClick={() => {
                                 props.setSelectedItem(item)
-                                props.setEditStockState(prev => ({
-                                    ...prev,
-                                    currentStock: item.stock.toString(),
-                                    editItemModalOpen: true,
-                                }))
-                            }}                                    
+                                props.setOpenModal(prev => ({ ...prev, editItem: true }))
+                            }}
                             stock={item.stock}
                         />
                     </View>
                 )
             })}
-        </ScrollView>  
+        </ScrollView> 
     )
 }

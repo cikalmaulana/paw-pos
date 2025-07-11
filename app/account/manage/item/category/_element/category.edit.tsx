@@ -51,7 +51,7 @@ export default function CategoryEdit(props: I_Props){
                                     onChangeText={(text) =>
                                         props.setAddNewCategory((prev) => ({
                                             ...prev,
-                                            setCurrentCategoryName: text
+                                            currentCategoryName: text
                                         }))
                                     }
                                 />

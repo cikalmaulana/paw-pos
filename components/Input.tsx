@@ -1,5 +1,5 @@
 import { Eye, EyeOff } from "lucide-react-native"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Text, TextInput, TextInputProps, TouchableOpacity, View } from "react-native"
 import { CE_Button } from "./Button"
 
@@ -18,16 +18,29 @@ export function Input({ label, type = "text", stepperButtons = false, ...props }
     const [value, setValue] = useState(String(props.value ?? ''))
 
     const handleIncrement = () => {
-        const num = parseInt(value) || 0
-        setValue(String(num + 1))
-        props.onChangeText?.(String(num + 1))
+        const num = getSafeNumber(value)
+        const newValue = num + 1
+        setValue(String(newValue))
+        props.onChangeText?.(String(newValue))
     }
 
     const handleDecrement = () => {
-        const num = parseInt(value) || 0
-        setValue(String(num - 1))
-        props.onChangeText?.(String(num - 1))
+        const num = Number(value)
+        const newValue = isNaN(num) ? 0 : num - 1
+        setValue(String(newValue))
+        props.onChangeText?.(String(newValue))
     }
+
+    const getSafeNumber = (val: string) => {
+        const parsed = Number(val)
+        return isNaN(parsed) ? 0 : parsed
+    }
+
+    useEffect(() => {
+        if (type === "number" && stepperButtons) {
+            setValue(String(props.value ?? ''))
+        }
+    }, [props.value, type, stepperButtons])
 
     return (
         <View className="flex flex-col w-full gap-2">

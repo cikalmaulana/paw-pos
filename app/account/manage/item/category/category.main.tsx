@@ -6,10 +6,10 @@ import { API_AddCategory, API_EditCategory, API_GetAllCategory } from "@/service
 import { I_Category, I_EditCategoryRequest, I_EditCategoryResponse } from "@/services/api/api.category.int";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { searchCategoryByName } from "../../../../_function/do.searchItem";
-import CategoryAddNew from "./manage.category.add";
-import CategoryEdit from "./manage.category.edit";
-import CategoryList from "./manage.category.list";
+import CategoryAddNew from "./_element/category.add";
+import CategoryEdit from "./_element/category.edit";
+import CategoryList from "./_element/category.list";
+import { searchCategoryByName } from "./_function/do.searchItem";
 
 interface I_Props{
     handleBack:()=>void

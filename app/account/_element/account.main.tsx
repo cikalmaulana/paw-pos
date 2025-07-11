@@ -13,11 +13,11 @@ import { Dimensions, RefreshControl, ScrollView, Text, View } from "react-native
 import { LogoutModal } from "./account.modal.logout"
 import AccountSettingList from "./account.setting.list"
 
-const ManageItem = lazy(() => import("./_manage/_item/manage.item.main"));
-const ManageAdmin = lazy(() => import("./_manage/_admin/manage.admin.main"));
-const ManageStore = lazy(() => import("./_manage/_store/manage.store.main"));
-const AccountDetails = lazy(() => import("./_profile/profile.main"));
-const AccountReport = lazy(() => import("./_report/report.main"));
+const ManageItem = lazy(() => import("../manage/item/manage.item.main"));
+const ManageAdmin = lazy(() => import("../manage/admin/manage.admin.main"));
+const ManageStore = lazy(() => import("../manage/store/store.main"));
+const AccountDetails = lazy(() => import("../profile/profile.main"));
+const AccountReport = lazy(() => import("../report/report.main"));
 
 interface I_Props {
     userData: I_User
