@@ -11,11 +11,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Tabs, useRouter } from "expo-router"
 import React, { useEffect, useState } from 'react'
 
+import { I_Store } from "@/services/api/store/api.store.int"
 import { Image } from "react-native"
 import { TAB_HEIGHT } from "./constant"
 
 
 const _Layout = () => {
+    const [needOngoingOrder, setNeedOngoingOrder] = useState(true)
     const [checking, setChecking] = useState(true)
     const [loggedIn, setLoggedIn] = useState(false)
     const router = useRouter()
@@ -32,6 +34,7 @@ const _Layout = () => {
 
             try {
                 const parsed = JSON.parse(stored) as {
+                    store: I_Store
                     token: string
                     expiredAt?: number
                 }
@@ -41,6 +44,8 @@ const _Layout = () => {
                     router.replace("../welcome" as const)
                     return
                 }
+
+                if(!parsed.store.setting.need_ongoing_order) setNeedOngoingOrder(false)
 
                 setLoggedIn(true)
             } catch {
@@ -97,20 +102,22 @@ const _Layout = () => {
                 }}
             />
 
-            <Tabs.Screen 
-                name="order"
-                options={{
-                    title: "Order",
-                    headerShown: false,
-                    tabBarIcon: ({ focused }) => (
-                        <Image
-                            source={focused ? OrderActiveIcon : OrderIcon}
-                            style={{ width: 24, height: 24 }}
-                            resizeMode="contain"
-                        />
-                    ),
-                }}
-            />
+            {needOngoingOrder && (
+                <Tabs.Screen 
+                    name="order"
+                    options={{
+                        title: "Order",
+                        headerShown: false,
+                        tabBarIcon: ({ focused }) => (
+                            <Image
+                                source={focused ? OrderActiveIcon : OrderIcon}
+                                style={{ width: 24, height: 24 }}
+                                resizeMode="contain"
+                            />
+                        ),
+                    }}
+                />
+            )}
 
             <Tabs.Screen 
                 name="history"

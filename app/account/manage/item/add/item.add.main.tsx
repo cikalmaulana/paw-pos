@@ -1,6 +1,6 @@
 import { CE_BackButton } from "@/components/BackButton";
-import { API_AddItem } from "@/services/api/api.item.add";
-import { I_AddItemRequest } from "@/services/api/api.item.add.int";
+import { API_AddItem } from "@/services/api/item/api.item.add";
+import { I_AddItemRequest } from "@/services/api/item/api.item.add.int";
 import { useRef } from "react";
 import { View } from "react-native";
 import ItemAddForm, { ItemAddFormHandles } from "./_element/item.add.form";

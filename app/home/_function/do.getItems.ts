@@ -1,5 +1,5 @@
-import { API_GetAllItem, API_GetItemById } from "@/services/api/api.item.get"
-import { I_GetMenuResponse } from "@/services/api/api.item.get.int"
+import { API_GetAllItem, API_GetItemById } from "@/services/api/item/api.item.get"
+import { I_GetMenuResponse } from "@/services/api/item/api.item.get.int"
 
 export const doGetItem = async (id: string): Promise<I_GetMenuResponse | null> => {
     try {

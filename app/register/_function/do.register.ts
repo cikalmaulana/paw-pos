@@ -1,5 +1,5 @@
-import { API_Register } from "@/services/api/api.register";
-import { I_RegisterRequest, I_RegisterResponse } from "@/services/api/api.register.int";
+import { API_Register } from "@/services/api/auth/api.register";
+import { I_RegisterRequest, I_RegisterResponse } from "@/services/api/auth/api.register.int";
 
 export const doRegister = async (params: I_RegisterRequest): Promise<I_RegisterResponse> => {
     try{

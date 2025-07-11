@@ -1,7 +1,6 @@
 import { CE_Card } from "@/components/Card";
-import { I_Category } from "@/services/api/api.category.int";
+import { I_Category } from "@/services/api/category/api.category.get.int";
 import { FlatList, Text, View } from "react-native";
-
 interface I_Props{
     categoryData: I_Category[] | null
     categoryList: I_Category[]

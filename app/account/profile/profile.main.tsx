@@ -1,8 +1,8 @@
 import { CE_BackButton } from "@/components/BackButton";
 import { CE_Button } from "@/components/Button";
 import { Input } from "@/components/Input";
-import { API_ChangePassword, API_EditUser } from "@/services/api/api.user.get";
-import { I_ChangePasswordRequest, I_EditUserRequest, I_User } from "@/services/api/api.user.get.int";
+import { API_ChangePassword, API_EditUser } from "@/services/api/user/api.user.get";
+import { I_ChangePasswordRequest, I_EditUserRequest, I_User } from "@/services/api/user/api.user.get.int";
 import { useEffect, useState } from "react";
 import { Keyboard, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TouchableWithoutFeedback, View } from "react-native";
 

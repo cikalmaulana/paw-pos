@@ -1,5 +1,5 @@
 import { CE_ItemCardHorizontal } from "@/components/ItemCard"
-import { I_Menu } from "@/services/api/api.item.get.int"
+import { I_Menu } from "@/services/api/item/api.item.get.int"
 import { RefreshControl, ScrollView, Text, View } from "react-native"
 
 interface I_Props{

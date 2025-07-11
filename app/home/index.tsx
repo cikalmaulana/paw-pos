@@ -1,8 +1,9 @@
-import { I_Category } from "@/services/api/api.category.int";
-import { I_GetMenuResponse } from "@/services/api/api.item.get.int";
-import { I_LoginData } from "@/services/api/api.login.int";
-import { I_Store } from "@/services/api/api.store.int";
-import { I_User } from "@/services/api/api.user.get.int";
+
+import { I_LoginData } from "@/services/api/auth/api.login.int";
+import { I_Category } from "@/services/api/category/api.category.get.int";
+import { I_GetMenuResponse } from "@/services/api/item/api.item.get.int";
+import { I_Store } from "@/services/api/store/api.store.int";
+import { I_User } from "@/services/api/user/api.user.get.int";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";

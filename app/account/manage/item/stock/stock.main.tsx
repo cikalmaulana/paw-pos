@@ -1,10 +1,10 @@
 import { CE_BackButton } from "@/components/BackButton";
 import { CE_Loading } from "@/components/Loading";
 import { CE_Search } from "@/components/Search";
-import { API_EditStock } from "@/services/api/api.item.edit";
-import { I_EditStockRequest } from "@/services/api/api.item.edit.int";
-import { API_GetAllItem } from "@/services/api/api.item.get";
-import { I_Menu } from "@/services/api/api.item.get.int";
+import { API_EditStock } from "@/services/api/item/api.item.edit";
+import { I_EditStockRequest } from "@/services/api/item/api.item.edit.int";
+import { API_GetAllItem } from "@/services/api/item/api.item.get";
+import { I_Menu } from "@/services/api/item/api.item.get.int";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import StockEdit from "./_element/stock.item.edit";

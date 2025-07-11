@@ -1,5 +1,5 @@
-import { API_GetAllCategory } from "@/services/api/api.category"
-import { I_GetCategoryResponse } from "@/services/api/api.category.int"
+import { API_GetAllCategory } from "@/services/api/category/api.category.get"
+import { I_GetCategoryResponse } from "@/services/api/category/api.category.get.int"
 
 export const doGetCategory = async (): Promise<I_GetCategoryResponse | null> => {
     try {

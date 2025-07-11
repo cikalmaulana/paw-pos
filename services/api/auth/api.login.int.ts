@@ -1,6 +1,6 @@
-import { I_CommonMeta } from "./api.common.int";
-import { I_Store } from "./api.store.int";
-import { I_User } from "./api.user.get.int";
+import { I_CommonMeta } from "../api.common.int"
+import { I_Store } from "../store/api.store.int"
+import { I_User } from "../user/api.user.get.int"
 
 export interface I_LoginRequest{
     phone: string

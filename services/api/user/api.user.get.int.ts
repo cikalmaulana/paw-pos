@@ -1,5 +1,5 @@
-import { I_CommonMeta } from "./api.common.int";
-import { I_Membership } from "./api.membership.int";
+import { I_CommonMeta } from "../api.common.int"
+import { I_Membership } from "../membership/api.membership.int"
 
 export interface I_GetUserRequest{
     user_id: string

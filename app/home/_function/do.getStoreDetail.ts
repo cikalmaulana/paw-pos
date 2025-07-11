@@ -1,5 +1,5 @@
-import { I_LoginData } from '@/services/api/api.login.int'
-import { I_Store } from '@/services/api/api.store.int'
+import { I_LoginData } from '@/services/api/auth/api.login.int'
+import { I_Store } from '@/services/api/store/api.store.int'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const KEY_LOGIN = process.env.KEY_LOGIN ?? "KEY_LOGIN"

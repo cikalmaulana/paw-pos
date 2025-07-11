@@ -1,4 +1,4 @@
-import { I_CommonMeta } from "./api.common.int";
+import { I_CommonMeta } from "../api.common.int"
 
 export interface I_RegisterResponse{
     meta: I_CommonMeta

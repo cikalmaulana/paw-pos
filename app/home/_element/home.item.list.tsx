@@ -1,7 +1,7 @@
 import { TAB_HEIGHT } from "@/app/(tabs)/constant";
 import { CE_ItemCard } from "@/components/ItemCard";
-import { I_Menu } from "@/services/api/api.item.get.int";
-import { I_Cart } from "@/services/api/api.pruchase.int";
+import { I_Menu } from "@/services/api/item/api.item.get.int";
+import { I_Cart } from "@/services/api/transactional/api.cart.int";
 import { priceFormat } from "@/services/function/formatPrice";
 import { FlatList, View } from "react-native";
 

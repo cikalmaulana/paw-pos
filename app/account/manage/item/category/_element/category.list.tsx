@@ -1,5 +1,5 @@
 import { CE_Card } from "@/components/Card";
-import { I_Category } from "@/services/api/api.category.int";
+import { I_Category } from "@/services/api/category/api.category.get.int";
 import { Image, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 
 interface I_Props{

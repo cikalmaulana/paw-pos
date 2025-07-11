@@ -1,7 +1,7 @@
 import { FailedGetData } from "@/components/FailedGetData";
-import { I_LoginData } from "@/services/api/api.login.int";
-import { I_Store } from "@/services/api/api.store.int";
-import { I_User } from "@/services/api/api.user.get.int";
+import { I_LoginData } from "@/services/api/auth/api.login.int";
+import { I_Store } from "@/services/api/store/api.store.int";
+import { I_User } from "@/services/api/user/api.user.get.int";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";

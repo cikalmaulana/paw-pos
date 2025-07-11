@@ -1,6 +1,6 @@
 import { CE_Button } from "@/components/Button";
 import { Input } from "@/components/Input";
-import { I_Menu } from "@/services/api/api.item.get.int";
+import { I_Menu } from "@/services/api/item/api.item.get.int";
 import { priceFormat } from "@/services/function/formatPrice";
 import { useEffect, useState } from "react";
 import { Dimensions, Image, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";

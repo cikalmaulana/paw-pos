@@ -1,5 +1,5 @@
-import { I_Category } from "./api.category.int"
-import { I_CommonMeta } from "./api.common.int"
+import { I_Category } from "../api.category.int"
+import { I_CommonMeta } from "../api.common.int"
 
 export interface I_GetMenuResponse {
     meta: I_CommonMeta

@@ -1,7 +1,7 @@
 import { CE_Button } from "@/components/Button";
 import { CE_Dropdown } from "@/components/Dropdown";
 import { Input } from "@/components/Input";
-import { I_Cart } from "@/services/api/api.pruchase.int";
+import { I_Cart } from "@/services/api/transactional/api.cart.int";
 import { priceFormat } from "@/services/function/formatPrice";
 import { useState } from "react";
 import { Dimensions, Image, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";

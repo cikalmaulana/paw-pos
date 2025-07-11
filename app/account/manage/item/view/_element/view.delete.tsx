@@ -1,5 +1,5 @@
 import { CE_Button } from "@/components/Button";
-import { I_Menu } from "@/services/api/api.item.get.int";
+import { I_Menu } from "@/services/api/item/api.item.get.int";
 import React from "react";
 import { Image, Modal, Pressable, Text, View } from "react-native";
 
