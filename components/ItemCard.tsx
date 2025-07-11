@@ -117,22 +117,26 @@ export function CE_ItemCardHorizontal({
                     </Text>
                     <Text className="text-sm font-semibold mb-1">{stock} pcs</Text>
 
-                    <View className="flex flex-row justify-between gap-2 mt-1">
+                    <View className="flex flex-row gap-2 mt-1">
                         {deleteOnClick && (
-                            <CE_Button
-                                title="Delete"
-                                className="!py-2 !px-4 justify-center items-center"
-                                btnClassName="!text-sm"
-                                bgColor="bg-danger"
-                                onPress={deleteOnClick}
-                            />
+                            <View className="flex-1">
+                                <CE_Button
+                                    title="Delete"
+                                    className="!py-2 justify-center items-center"
+                                    btnClassName="!text-sm"
+                                    bgColor="bg-danger"
+                                    onPress={deleteOnClick}
+                                />
+                            </View>
                         )}
-                        <CE_Button
-                            title={editLabel ?? "Edit Item"}
-                            className="!py-2 !px-4 justify-center items-center"
-                            btnClassName="!text-sm"
-                            onPress={editOnClick}
-                        />
+                        <View className="flex-1">
+                            <CE_Button
+                                title={editLabel ?? "Edit Item"}
+                                className="!py-2 justify-center items-center"
+                                btnClassName="!text-sm"
+                                onPress={editOnClick}
+                            />
+                        </View>
                     </View>
                 </View>
             </View>
