@@ -11,6 +11,7 @@ import AddNewItem from "./add/item.add.main";
 const ManageItemView = lazy(() => import("./view/view.main"));
 const ManageItemEditStock = lazy(() => import("./stock/stock.main"))
 const ManageItemCategories = lazy(() => import("./category/category.main"))
+const LowStockMain = lazy(() => import("./lowstock/lowstock.main"))
 
 interface I_Props {
     handleBack:()=>void
@@ -129,9 +130,16 @@ export default function ManageItem(props: I_Props){
                     />
                 </Suspense>
             ) : manageItemOpen === 'lowStock' && (
-                <View>
-                    <CE_BackButton lable="View Low Stock" onPress={() => setManageItemOpen('')}/>
-                </View> 
+                <Suspense fallback={
+                    <CE_Loading />
+                }>
+                    <LowStockMain 
+                        handleBack={() => setManageItemOpen('')}
+                        setShowAlert={props.setShowAlert}
+                        setAlertMsg={props.setAlertMsg}
+                        setAlertSuccess={props.setAlertSuccess}
+                    />
+                </Suspense>
             )}
         </View>
     )

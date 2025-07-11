@@ -1,6 +1,7 @@
 import { CE_ItemCardHorizontal } from "@/components/ItemCard"
 import { I_Menu } from "@/services/api/api.item.get.int"
-import { RefreshControl, ScrollView, Text, View } from "react-native"
+import { useState } from "react"
+import { Image, Pressable, RefreshControl, ScrollView, Text, View } from "react-native"
 
 interface I_Props{
     refreshing: boolean
@@ -18,6 +19,12 @@ interface I_Props{
 }
 
 export default function StockItemList(props: I_Props) {
+    const [sortBy, setSortBy] = useState<"default" | "asc" | "desc">("default")
+
+    const sortedItems = [...props.filteredItems]
+    if (sortBy === "asc") sortedItems.sort((a, b) => a.stock - b.stock)
+    else if (sortBy === "desc") sortedItems.sort((a, b) => b.stock - a.stock)
+
     return (
         <ScrollView 
             className="min-h-screen"
@@ -34,8 +41,42 @@ export default function StockItemList(props: I_Props) {
             contentContainerStyle={{ paddingBottom: 700 }}
             showsVerticalScrollIndicator={false}
         >
-            <Text className="text-primary text-lg font-semibold mb-2">Total : {props.totalData} {props.totalData > 1 ? "items" : "item"}</Text>
-            {props.filteredItems !== null && props.filteredItems.map((item, index) => {
+            <View className="flex flex-row justify-between items-center mb-2">
+                <Text className="text-primary text-lg font-semibold">
+                    Total : {props.totalData} {props.totalData > 1 ? "items" : "item"}
+                </Text>
+
+                <Pressable 
+                    className="flex flex-row items-center"
+                    onPress={() => {
+                        setSortBy(prev => {
+                            if (prev === "default") return "asc"
+                            if (prev === "asc") return "desc"
+                            return "default"
+                        })
+                    }}
+                >
+                    <Text className="text-primary font-semibold text-lg"> Sort </Text>
+                    {sortBy === "default" ? (
+                        <Image 
+                            source={require("@/assets/icons/sort.png")}
+                            style={{width:18, height:18}}
+                        />
+                    ) : sortBy === "asc" ? (
+                        <Image 
+                            source={require("@/assets/icons/asc.png")}
+                            style={{width:18, height:18}}
+                        />
+                    ) : (
+                        <Image 
+                            source={require("@/assets/icons/desc.png")}
+                            style={{width:18, height:18}}
+                        />
+                    )}
+                </Pressable>
+            </View>
+
+            {props.filteredItems !== null && sortedItems !== null && sortedItems.map((item, index) => {
                 return (
                     <View key={index} className="mb-4">
                         <CE_ItemCardHorizontal 

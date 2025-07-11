@@ -23,7 +23,8 @@ module.exports = {
         danger: '#CF0F47',
         success: '#16B8A8',
         deact: '#B2C6D5',
-        description: '#686e6d'
+        description: '#686e6d',
+        warning: '#FFB823'
       }
     },
   },

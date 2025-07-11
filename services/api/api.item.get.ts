@@ -65,7 +65,7 @@ export async function API_GetAllItem(): Promise<I_GetMenuResponse> {
                 image: require('@/assets/images/iced-caramel-latte.jpeg'),
                 price: "28000",
                 category: { id: "c1", name: "Coffee" },
-                stock: 15,
+                stock: 5,
             },
             {
                 id: "4",
@@ -75,7 +75,7 @@ export async function API_GetAllItem(): Promise<I_GetMenuResponse> {
                 image: require('@/assets/images/matcha-latte.jpeg'),
                 price: "30000",
                 category: { id: "c2", name: "Non-Coffee" },
-                stock: 17,
+                stock: 7,
             },
             {
                 id: "5",
@@ -85,7 +85,7 @@ export async function API_GetAllItem(): Promise<I_GetMenuResponse> {
                 image: require('@/assets/images/choco-frappe.jpeg'),
                 price: "32000",
                 category: { id: "c2", name: "Non-Coffee" },
-                stock: 10,
+                stock: 0,
             },
             {
                 id: "6",

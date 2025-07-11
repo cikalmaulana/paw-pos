@@ -49,6 +49,7 @@ export default function HomeAddItem(props: I_Props) {
                             flexGrow: 1 
                         }} 
                         keyboardShouldPersistTaps="handled"
+                        showsVerticalScrollIndicator={false}
                     >
                         <View style={{ 
                             width: width * 0.85, 

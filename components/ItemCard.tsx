@@ -76,39 +76,62 @@ export function CE_ItemCardHorizontal({
     className,
     stock,
 }: I_HorizontalCardProps) {
+    let stockWarning: string | null = null
+    if (stock === 0) stockWarning = "Empty"
+    else if (stock < 5) stockWarning = "Very Low"
+    else if (stock < 10) stockWarning = "Low Stock"
+
     return (
-        <View className={`bg-white rounded-2xl p-4 h-36 ${className}`}>
+        <View className={`bg-white rounded-2xl p-4 h-36 relative ${className}`}>
+
+            {stockWarning && (
+                <View className="absolute top-4 right-2 bg-red-100 px-2 py-1 rounded-md z-10">
+                    <Text
+                        className={`text-[10px] font-bold ${
+                            stock === 0 ? "text-danger" : "text-warning"
+                        }`}
+                    >
+                        {stockWarning}
+                    </Text>
+                </View>
+            )}
+
             <View className="flex flex-1 flex-row gap-4">
                 <Image
                     source={image}
                     className="w-28 h-28 rounded-xl mb-2"
                     resizeMode="cover"
                 />
-                <View className="flex flex-col">
-                    <Text 
-                        className="text-primary text-lg font-bold mb-1" 
-                        numberOfLines={2}
-                        style={{ lineHeight: 22 }} 
+                <View className="flex flex-col flex-1">
+                    <Text
+                        className={`text-primary text-lg font-bold mb-1 ${stockWarning ? "pr-20" : ""} `}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        style={{ lineHeight: 22 }}
                     >
                         {title}
                     </Text>
-                    <Text className="text-black text-sm font-bold mb-1">{priceFormat(price, "IDR")}</Text>
+
+                    <Text className="text-black text-sm font-bold mb-1">
+                        {priceFormat(price, "IDR")}
+                    </Text>
                     <Text className="text-sm font-semibold mb-1">{stock} pcs</Text>
+
                     <View className="flex flex-row justify-between gap-2 mt-1">
                         {deleteOnClick && (
-                            <CE_Button 
-                                title="Delete" 
-                                className="!py-2 !px-4 justify-center items-center" 
+                            <CE_Button
+                                title="Delete"
+                                className="!py-2 !px-4 justify-center items-center"
                                 btnClassName="!text-sm"
                                 bgColor="bg-danger"
-                                onPress={() => deleteOnClick()}
+                                onPress={deleteOnClick}
                             />
                         )}
-                        <CE_Button 
+                        <CE_Button
                             title={editLabel ?? "Edit Item"}
-                            className="!py-2 !px-4 justify-center items-center" 
+                            className="!py-2 !px-4 justify-center items-center"
                             btnClassName="!text-sm"
-                            onPress={() => editOnClick()}
+                            onPress={editOnClick}
                         />
                     </View>
                 </View>
