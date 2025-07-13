@@ -180,6 +180,11 @@ export default function AccountMain(props: I_Props) {
                         <Suspense fallback={<CE_Loading />}>
                             <ManageStore 
                                 handleBack={() => handleBack()}
+                                storeData={props.storeData}
+                                balance={balance}
+                                setShowAlert={setShowAlert}
+                                setAlertMsg={setAlertMsg}
+                                setAlertSuccess={setAlertSuccess}
                             />
                         </Suspense>
                     ) : (
