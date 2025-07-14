@@ -9,6 +9,7 @@ import StoreBalance from "./_element/store.balance";
 import StoreDetail from "./_element/store.detail";
 import StoreManagementList from "./_element/store.list.mgm";
 import StoreTransactionMgmList from "./_element/store.list.transaction.mgm";
+import StoreReceipt from "./_element/store.reeipt";
 import StoreSetting from "./_element/store.setting";
 import StoreStockManagement from "./_element/store.stock.mgm";
 
@@ -128,6 +129,14 @@ export default function ManageStore(props: I_Props){
                         await onRefresh()
                         setManageOpen('')
                     }}
+                />
+            )}
+
+            {manageOpen === 'receipt' && (
+                <StoreReceipt
+                    storeData={props.storeData}
+                    handleBack={() => setManageOpen('')}
+                    setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
                 />
             )}
         </View>

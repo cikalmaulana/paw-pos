@@ -35,7 +35,7 @@ export function CE_Button({
         <Pressable
             onPressIn={() => setIsPressed(true)}
             onPressOut={() => setIsPressed(false)}
-            className={`rounded-2xl py-3 px-6 items-center ${dynamicBg} ${className}`}
+            className={`rounded-2xl py-3 px-6 items-center ${dynamicBg} ${className} ${isLoading ? '!bg-deact' : ''}`}
             disabled={disabled || isLoading}
             {...props}
         >
