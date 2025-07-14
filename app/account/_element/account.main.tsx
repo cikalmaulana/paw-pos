@@ -26,6 +26,7 @@ interface I_Props {
 
 export default function AccountMain(props: I_Props) {
     const [userData, setUserData] = useState<I_User>(props.userData)
+    const [storeData, setStoreData] = useState<I_Store>(props.storeData)
     const [balance, setBalance] = useState(props.storeData.balance)
     const navigation = useNavigation<any>();
     const [showAlert, setShowAlert] = useState(false)
@@ -119,7 +120,7 @@ export default function AccountMain(props: I_Props) {
                             </Text>
                             <Text>|</Text>
                             <Text className="text-secondary font-semibold text-lg">
-                            {userData.id === props.storeData.owner_id ? "Owner" : "Cashier"}
+                            {userData.id === storeData.owner_id ? "Owner" : "Cashier"}
                             </Text>
                         </View>
                         
@@ -136,7 +137,7 @@ export default function AccountMain(props: I_Props) {
                             }
                             showsVerticalScrollIndicator={false}
                         >
-                            <Text className="text-secondary text-3xl font-bold mb-3">{props.storeData.name}</Text>
+                            <Text className="text-secondary text-3xl font-bold mb-3">{storeData.name}</Text>
                             <CE_Card className="bg-primary p-5 flex justify-center mb-8">
                                 <Text className="text-white font-semibold text-lg">Store Balance</Text>
                                 <Text className="text-white font-bold text-3xl">{priceFormat(balance, "IDR")}</Text>
@@ -164,7 +165,7 @@ export default function AccountMain(props: I_Props) {
                         <Suspense fallback={<CE_Loading />}>
                             <ManageItem 
                                 handleBack={() => handleBack()}
-                                storeData={props.storeData}
+                                storeData={storeData}
                                 setShowAlert={setShowAlert}
                                 setAlertMsg={setAlertMsg}
                                 setAlertSuccess={setAlertSuccess}
@@ -180,11 +181,12 @@ export default function AccountMain(props: I_Props) {
                         <Suspense fallback={<CE_Loading />}>
                             <ManageStore 
                                 handleBack={() => handleBack()}
-                                storeData={props.storeData}
+                                storeData={storeData}
                                 balance={balance}
                                 setShowAlert={setShowAlert}
                                 setAlertMsg={setAlertMsg}
                                 setAlertSuccess={setAlertSuccess}
+                                setStoreData={setStoreData}
                             />
                         </Suspense>
                     ) : (

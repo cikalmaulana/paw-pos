@@ -115,10 +115,10 @@ export default function HomeCartPopup(props: I_Props) {
 
                         <View className="flex flex-row justify-between gap-2 mt-2">
                             <View className="flex-1">
-                            <CE_Button title="Delete" onPress={deleteCart} bgColor="bg-danger" className="w-full" />
+                                <CE_Button title="Delete" onPress={deleteCart} bgColor="bg-danger" className="w-full" />
                             </View>
                             <View className="flex-1">
-                            <CE_Button title="Checkout" onPress={checkout} className="w-full" />
+                                <CE_Button title="Checkout" onPress={checkout} className="w-full" />
                             </View>
                         </View>
                         </ScrollView>
