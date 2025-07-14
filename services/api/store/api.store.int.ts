@@ -17,6 +17,16 @@ export interface I_StoreSetting {
     need_ongoing_order: boolean
     need_table_no: boolean
     currency: string  
+    discount: I_Discount
+}
+
+export interface I_Discount {
+    is_active: boolean           
+    value: number                // nominal diskon (bisa % atau angka fix)
+    type: "percentage" | "fixed" 
+    name?: string                
+    min_order?: number           // minimum pembelian untuk diskon berlaku
+    description?: string         // keterangan tambahan
 }
 
 export interface I_StoreAdmin {

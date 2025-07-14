@@ -18,7 +18,15 @@ export async function API_GetStoreById(store_id: string): Promise<I_GetStoreResp
                 store_type: "grocery",
                 need_ongoing_order: true,
                 need_table_no: true,
-                currency: "IDR"
+                currency: "IDR",
+                discount: {
+                    is_active: true,
+                    value: 10,
+                    type: "percentage",
+                    name: "Diskon Spesial Juli",
+                    min_order: 50000,
+                    description: "Diskon berlaku untuk pembelian di atas Rp50.000"
+                }
             },
             admins: [],
             created_at: "2025-07-11T08:00:00.000Z",
@@ -45,7 +53,15 @@ export async function API_GetStoreByOwner(owner_id: string): Promise<I_GetStoreR
                 store_type: "grocery",
                 need_ongoing_order: true,
                 need_table_no: true,
-                currency: "IDR"
+                currency: "IDR",
+                discount: {
+                    is_active: true,
+                    value: 10,
+                    type: "percentage",
+                    name: "Diskon Spesial Juli",
+                    min_order: 50000,
+                    description: "Diskon berlaku untuk pembelian di atas Rp50.000"
+                }
             },
             admins: [],
             created_at: "2025-07-11T08:00:00.000Z",
@@ -61,7 +77,15 @@ export async function API_GetStoreSetting(id: string): Promise<I_GetStoreSetting
             store_type: "grocery",
             need_ongoing_order: false,
             need_table_no: false,
-            currency: "IDR"
+            currency: "IDR",
+            discount: {
+                is_active: true,
+                value: 10,
+                type: "percentage",
+                name: "Diskon Spesial Juli",
+                min_order: 50000,
+                description: "Diskon berlaku untuk pembelian di atas Rp50.000"
+            }
         }
     }
 }

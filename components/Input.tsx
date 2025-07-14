@@ -8,9 +8,16 @@ interface Props extends TextInputProps {
     optional?: boolean
     type?: "text" | "password" | "number"
     stepperButtons?: boolean
+    disabled?: boolean
 }
 
-export function Input({ label, type = "text", stepperButtons = false, ...props }: Props) {
+export function Input({
+    label,
+    type = "text",
+    stepperButtons = false,
+    disabled = false,
+    ...props
+}: Props) {
     const [isPasswordVisible, setPasswordVisible] = useState(false)
     const isPasswordType = type === "password"
     const isNumberType = type === "number" && stepperButtons
@@ -46,16 +53,21 @@ export function Input({ label, type = "text", stepperButtons = false, ...props }
         <View className="flex flex-col w-full gap-2">
             <View className="flex flex-row w-full">
                 <Text className="text-base text-primary font-semibold">{label}</Text>
-                {props.optional && (<Text className="ms-1 text-sm text-gray-400 font-semibold">*optional</Text>)}
+                {props.optional && (
+                    <Text className="ms-1 text-sm text-gray-400 font-semibold">*optional</Text>
+                )}
             </View>
 
             <View className="relative w-full flex-row items-center">
                 <TextInput
-                    className={`flex-1 border rounded-2xl px-4 py-3 ${isPasswordType || isNumberType ? 'pr-20' : ''} border-primary text-black bg-white`}
+                    className={`flex-1 border rounded-2xl px-4 py-3 ${
+                        isPasswordType || isNumberType ? 'pr-20' : ''
+                    } ${disabled ? 'border-gray-300 bg-gray-100 text-gray-400' : 'border-primary bg-white text-black'}`}
                     placeholderTextColor="#999"
                     secureTextEntry={isPasswordType && !isPasswordVisible}
                     keyboardType={type === 'number' ? 'numeric' : 'default'}
                     value={value}
+                    editable={!disabled}
                     onChangeText={(text) => {
                         setValue(text)
                         props.onChangeText?.(text)
@@ -63,7 +75,7 @@ export function Input({ label, type = "text", stepperButtons = false, ...props }
                     {...props}
                 />
 
-                {isPasswordType && (
+                {isPasswordType && !disabled && (
                     <TouchableOpacity
                         className="absolute right-4 top-1/2 -translate-y-1/2"
                         onPress={() => setPasswordVisible((prev) => !prev)}
@@ -76,7 +88,7 @@ export function Input({ label, type = "text", stepperButtons = false, ...props }
                     </TouchableOpacity>
                 )}
 
-                {isNumberType && (
+                {isNumberType && !disabled && (
                     <View className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-row gap-1">
                         <CE_Button 
                             title="-" 

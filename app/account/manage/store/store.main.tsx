@@ -1,19 +1,20 @@
 import { CE_BackButton } from "@/components/BackButton";
 import { CE_Card } from "@/components/Card";
+import { CE_Loading } from "@/components/Loading";
 import { I_Store } from "@/services/api/store/api.store.int";
 import { priceFormat } from "@/services/function/formatPrice";
 import { updateStoreData } from "@/services/function/updateStoreData";
-import { useState } from "react";
-import { Dimensions, KeyboardAvoidingView, Platform, RefreshControl, ScrollView, Text, View } from "react-native";
+import { lazy, Suspense, useState } from "react";
+import { KeyboardAvoidingView, Platform, RefreshControl, ScrollView, Text, View } from "react-native";
 import StoreBalance from "./_element/store.balance";
 import StoreDetail from "./_element/store.detail";
+import StoreDiscount from "./_element/store.discount";
 import StoreManagementList from "./_element/store.list.mgm";
 import StoreTransactionMgmList from "./_element/store.list.transaction.mgm";
-import StoreReceipt from "./_element/store.reeipt";
 import StoreSetting from "./_element/store.setting";
 import StoreStockManagement from "./_element/store.stock.mgm";
 
-const screenHeight = Dimensions.get("window").height
+const StoreReceipt = lazy(() => import('../store/_element/store.receipt'))
 
 interface I_Props {
     storeData:I_Store
@@ -29,9 +30,6 @@ export default function ManageStore(props: I_Props){
     const [balance, setBalance] = useState(props.storeData.balance)
     const [manageOpen, setManageOpen] = useState('')
     const [refreshing, setRefreshing] = useState(false)
-    const [showAlert, setAlertShow] = useState(false)
-    const [alertSuccess, setAlertSuccess] = useState(false)
-    const [alertMsg, setAlertMsg] = useState('')
 
     const onRefresh = async () => {
         setRefreshing(true)
@@ -122,22 +120,43 @@ export default function ManageStore(props: I_Props){
             {manageOpen === 'detail' && (
                 <StoreDetail 
                     storeData={props.storeData}
+                    refreshing={refreshing}
                     handleBack={() => setManageOpen('')}
                     setStoreData={props.setStoreData}
                     setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
                     doRefresh={async () => {
                         await onRefresh()
-                        setManageOpen('')
                     }}
                 />
             )}
 
             {manageOpen === 'receipt' && (
-                <StoreReceipt
-                    storeData={props.storeData}
-                    handleBack={() => setManageOpen('')}
-                    setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
-                />
+                <Suspense fallback={
+                    <CE_Loading />
+                }>
+                    <StoreReceipt
+                        storeData={props.storeData}
+                        handleBack={() => setManageOpen('')}
+                        setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
+                    />
+                </Suspense>
+            )}
+
+            {manageOpen === 'discount' && (
+                <Suspense fallback={
+                    <CE_Loading />
+                }>
+                    <StoreDiscount
+                        storeData={props.storeData}
+                        refreshing={refreshing}
+                        handleBack={() => setManageOpen('')}
+                        setStoreData={props.setStoreData}
+                        setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
+                        doRefresh={async () => {
+                            await onRefresh()
+                        }}
+                    />
+                </Suspense>
             )}
         </View>
     )
