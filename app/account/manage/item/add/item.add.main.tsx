@@ -17,7 +17,8 @@ export default function AddNewItem(props: I_Props) {
 
     const saveItem = async (formData: {
         name: string;
-        price: string;
+        sellingPrice: string;
+        costPrice: string;
         stock: string;
         desc: string;
         image: string | number;
@@ -25,7 +26,8 @@ export default function AddNewItem(props: I_Props) {
     }) => {
         const payload: I_AddItemRequest = {
             name: formData.name,
-            price: formData.price,
+            cost_price: formData.costPrice,
+            selling_price: formData.sellingPrice,
             stock: formData.stock,
             description: formData.desc,
             image: typeof formData.image === "number" ? formData.image : undefined,
@@ -56,7 +58,7 @@ export default function AddNewItem(props: I_Props) {
     return (
         <View>
             <CE_BackButton lable="Add New Item" onPress={safetyBack} />
-            <ItemAddForm ref={formRef} onSubmit={saveItem} />
+            <ItemAddForm ref={formRef} onSubmit={saveItem} alertSetup={alertSetup}/>
         </View>
     );
 }

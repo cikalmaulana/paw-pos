@@ -31,7 +31,7 @@ export default function HomeItemList(props: I_Props) {
                         <CE_ItemCard
                             image={item.image}
                             title={item.name}
-                            price={priceFormat(item.price, "IDR")}
+                            price={priceFormat(item.selling_price, "IDR")}
                             description={item.description}
                             buttonLabel={isInCart ? "Edit" : "Add"}
                             onPressButton={() => props.selectedItem(item)}

@@ -110,7 +110,7 @@ export default function HomeMain(props: I_Props) {
         if (!selectedItem) return;
 
         const parsedQty = parseInt(qty);
-        const parsedPrice = parseInt(selectedItem.price);
+        const parsedPrice = parseInt(selectedItem.selling_price);
         const total = parsedQty * parsedPrice;
     
         setCart((prevCart) => {
@@ -125,7 +125,7 @@ export default function HomeMain(props: I_Props) {
                     image: selectedItem.image,
                     name: selectedItem.name,
                     total_price: total.toString(),
-                    price: selectedItem.price,
+                    price: selectedItem.selling_price,
                     qty,
                 });
             }            
