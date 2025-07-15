@@ -1,12 +1,15 @@
 import { CE_BackButton } from "@/components/BackButton";
 import { CE_Button } from "@/components/Button";
 import { Input } from "@/components/Input";
+import { I_Lang } from "@/services/api/other/api.language.int";
 import { API_ChangePassword, API_EditUser } from "@/services/api/user/api.user.get";
 import { I_ChangePasswordRequest, I_EditUserRequest, I_User } from "@/services/api/user/api.user.get.int";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Keyboard, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TouchableWithoutFeedback, View } from "react-native";
+import { locales } from "./locales";
 
 interface I_Props{
+    lang: I_Lang
     userData: I_User
     handleBack:()=>void
     setShowAlert:(open: boolean)=>void
@@ -25,6 +28,12 @@ export default function AccountDetails(props: I_Props){
     const [newPassWarn, setNewPassWarn] = useState("")
     const [newRePassWarn, setNewRePassWarn] = useState('')
     const [firstLoad, setFirstLoad] = useState(true)
+
+    const language = useMemo(() => getLocale(props.lang), [props.lang])
+    
+    function getLocale(lang: I_Lang): typeof locales["en"] {
+        return locales[lang.name.toLowerCase() as "en" | "id"]
+    }
 
     const saveNewProfile = async () => {
         const payload: I_EditUserRequest = {
@@ -119,13 +128,13 @@ export default function AccountDetails(props: I_Props){
     
     return (
         <View>
-            <CE_BackButton lable="Edit Profile" onPress={props.handleBack}/>
+            <CE_BackButton lable={language.title} onPress={props.handleBack}/>
             <ScrollView className="min-h-screen">
                 <View className="flex flex-col justify-between gap-4">
-                    <Input label="Name" onChangeText={setName} value={name}/>
-                    <Input label="Phone Number" onChangeText={setPhone} value={phone}/>
-                    <CE_Button title="Save" onPress={() => saveNewProfile()}/>
-                    <CE_Button title="Change Password" onPress={() => setChangePasswordOpen(true)} bgColor="bg-secondary"/>
+                    <Input label={language.editProfileform.name} onChangeText={setName} value={name}/>
+                    <Input label={language.editProfileform.phone} onChangeText={setPhone} value={phone}/>
+                    <CE_Button title={language.button.save} onPress={() => saveNewProfile()}/>
+                    <CE_Button title={language.button.changePassword} onPress={() => setChangePasswordOpen(true)} bgColor="bg-secondary"/>
                 </View>
             </ScrollView>
 
@@ -144,23 +153,23 @@ export default function AccountDetails(props: I_Props){
                             <View className="bg-white p-5 gap-3 rounded-xl w-full max-h-[80%]">
                                 <ScrollView keyboardShouldPersistTaps="handled">
                                     <View className="flex flex-col gap-3">
-                                        <Input label="Old password" onChangeText={setOldPass} value={oldPass} type="password"/>
+                                        <Input label={language.changePasswordForm.old} onChangeText={setOldPass} value={oldPass} type="password"/>
                                         {oldPassWarn !== '' && (<Text className="text-danger text-sm">{oldPassWarn}</Text>)}
-                                        <Input label="New password" onChangeText={setNewPass} value={newPass} type="password" />
+                                        <Input label={language.changePasswordForm.new} onChangeText={setNewPass} value={newPass} type="password" />
                                         {newPassWarn !== '' && (<Text className="text-danger text-sm">{newPassWarn}</Text>)}
-                                        <Input label="Confirm new password" onChangeText={setNewRePass} value={newRePass} type="password" />
+                                        <Input label={language.changePasswordForm.confirm} onChangeText={setNewRePass} value={newRePass} type="password" />
                                         {newRePassWarn !== '' && (<Text className="text-danger text-sm">{newRePassWarn}</Text>)}
                                     </View>
 
                                     <View className="flex flex-row justify-between gap-3 mt-5">
                                         <CE_Button
-                                            title="Cancel"
+                                            title={language.changePasswordForm.button.cancel}
                                             onPress={() => handleCancelChangePass()}
                                             className="flex-1"
                                             bgColor="bg-primary"
                                         />
                                         <CE_Button
-                                            title="Change"
+                                            title={language.changePasswordForm.button.change}
                                             bgColor="bg-secondary"
                                             onPress={handleChangePass}
                                             className="flex-1"

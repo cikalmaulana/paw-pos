@@ -1,10 +1,12 @@
 import { CE_Button } from "@/components/Button"
 import { Image, Modal, Text, View } from "react-native"
+import { locales } from "../locales"
 
 interface I_Props{
     isModalOpen: boolean
     setIsModalOpen:(open: boolean)=>void
     logout:()=>void
+    language: typeof locales["en"]
 }
 
 export function LogoutModal(props: I_Props){
@@ -23,15 +25,15 @@ export function LogoutModal(props: I_Props){
                             style={{width: 52, height: 52}}
                         />
                     </View>
-                    <Text className="text-lg font-semibold text-center mb-4">Are you sure you want to logout?</Text>
+                    <Text className="text-lg font-semibold text-center mb-4">{props.language.logout.title}</Text>
                     <View className="flex flex-row justify-between gap-3">
                         <CE_Button 
-                            title="Cancel" 
+                            title={props.language.logout.buttonCancel}
                             onPress={() => props.setIsModalOpen(false)} 
                             className="flex-1" 
                         />
                         <CE_Button
-                            title="Logout"
+                            title={props.language.logout.buttonLogout}
                             bgColor="bg-danger"
                             onPress={() => {
                                 props.logout()

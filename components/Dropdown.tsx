@@ -34,7 +34,6 @@ export function CE_Dropdown({ label, selected, options, onSelect, disabled = fal
                 </Text>
             </Pressable>
 
-            {/* Jangan buka modal sama sekali jika disabled */}
             {!disabled && (
                 <Modal visible={open} transparent animationType="fade">
                     <Pressable

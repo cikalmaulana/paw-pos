@@ -1,6 +1,8 @@
 import { CE_Alert } from "@/components/Alert"
 import { CE_Card } from "@/components/Card"
 import { CE_Loading } from "@/components/Loading"
+import { API_GetLanguage } from "@/services/api/other/api.language"
+import { I_Lang } from "@/services/api/other/api.language.int"
 import { I_Store } from "@/services/api/store/api.store.int"
 import { I_User } from "@/services/api/user/api.user.get.int"
 import { priceFormat } from "@/services/function/formatPrice"
@@ -8,8 +10,10 @@ import { doLogout } from "@/services/function/logout"
 import { updateStoreData } from "@/services/function/updateStoreData"
 import { updateUserData } from "@/services/function/updateUserData"
 import { CommonActions, useNavigation } from "@react-navigation/native"
-import { lazy, Suspense, useEffect, useState } from "react"
+import { lazy, Suspense, useEffect, useMemo, useState } from "react"
 import { Dimensions, RefreshControl, ScrollView, Text, View } from "react-native"
+import { locales } from "../locales"
+import ModalChangeLanguage from "./account.modal.language"
 import { LogoutModal } from "./account.modal.logout"
 import AccountSettingList from "./account.setting.list"
 
@@ -20,11 +24,13 @@ const AccountDetails = lazy(() => import("../profile/profile.main"));
 const AccountReport = lazy(() => import("../report/report.main"));
 
 interface I_Props {
+    lang: I_Lang
     userData: I_User
     storeData: I_Store
 }
 
 export default function AccountMain(props: I_Props) {
+    const [lang, setLang] = useState(props.lang)
     const [userData, setUserData] = useState<I_User>(props.userData)
     const [storeData, setStoreData] = useState<I_Store>(props.storeData)
     const [balance, setBalance] = useState(props.storeData.balance)
@@ -38,6 +44,12 @@ export default function AccountMain(props: I_Props) {
 
     const screenHeight = Dimensions.get("window").height
 
+    const language = useMemo(() => getLocale(lang), [lang])
+    
+    function getLocale(lang: I_Lang): typeof locales["en"] {
+        return locales[lang.name.toLowerCase() as "en" | "id"]
+    }
+
     const onRefresh = async () => {
         setRefreshing(true)
         await getNewUserData()
@@ -46,9 +58,23 @@ export default function AccountMain(props: I_Props) {
         setRefreshing(false)
     }
 
+    const refreshLang = async () => {
+        await getNewLang()
+    }
+
     useEffect(() => {
         onRefresh()
     },[])
+
+    const getNewLang = async () => {
+        const result = await API_GetLanguage()
+        if(result) setLang(result)
+        else {
+            setAlertMsg("Failed to change language. Please try again.")
+            setAlertSuccess(false)
+            setShowAlert(true)
+        }
+    }
 
     const getNewUserData = async () => {
         const result = await updateUserData()
@@ -110,8 +136,21 @@ export default function AccountMain(props: I_Props) {
                 </View>
             )}
 
-                {manageOpen === '' ? (
+                {manageOpen === '' || manageOpen === 'lang' ? (
                     <View>
+                        {manageOpen === 'lang' && (
+                            <ModalChangeLanguage 
+                                isModalOpen={manageOpen === 'lang'}
+                                doRefresh={refreshLang}
+                                setIsModalOpen={() => setManageOpen('')}
+                                setUpAlert={(msg: string, isSuccess: boolean) => {
+                                    setShowAlert(true)
+                                    setAlertMsg(msg)
+                                    setAlertSuccess(isSuccess)
+                                }}
+                                lang={lang}
+                            />
+                        )}
                         <View className="flex flex-row gap-2 items-center mb-4 mt-4">
                             <Text className="text-primary font-bold text-2xl">
                                 {userData.name.length > 20
@@ -120,7 +159,7 @@ export default function AccountMain(props: I_Props) {
                             </Text>
                             <Text>|</Text>
                             <Text className="text-secondary font-semibold text-lg">
-                            {userData.id === storeData.owner_id ? "Owner" : "Cashier"}
+                            {userData.id === storeData.owner_id ? language.role.owner : language.role.cashier}
                             </Text>
                         </View>
                         
@@ -139,11 +178,12 @@ export default function AccountMain(props: I_Props) {
                         >
                             <Text className="text-secondary text-3xl font-bold mb-3">{storeData.name}</Text>
                             <CE_Card className="bg-primary p-5 flex justify-center mb-8">
-                                <Text className="text-white font-semibold text-lg">Store Balance</Text>
+                                <Text className="text-white font-semibold text-lg">{language.store.balance}</Text>
                                 <Text className="text-white font-bold text-3xl">{priceFormat(balance, "IDR")}</Text>
                             </CE_Card>
                 
                             <AccountSettingList 
+                                lang={lang}
                                 setManageOpen={(page) => setManageOpen(page)} 
                                 doLogout={() => setIsModalOpen(true)}
                             />
@@ -154,6 +194,7 @@ export default function AccountMain(props: I_Props) {
                             <CE_Loading />
                         }>
                             <AccountDetails 
+                                lang={lang}
                                 userData={userData} 
                                 handleBack={() => handleBack()}
                                 setShowAlert={setShowAlert}
@@ -189,16 +230,17 @@ export default function AccountMain(props: I_Props) {
                                 setStoreData={setStoreData}
                             />
                         </Suspense>
-                    ) : (
+                    ) : manageOpen === 'report' ? (
                         <Suspense fallback={<CE_Loading />}>
                             <AccountReport 
                                 handleBack={() => handleBack()}
                             />
                         </Suspense>
-                    )
+                    ) : <></>
                 }
 
             <LogoutModal 
+                language={language}
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 logout={logout}

@@ -1,5 +1,6 @@
-import { I_Category } from "../api.category.int"
+
 import { I_CommonMeta } from "../api.common.int"
+import { I_Category } from "../category/api.category.get.int"
 
 export interface I_GetMenuResponse {
     meta: I_CommonMeta
@@ -12,9 +13,11 @@ export interface I_Menu{
     name: string
     description: string
     image: number
-    price: string
+    cost_price: string
+    selling_price: string
+    unit_type: string
     category: I_Category
-    stock: number
+    stock?: number
 }
 
 export interface I_GetTotalItemResponse {

@@ -15,7 +15,8 @@ export const updateStoreData = async (): Promise<I_Store | null> => {
                 token: "ThIsIstOKEnForvserLogin",
                 user: datas.user,
                 store: result.data,
-                expiredAt: Date.now() + (datas.expiredAt ? 24 * 60 * 60 * 1000 : 60 * 60 * 1000) 
+                expiredAt: Date.now() + (datas.expiredAt ? 24 * 60 * 60 * 1000 : 60 * 60 * 1000),
+                lang: datas.lang
             }
         
             await AsyncStorage.setItem(KEY_LOGIN, JSON.stringify(loginData));

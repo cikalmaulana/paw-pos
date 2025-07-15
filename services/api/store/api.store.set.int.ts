@@ -1,4 +1,5 @@
 import { I_CommonMeta } from "../api.common.int"
+import { I_Discount } from "./api.store.int"
 
 //Request
 export interface I_SetStoreDetailRequest{
@@ -21,3 +22,11 @@ export interface I_SetAsAdminResponse {
     meta: I_CommonMeta
 }
 
+export interface I_UpdateDiscountRequest {
+    store_id: string
+    data: I_Discount
+}
+
+export interface I_UpdateDIscountResponse {
+    meta: I_CommonMeta
+}

@@ -17,7 +17,8 @@ export const doLogin = async (params: I_LoginRequest, remember: boolean): Promis
                         token: "ThIsIstOKEnForvserLogin",
                         user: result.user,
                         store: store.data,
-                        expiredAt: Date.now() + (remember ? 24 * 60 * 60 * 1000 : 60 * 60 * 1000) 
+                        expiredAt: Date.now() + (remember ? 24 * 60 * 60 * 1000 : 60 * 60 * 1000), 
+                        lang: {name:"ID"}
                     }
             
                     await AsyncStorage.setItem(KEY_LOGIN, JSON.stringify(loginData));

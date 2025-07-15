@@ -1,8 +1,12 @@
 import { CE_BackButton } from "@/components/BackButton"
+import { CE_Button } from "@/components/Button"
 import { CE_Dropdown } from "@/components/Dropdown"
 import { Input } from "@/components/Input"
+import { API_GetStoreById } from "@/services/api/store/api.store.get"
 import { I_Store } from "@/services/api/store/api.store.int"
-import { useState } from "react"
+import { API_UpdateDiscountSetting } from "@/services/api/store/api.store.set"
+import { I_UpdateDiscountRequest } from "@/services/api/store/api.store.set.int"
+import { useEffect, useState } from "react"
 import { KeyboardAvoidingView, Platform, Pressable, RefreshControl, ScrollView, Switch, Text, View } from "react-native"
 
 interface I_Props{
@@ -19,11 +23,51 @@ export default function StoreDiscount(props: I_Props) {
     const [discountType, setDiscountType] = useState(props.storeData.setting.discount.type)
     const [discountName, setDiscountName] = useState(props.storeData.setting.discount.name)
     const [discountMinimal, setDiscountMinimal] = useState(props.storeData.setting.discount.min_order)
+    const [discountNominal, setDiscountNominal] = useState(props.storeData.setting.discount.value)
+    const [discountDescription, setDiscountDescription] = useState(props.storeData.setting.discount.description)
+    const [hint, setHint] = useState("Dalam Persen")
+    const [firstLoad, setFirstLoad] = useState(true)
 
     const discountTypeList = [
         { value: 'percentage', label: 'Percentage' },
         { value: 'fixed', label: 'Fixed' },
     ] 
+
+    useEffect(() => {
+        if(firstLoad) {
+            setFirstLoad(false)
+            true
+        }
+
+        if(discountType === "percentage") setHint("Dalam Persen. Hanya mengisi angka, Contoh: 10 untuk 10%")
+        else setHint("Dalam Rupiah. Hanya mengisi angka, Contoh: 20000 untuk Rp20.000")
+    },[discountType])
+
+    const saveDiscount = async () => {
+        const payload: I_UpdateDiscountRequest = {
+            store_id:props.storeData.id,
+            data: {
+                is_active: isDiscountActive,           
+                value: discountNominal,               
+                type: discountType,
+                name: discountName,                
+                min_order: discountMinimal,       
+                description: discountDescription
+            }
+        }
+        const result = await API_UpdateDiscountSetting(payload)
+        if(result && result.meta.status === 'success'){
+            props.setUpAlert("Update discount success!", true)
+            await doRefresh()
+        } else props.setUpAlert("Connection lost.", false)
+    }
+
+    const doRefresh = async () => {
+        const result = await API_GetStoreById(props.storeData.id)
+        if(result && result.meta.status === 'success'){
+            props.setStoreData(result.data)
+        } else props.setUpAlert("Connection lost.", false)
+    }
     
     return (
         <View>
@@ -60,6 +104,14 @@ export default function StoreDiscount(props: I_Props) {
                                 trackColor={{ false: "#ccc", true: "#a7f3d0" }}
                             />
                         </Pressable>
+
+                        <Input 
+                            label="Discount Name"
+                            value={discountName}
+                            onChangeText={setDiscountName}
+                            disabled={!isDiscountActive}
+                        />
+
                         <CE_Dropdown
                             label="Discount Type"
                             selected={
@@ -73,17 +125,35 @@ export default function StoreDiscount(props: I_Props) {
                             }}
                             disabled={!isDiscountActive}
                         />
+                        
                         <Input 
-                            label="Discount Name"
-                            value={discountName}
-                            onChangeText={setDiscountName}
+                            label="Value"
+                            keyboardType="numeric"
+                            value={discountNominal?.toString()}
+                            onChangeText={(e) => setDiscountNominal(Number(e))}
                             disabled={!isDiscountActive}
+                            hint={hint}
                         />
+
                         <Input 
                             label="Min Order"
                             value={discountMinimal?.toString()}
                             onChangeText={(e) => setDiscountMinimal(Number(e))}
                             disabled={!isDiscountActive}
+                            hint="Dalam rupiah. Hanya mengisi angka, Contoh 20000 untuk Rp20.000"
+                        />
+
+                        <Input 
+                            label="Description"
+                            optional={true}
+                            value={discountDescription}
+                            onChangeText={(e) => setDiscountDescription(e)}
+                            disabled={!isDiscountActive}
+                        />
+
+                        <CE_Button 
+                            title="Save"
+                            onPress={saveDiscount}
                         />
 
                     </View>

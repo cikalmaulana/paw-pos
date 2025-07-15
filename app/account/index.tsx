@@ -1,5 +1,6 @@
 import { FailedGetData } from "@/components/FailedGetData";
 import { I_LoginData } from "@/services/api/auth/api.login.int";
+import { I_Lang } from "@/services/api/other/api.language.int";
 import { I_Store } from "@/services/api/store/api.store.int";
 import { I_User } from "@/services/api/user/api.user.get.int";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,6 +14,7 @@ export default function AccountPage() {
     const [loading, setLoading] = useState(false);
     const [userData, setUserData] = useState<I_User | null>(null)
     const [storeData, setStoreData] = useState<I_Store | null>(null)
+    const [lang, setLang] = useState<I_Lang>({name: "ID"})
 
     useEffect(() => {
         const starterData = async () => {
@@ -24,6 +26,7 @@ export default function AccountPage() {
                     const datas: I_LoginData = JSON.parse(stored)
                     setUserData(datas.user)
                     setStoreData(datas.store)
+                    setLang(datas.lang)
 
                 } catch (error) {
                     console.error("Failed to parse login data", error)
@@ -46,6 +49,7 @@ export default function AccountPage() {
                     <FailedGetData />
                 ) : (
                     <AccountMain 
+                        lang={lang}
                         userData={userData} 
                         storeData={storeData}
                     />

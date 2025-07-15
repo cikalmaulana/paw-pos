@@ -9,6 +9,7 @@ interface Props extends TextInputProps {
     type?: "text" | "password" | "number"
     stepperButtons?: boolean
     disabled?: boolean
+    hint?:string
 }
 
 export function Input({
@@ -16,6 +17,7 @@ export function Input({
     type = "text",
     stepperButtons = false,
     disabled = false,
+    hint="",
     ...props
 }: Props) {
     const [isPasswordVisible, setPasswordVisible] = useState(false)
@@ -50,7 +52,7 @@ export function Input({
     }, [props.value, type, stepperButtons])
 
     return (
-        <View className="flex flex-col w-full gap-2">
+        <View className={`flex flex-col w-full gap-2 ${disabled ? "opacity-60" : ""}`}>
             <View className="flex flex-row w-full">
                 <Text className="text-base text-primary font-semibold">{label}</Text>
                 {props.optional && (
@@ -106,6 +108,9 @@ export function Input({
                     </View>
                 )}
             </View>
+
+            {hint !== "" && (<Text className="-mt-1 px-1 text-description font-semibold">{hint}</Text>)}
+            
         </View>
     )
 }

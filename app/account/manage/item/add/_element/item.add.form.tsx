@@ -77,8 +77,6 @@ const ItemAddForm = forwardRef<ItemAddFormHandles, I_Props>((props, ref) => {
         else updateForm("nameWarn", "")
         if (form.price === '') return updateForm("priceWarn", "Price cannot be empty!")
         else updateForm("priceWarn", "")
-        if (form.stock === '') return updateForm("stockWarn", "Stock cannot be empty!")
-        else updateForm("stockWarn", "")
         
         props.onSubmit({
             name: form.name,
@@ -158,6 +156,7 @@ const ItemAddForm = forwardRef<ItemAddFormHandles, I_Props>((props, ref) => {
                             value={form.stock} 
                             keyboardType="numeric" 
                             type="number"
+                            optional={true}
                             stepperButtons={true}
                             onChangeText={text => updateForm("stock", text)} 
                         />
