@@ -1,4 +1,4 @@
-import { I_GetStoreResponse, I_GetStoreSettingResponse } from "./api.store.get.int"
+import { I_GetStoreAdmin, I_GetStoreResponse, I_GetStoreSettingResponse } from "./api.store.get.int"
 
 export async function API_GetStoreById(store_id: string): Promise<I_GetStoreResponse> {
     return {
@@ -87,5 +87,49 @@ export async function API_GetStoreSetting(id: string): Promise<I_GetStoreSetting
                 description: "Diskon berlaku untuk pembelian di atas Rp50.000"
             }
         }
+    }
+}
+
+export async function API_GetStoreAdmin(store_id: string): Promise<I_GetStoreAdmin> {
+    return {
+        meta: { status: "success", code: 200, message: "OK" },
+        data: [
+            {
+                id: "2",
+                name: "Steven Doe",
+                phone: "081234567891",
+                user_type: "admin",
+                membership: {
+                    is_member: true,
+                    member_type: "basic",
+                    date_joined: "2025-07-07T01:13:46.123Z",
+                    date_expired: "2025-08-07T01:13:46.123Z",
+                }
+            },
+            {
+                id: "3",
+                name: "Carla Doe",
+                phone: "081234567892",
+                user_type: "admin",
+                membership: {
+                    is_member: true,
+                    member_type: "basic",
+                    date_joined: "2025-07-07T01:13:46.123Z",
+                    date_expired: "2025-08-07T01:13:46.123Z",
+                }
+            }, 
+            {
+                id: "4",
+                name: "Kevin Doe",
+                phone: "081234567893",
+                user_type: "admin",
+                membership: {
+                    is_member: true,
+                    member_type: "basic",
+                    date_joined: "2025-07-07T01:13:46.123Z",
+                    date_expired: "2025-08-07T01:13:46.123Z",
+                }
+            }
+        ]
     }
 }

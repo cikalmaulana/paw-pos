@@ -29,9 +29,10 @@ export const locales = {
             ]
         },
         logout: {
-            title: "Are you sure you want to logout?",
+            title: "Logout",
             buttonCancel: "Cancel",
-            buttonLogout: "Logout"
+            buttonLogout: "Logout",
+            description: "Are you sure you want to logout?"
         },
         alert: {
             updateLanguageSuccess: "Update language success!",
@@ -68,9 +69,10 @@ export const locales = {
             ]
         },
         logout: {
-            title: "Apakah kamu yakin ingin keluar",
+            title: 'Keluar',
             buttonCancel: "Batal",
-            buttonLogout: "Keluar"
+            buttonLogout: "Keluar",
+            description: "Apakah kamu yakin ingin keluar"
         },
         alert: {
             updateLanguageSuccess: "Berhasil ganti bahasa!",

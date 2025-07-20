@@ -9,10 +9,14 @@ import { priceFormat } from "@/services/function/formatPrice"
 import { doLogout } from "@/services/function/logout"
 import { updateStoreData } from "@/services/function/updateStoreData"
 import { updateUserData } from "@/services/function/updateUserData"
+import { useLocale } from "@/services/function/useLocale"
 import { CommonActions, useNavigation } from "@react-navigation/native"
-import { lazy, Suspense, useEffect, useMemo, useState } from "react"
+import { lazy, Suspense, useEffect, useState } from "react"
 import { Dimensions, RefreshControl, ScrollView, Text, View } from "react-native"
+import AboutPage from "../about/about.main"
+import ContactSupport from "../cs/cs.main"
 import { locales } from "../locales"
+import PrivacyPolicy from "../policy/policy.main"
 import ModalChangeLanguage from "./account.modal.language"
 import { LogoutModal } from "./account.modal.logout"
 import AccountSettingList from "./account.setting.list"
@@ -44,11 +48,7 @@ export default function AccountMain(props: I_Props) {
 
     const screenHeight = Dimensions.get("window").height
 
-    const language = useMemo(() => getLocale(lang), [lang])
-    
-    function getLocale(lang: I_Lang): typeof locales["en"] {
-        return locales[lang.name.toLowerCase() as "en" | "id"]
-    }
+    const language = useLocale(lang, locales)
 
     const onRefresh = async () => {
         setRefreshing(true)
@@ -215,7 +215,13 @@ export default function AccountMain(props: I_Props) {
                     ) : manageOpen === 'admin' ? (
                         <Suspense fallback={<CE_Loading />}>
                             <ManageAdmin 
+                                storeId={props.storeData.id}
                                 handleBack={() => handleBack()}
+                                setUpAlert={(msg, isSuccess) => {
+                                    setAlertMsg(msg)
+                                    setAlertSuccess(isSuccess)
+                                    setShowAlert(true)
+                                }}
                             />
                         </Suspense>
                     ) : manageOpen === 'store' ? (
@@ -233,6 +239,27 @@ export default function AccountMain(props: I_Props) {
                     ) : manageOpen === 'report' ? (
                         <Suspense fallback={<CE_Loading />}>
                             <AccountReport 
+                                handleBack={() => handleBack()}
+                            />
+                        </Suspense>
+                    ) : manageOpen === 'privacypolicy' ? (
+                        <Suspense fallback={<CE_Loading />}>
+                            <PrivacyPolicy 
+                                lang={props.lang}
+                                handleBack={() => handleBack()}
+                            />
+                        </Suspense>
+                    ) : manageOpen === 'cs' ? (
+                        <Suspense fallback={<CE_Loading />}>
+                            <ContactSupport 
+                                lang={props.lang}
+                                handleBack={() => handleBack()}
+                            />
+                        </Suspense>
+                    ) : manageOpen === 'about' ? (
+                        <Suspense fallback={<CE_Loading />}>
+                            <AboutPage 
+                                lang={props.lang}
                                 handleBack={() => handleBack()}
                             />
                         </Suspense>
