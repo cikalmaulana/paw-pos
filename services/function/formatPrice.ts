@@ -1,7 +1,7 @@
-export const priceFormat = (price: string, currency: string) => {
-    const numberPrice = parseFloat(price);
+export const priceFormat = (price: string | number, currency: string) => {
+    const numberPrice = typeof price === "number" ? price : parseFloat(price);
 
-    if (isNaN(numberPrice)) return price;
+    if (isNaN(numberPrice)) return String(price);
 
     return new Intl.NumberFormat('id-ID', {
         style: 'currency',

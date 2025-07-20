@@ -239,7 +239,14 @@ export default function AccountMain(props: I_Props) {
                     ) : manageOpen === 'report' ? (
                         <Suspense fallback={<CE_Loading />}>
                             <AccountReport 
+                                storeId={props.storeData.id}
+                                lang={props.lang}
                                 handleBack={() => handleBack()}
+                                setupAlert={(msg, isSuccess) => {
+                                    setAlertMsg(msg)
+                                    setAlertSuccess(isSuccess)
+                                    setShowAlert(true)
+                                }}
                             />
                         </Suspense>
                     ) : manageOpen === 'privacypolicy' ? (

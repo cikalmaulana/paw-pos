@@ -22,7 +22,6 @@ export default function AboutPage(props: I_Props) {
         } else if (value.startsWith("@")) {
         Linking.openURL(`https://instagram.com/${value.replace("@", "")}`);
         } else {
-            // fallback for social labels like Facebook page
             Linking.openURL(`https://facebook.com/${value.replace(/\s/g, "")}`);
         }
     };
