@@ -102,7 +102,7 @@ export default function ReportProduct(props: I_Props) {
                         <CE_Search
                             value={searchTerm}
                             onChangeText={(text) => setSearchTerm(text)}
-                            placeholder="Search by name..."
+                            placeholder={language.product.search}
                             className=""
                         />
                     </View>
@@ -118,15 +118,15 @@ export default function ReportProduct(props: I_Props) {
 
                 <View className="flex flex-row gap-3 my-3">
                     <View className="flex-1">
-                        <CE_Button title="Save to PDF" />
+                        <CE_Button title={language.button.pdf} />
                     </View>
                     <View className="flex-1">
-                        <CE_Button title="Save to Excel" bgColor="bg-secondary"/>
+                        <CE_Button title={language.button.excel} bgColor="bg-secondary"/>
                     </View>
                 </View>
 
                 <Text className="text-primary text-lg font-semibold mb-2">
-                    Total : {filteredData.length} {filteredData.length > 1 ? "items" : "item"}
+                    Total : {filteredData.length} {filteredData.length > 1 ? language.product.units : language.product.unit}
                 </Text>
 
                 {filteredData.map((item) => (

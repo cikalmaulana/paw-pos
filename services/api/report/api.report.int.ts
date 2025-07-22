@@ -53,3 +53,26 @@ export interface I_ProfitAndLoss{
     gross_profit: string //laba kotor
     net_income: string // laba bersih 
 }
+
+export interface I_GetExpeseReportRequest {
+    store_id: string
+    date_start: string
+    date_end: string
+}
+
+export interface I_GetExpeseReportResponse{
+    meta: I_CommonMeta
+    data: I_ExpenseReport
+}
+
+export interface I_ExpenseReport{
+    total: string
+    expense: I_ExpenseData[]
+}
+
+export interface I_ExpenseData{
+    date: string
+    description: string
+    nominal: string
+    maker: string
+}

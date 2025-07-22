@@ -1,12 +1,13 @@
 import { CE_BackButton } from "@/components/BackButton";
+import { CE_Search } from "@/components/Search";
 import { I_Lang } from "@/services/api/other/api.language.int";
-import { API_GetProfitAndLossReport } from "@/services/api/report/api.report";
-import { I_ProfitAndLoss, I_ProfitAndLossRequest } from "@/services/api/report/api.report.int";
+import { API_GetExpenseReport } from "@/services/api/report/api.report";
+import { I_ExpenseReport, I_GetExpeseReportRequest } from "@/services/api/report/api.report.int";
 import { priceFormat } from "@/services/function/formatPrice";
 import { useLocale } from "@/services/function/useLocale";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { Pressable, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { locales } from "../locales";
 
@@ -17,37 +18,44 @@ interface I_Props {
     handleBack: () => void
 }
 
-export default function ReportProfitLoss(props: I_Props) {
-    const language = useLocale(props.lang, locales)
-    const [profitLossData, setProfitLossData] = useState<I_ProfitAndLoss>()
-    const [refreshing, setRefreshing] = useState(false)
+export default function ReportExpense(props: I_Props) {
+    const language = useLocale(props.lang, locales);
+    const [expenseData, setExpenseData] = useState<I_ExpenseReport>({
+        total: "0",
+        expense: [],
+    })
     const [dateStart, setDateStart] = useState("")
     const [dateEnd, setDateEnd] = useState("")
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false)
     const [activePickerType, setActivePickerType] = useState<"start" | "end" | null>(null)
-    const filterTypes = ["all", "daily", "weekly", "monthly"] as const
-    const [activeFilter, setActiveFilter] = useState<(typeof filterTypes)[number]>("all")
+    const [refreshing, setRefreshing] = useState(false)
+    const [sortBy, setSortBy] = useState<"default" | "asc" | "desc">("default")
+    const [searchTerm, setSearchTerm] = useState("")
 
-    
     useEffect(() => {
         getItemData()
     }, [])
 
+    const onRefresh = async () => {
+        setRefreshing(true)
+        await getItemData()
+        setRefreshing(false)
+    } 
+
     const getItemData = async () => {
         try {
-            const payload: I_ProfitAndLossRequest= {
+            const payload: I_GetExpeseReportRequest= {
                 store_id: props.storeId,
                 date_start: dateStart,
                 date_end: dateEnd
             }
-
-            const result = await API_GetProfitAndLossReport(payload)
+            const result = await API_GetExpenseReport(payload)
             if (result) {
                 if (result.meta.status !== 'success' || result.data == null) {
                     props.setUpAlert("Connection lost.", false)
                     return
                 }
-                setProfitLossData(result.data)
+                setExpenseData(result.data ?? { total: "0", expense: [] })
             } else {
                 props.setUpAlert("Connection lost.", false)
                 return
@@ -58,11 +66,17 @@ export default function ReportProfitLoss(props: I_Props) {
         }
     }
 
-    const onRefresh = async () => {
-        setRefreshing(true)
-        await getItemData()
-        setRefreshing(false)
-    } 
+    const toggleSort = () => {
+        if (sortBy === "default") setSortBy("desc")
+        else if (sortBy === "desc") setSortBy("asc")
+        else setSortBy("default")
+    }
+
+    const sortIcon = (
+        sortBy === "default" ? require("@/assets/icons/sort.png")
+        : sortBy === "asc" ? require("@/assets/icons/asc.png")
+        : require("@/assets/icons/desc.png")
+    )
 
     useEffect(() => {
         if(dateStart !== "" && dateEnd !== "") {
@@ -71,11 +85,24 @@ export default function ReportProfitLoss(props: I_Props) {
             setRefreshing(false)
         }
     },[dateStart, dateEnd])
-    
+
+    const filteredExpenseData = expenseData.expense
+        .filter((item) =>
+            item.maker.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .sort((a, b) => {
+            if (sortBy === "asc") {
+                return Number(a.nominal) - Number(b.nominal)
+            } else if (sortBy === "desc") {
+                return Number(b.nominal) - Number(a.nominal)
+            } else {
+                return 0
+            }
+        })
+
     return (
         <View>
-            <CE_BackButton lable={language.profit.title} onPress={props.handleBack} />
-
+            <CE_BackButton lable={language.expense.title} onPress={props.handleBack} />
             <ScrollView
                 className="min-h-screen"
                 refreshControl={
@@ -91,8 +118,26 @@ export default function ReportProfitLoss(props: I_Props) {
                 contentContainerStyle={{ paddingBottom: 700 }}
                 showsVerticalScrollIndicator={false}
             >
+                <View className="flex flex-row items-center m-3 gap-4">
+                    <View className="flex-1">
+                        <CE_Search
+                            value={searchTerm}
+                            onChangeText={(text) => setSearchTerm(text)}
+                            placeholder={language.expense.search}
+                            className=""
+                        />
+                    </View>
+
+                    <Pressable onPress={toggleSort}>
+                        <Image
+                            source={sortIcon}
+                            className="w-6 h-6"
+                            resizeMode="contain"
+                        />
+                    </Pressable>
+                </View>
                 <Text className="font-bold text-lg mb-2">Filter</Text>
-                <View className="flex-row items-center gap-3 px-3 mb-4">
+                <View className="flex-row items-center gap-3 px-3 mb-5">
                     <View className="flex-1">
                         <Text className="text-xs text-description  mb-1">{language.date.from}</Text>
                         <Pressable
@@ -122,54 +167,33 @@ export default function ReportProfitLoss(props: I_Props) {
                         </Pressable>
                     </View>
                 </View>
-                <View className="flex-row justify-center gap-1 px-3 mt-2 mb-3">
-                    {filterTypes.map((type) => {
-                        const isActive = activeFilter === type
-                        const label = language.profit.toggle[type]
-
-                        return (
-                            <TouchableOpacity
-                                key={type}
-                                onPress={() => setActiveFilter(type)}
-                                className={`px-4 py-2 rounded-full border ${
-                                    isActive 
-                                        ? "bg-white border-primary" 
-                                        : "bg-deact border-deact"
-                                }`}
-                            >
-                                <Text className={`font-semibold text-sm ${
-                                    isActive ? "text-primary" : "text-white"
-                                }`}>
-                                    {label}
-                                </Text>
-                            </TouchableOpacity>
-                        )
-                    })}
-                </View>
-
-
-                {profitLossData && (
-                    <View className="bg-white mx-3 my-3 rounded-2xl p-4 shadow-md">
-                        <Text className="text-primary text-base font-bold mb-4">{language.profit.table.title}</Text>
-
-                        <View className="flex-row justify-between mb-2">
-                            <Text className="text-description font-medium">{language.profit.table.revenue}</Text>
-                            <Text className="text-black font-semibold">{priceFormat(profitLossData.gross_revenue, "IDR")}</Text>
+                
+                <Text className="text-primary font-bold text-xl mb-2">
+                    Total: {priceFormat(expenseData.total, "IDR")}
+                </Text>
+                {filteredExpenseData.length > 0 ? (
+                    filteredExpenseData.map((item, index) => (
+                        <View key={index} className="bg-white shadow-sm rounded-xl p-4 mb-3 border border-gray-200">
+                        <View className="flex-row justify-between mb-1">
+                            <Text className="text-sm font-medium text-primary">
+                                {moment(item.date).format("DD MMM YYYY")}
+                            </Text>
+                            <Text className="text-sm font-semibold text-red-500">
+                                {priceFormat(item.nominal, "IDR")}
+                            </Text>
                         </View>
-                        <View className="flex-row justify-between mb-2">
-                            <Text className="text-description  font-medium">{language.profit.table.cost}</Text>
-                            <Text className="text-black font-semibold">{priceFormat(profitLossData.total_cost, "IDR")}</Text>
+                        <Text className="text-base text-gray-800 mb-1">
+                            {item.description}
+                        </Text>
+                        <Text className="text-xs text-gray-500 italic">
+                            {language.expense.by} : {item.maker}
+                        </Text>
                         </View>
-                        <View className="flex-row justify-between mb-2">
-                            <Text className="text-description  font-medium">{language.profit.table.profit}</Text>
-                            <Text className="text-secondary font-semibold">{priceFormat(profitLossData.gross_profit, "IDR")}</Text>
-                        </View>
-                        <View className="flex-row justify-between mt-3 pt-3 border-t border-deact">
-                            <Text className="text-gray-700 font-bold">{language.profit.table.income}</Text>
-                            <Text className="text-secondary font-bold">{priceFormat(profitLossData.net_income, "IDR")}</Text>
-                        </View>
-                    </View>
+                    ))
+                ) : (
+                    <Text className="text-center text-gray-400 mt-10">No expense data available</Text>
                 )}
+
             </ScrollView>
 
             <DateTimePickerModal

@@ -2,21 +2,26 @@ import { CE_BackButton } from "@/components/BackButton"
 import { CE_Button } from "@/components/Button"
 import { CE_Loading } from "@/components/Loading"
 import { CE_Search } from "@/components/Search"
+import { I_Lang } from "@/services/api/other/api.language.int"
 import { API_GetTransactionReport } from "@/services/api/report/api.report"
 import { I_TransactionReport } from "@/services/api/report/api.report.int"
 import { priceFormat } from "@/services/function/formatPrice"
+import { useLocale } from "@/services/function/useLocale"
 import moment from "moment"; // untuk formatting tanggal, opsional
 import { useEffect, useState } from "react"
 import { Image, Pressable, RefreshControl, ScrollView, Text, View } from "react-native"
 import DateTimePickerModal from "react-native-modal-datetime-picker"
+import { locales } from "../locales"
 
 interface I_Props {
+    lang: I_Lang
     storeId: string
     setUpAlert: (msg: string, isSuccess: boolean) => void
     handleBack: () => void
 }
 
-export default function ReportTransaction({ storeId, setUpAlert, handleBack }: I_Props) {
+export default function ReportTransaction({ storeId, lang, setUpAlert, handleBack }: I_Props) {
+    const language = useLocale(lang, locales)
     const [transactionData, setTransactionData] = useState<I_TransactionReport[]>([])
     const [filteredData, setFilteredData] = useState<I_TransactionReport[]>([])
     const [loading, setLoading] = useState(false)
@@ -119,7 +124,7 @@ export default function ReportTransaction({ storeId, setUpAlert, handleBack }: I
 
     return (
         <View>
-            <CE_BackButton lable="Transaction Report" onPress={handleBack} />
+            <CE_BackButton lable={language.transaction.title} onPress={handleBack} />
             {loading ? (
                 <CE_Loading />
             ) : (
@@ -148,17 +153,17 @@ export default function ReportTransaction({ storeId, setUpAlert, handleBack }: I
 
                     <View className="flex flex-row gap-3 mb-3">
                         <View className="flex-1">
-                            <CE_Button title="Save to PDF" onPress={() => generatePDF(transactionData)}/>
+                            <CE_Button title={language.button.pdf} onPress={() => generatePDF(transactionData)}/>
                         </View>
                         <View className="flex-1">
-                            <CE_Button title="Save to Excel" />
+                            <CE_Button title={language.button.excel} bgColor="bg-secondary"/>
                         </View>
                     </View>
 
                     <Text className="font-bold text-lg mb-2">Filter</Text>
                     <View className="flex-row items-center gap-3 px-3 mb-4">
                         <View className="flex-1">
-                            <Text className="text-xs text-gray-500 mb-1">From</Text>
+                            <Text className="text-xs text-gray-500 mb-1">{language.date.from}</Text>
                             <Pressable
                                 onPress={() => {
                                     setActivePickerType("start")
@@ -167,12 +172,12 @@ export default function ReportTransaction({ storeId, setUpAlert, handleBack }: I
                                 className="border border-gray-300 rounded-lg p-2"
                             >
                                 <Text className="text-sm text-gray-700">
-                                    {startDate ?? "Start Date"}
+                                    {startDate ?? language.date.start}
                                 </Text>
                             </Pressable>
                         </View>
                         <View className="flex-1">
-                            <Text className="text-xs text-gray-500 mb-1">To</Text>
+                            <Text className="text-xs text-gray-500 mb-1">{language.date.to}</Text>
                             <Pressable
                                 onPress={() => {
                                     setActivePickerType("end")
@@ -181,7 +186,7 @@ export default function ReportTransaction({ storeId, setUpAlert, handleBack }: I
                                 className="border border-gray-300 rounded-lg p-2"
                             >
                                 <Text className="text-sm text-gray-700">
-                                    {endDate ?? "End Date"}
+                                    {endDate ?? language.date.end}
                                 </Text>
                             </Pressable>
                         </View>
@@ -189,11 +194,11 @@ export default function ReportTransaction({ storeId, setUpAlert, handleBack }: I
 
                     <View className="flex-row justify-between items-center mb-3">
                         <Pressable onPress={() => changeSort("date")} className="flex-row items-center gap-2">
-                            <Text className="font-semibold text-base">Sort by Date</Text>
+                            <Text className="font-semibold text-base">{language.transaction.sort.date}</Text>
                             <Image source={sortIcon} style={{ width: 18, height: 18 }} />
                         </Pressable>
                         <Pressable onPress={() => changeSort("total")} className="flex-row items-center gap-2">
-                            <Text className="font-semibold text-base">Sort by Total</Text>
+                            <Text className="font-semibold text-base">{language.transaction.sort.total}</Text>
                             <Image source={sortIcon} style={{ width: 18, height: 18 }} />
                         </Pressable>
                     </View>
@@ -204,7 +209,7 @@ export default function ReportTransaction({ storeId, setUpAlert, handleBack }: I
                         <Text className="text-center text-gray-500 mt-10">No transactions found.</Text>
                     ) : (
                         <>
-                            <Text className="font-bold text-xl mb-3">Transaction List</Text>
+                            <Text className="font-bold text-xl mb-3">{language.transaction.list}</Text>
                             {filteredData.map((trx, idx) => {
                                 const isExpanded = expandedIds.includes(idx)
                                 return (

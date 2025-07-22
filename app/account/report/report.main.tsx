@@ -13,6 +13,7 @@ import { locales } from "./locales";
 const ReportProduct = lazy(() => import('./_element/report.product'))
 const ReportProfitLoss = lazy(() => import('./_element/report.profit.loss'))
 const ReportTransaction = lazy(() => import('./_element/report.transaction'))
+const ReportExpense = lazy(() => import('./_element/report.expense'))
 
 interface I_Props {
     storeId: string
@@ -106,6 +107,7 @@ export default function AccountReport(props: I_Props){
             ) : manageOpen === 'transcation' ? (
                 <Suspense fallback={<CE_Loading />}>
                     <ReportTransaction 
+                        lang={props.lang}
                         storeId={props.storeId}
                         handleBack={() => setManageOpen('')}
                         setUpAlert={props.setupAlert}
@@ -129,7 +131,16 @@ export default function AccountReport(props: I_Props){
                         lang={props.lang}
                     />
                 </Suspense>
-            ) : <></>}
+            ) : 
+                <Suspense fallback={<CE_Loading />}>
+                    <ReportExpense 
+                        storeId={props.storeId}
+                        handleBack={() => setManageOpen('')}
+                        setUpAlert={props.setupAlert}
+                        lang={props.lang}
+                    />
+                </Suspense>
+            }
 
         </View>
     )
