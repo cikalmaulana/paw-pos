@@ -82,7 +82,7 @@ export default function ManageItemView(props: I_Props) {
             setEditData({
                 currentItemName: selectedItem.name,
                 currentItemImg: selectedItem.image,
-                currentItemPrice: String(selectedItem.price),
+                currentItemPrice: String(selectedItem.selling_price),
                 currentItemDesc: selectedItem.description || ''
             })
         }

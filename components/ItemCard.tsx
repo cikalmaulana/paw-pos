@@ -144,3 +144,85 @@ export function CE_ItemCardHorizontal({
     )
 }
 
+interface I_ItemCardProductReport{
+    name: string
+    image: number
+    costPriceTitle: string
+    sellingPriceTitle: string
+    costPrice: string
+    sellingPrice: string
+    totalSellingTitle: string
+    totalSelling: string
+    salesProfitTitle: string
+    className?: string
+}
+
+export function CE_ItemCardProductReport({
+    name,
+    image,
+    costPrice,
+    costPriceTitle,
+    sellingPriceTitle,
+    sellingPrice,
+    totalSelling,
+    totalSellingTitle,
+    salesProfitTitle,
+    className
+}: I_ItemCardProductReport) {
+    const salesProfit =
+        (parseFloat(totalSelling) * parseFloat(sellingPrice)) -
+        (parseFloat(totalSelling) * parseFloat(costPrice));
+
+    return (
+        <View className={`bg-white rounded-2xl p-4 h-40 relative flex-row gap-4 ${className}`}>
+            <Image
+                source={image}
+                className="w-32 h-32 rounded-xl"
+                resizeMode="cover"
+            />
+
+            <View className="flex-1 justify-between">
+                <Text
+                    className="text-primary text-lg font-bold"
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    style={{ lineHeight: 22 }}
+                >
+                    {name}
+                </Text>
+
+                <View className="flex-row justify-between mt-1">
+                    <View className="flex-1 gap-1">
+                        <Text className="text-black text-sm font-medium">
+                            {costPriceTitle}
+                        </Text>
+                        <Text className="text-black text-sm font-medium">
+                            {sellingPriceTitle}
+                        </Text>
+                        <Text className="text-black text-sm font-medium">
+                            {totalSellingTitle}
+                        </Text>
+                        <Text className="text-black text-sm font-medium">
+                            {salesProfitTitle}
+                        </Text>
+                    </View>
+
+                    <View className="flex-1 items-end gap-1">
+                        <Text className="text-black text-sm font-bold">
+                            {priceFormat(costPrice, "IDR")}
+                        </Text>
+                        <Text className="text-black text-sm font-bold">
+                            {priceFormat(sellingPrice, "IDR")}
+                        </Text>
+                        <Text className="text-black text-sm font-bold">
+                            {totalSelling}
+                        </Text>
+                        <Text className="text-black text-sm font-bold">
+                            {priceFormat(salesProfit.toString(), "IDR")}
+                        </Text>
+                    </View>
+                </View>
+            </View>
+        </View>
+    );
+}

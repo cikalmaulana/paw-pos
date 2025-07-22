@@ -24,3 +24,17 @@ export interface I_GetTotalItemResponse {
     meta: I_CommonMeta
     totalItem: number
 }
+
+export interface I_GetMostSellingProductResponse{
+    meta: I_CommonMeta
+    data: I_MostSellingProduct[]
+}
+
+export interface I_MostSellingProduct{
+    id: string
+    name: string
+    image: number
+    cost_price: string
+    selling_price: string
+    total_selling: string
+}

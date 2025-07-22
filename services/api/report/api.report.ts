@@ -1,4 +1,4 @@
-import { I_GetReportResponse, I_GetTransactionReportResponse } from "./api.report.int";
+import { I_GetReportResponse, I_GetTransactionReportResponse, I_ProfitAndLossRequest, I_ProfitAndLossResponse } from "./api.report.int";
 
 export async function API_GetReport(id: string): Promise<I_GetReportResponse>{
     return {
@@ -67,5 +67,21 @@ export async function API_GetTransactionReport(id: string): Promise<I_GetTransac
                 ],
             },
         ],
+    }
+}
+
+export async function API_GetProfitAndLossReport(payload: I_ProfitAndLossRequest): Promise<I_ProfitAndLossResponse>{
+    return {
+        meta: {
+            status: "success",
+            code: 200,
+            message: "OK"
+        },
+        data: {
+            gross_profit: "3200000",      // Laba kotor = revenue - HPP
+            total_cost: "4800000",        // Total modal (COGS)
+            gross_revenue: "8000000",     // Omzet total dari penjualan
+            net_income: "2100000",        // Laba bersih = laba kotor - biaya lainnya
+        }
     }
 }

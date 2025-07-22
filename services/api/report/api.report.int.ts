@@ -35,3 +35,21 @@ export interface I_TransactionItem{
     selling_price: string
     qty: number
 }
+
+export interface I_ProfitAndLossRequest{
+    store_id: string
+    date_start: string
+    date_end: string
+}
+
+export interface I_ProfitAndLossResponse{
+    meta: I_CommonMeta
+    data: I_ProfitAndLoss
+}
+
+export interface I_ProfitAndLoss{
+    gross_revenue: string // total omset
+    total_cost: string // total modal
+    gross_profit: string //laba kotor
+    net_income: string // laba bersih 
+}

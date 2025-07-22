@@ -37,7 +37,7 @@ export default function ItemList(props: I_Props){
                     <View key={index} className="mb-4">
                         <CE_ItemCardHorizontal 
                             image={item.image}
-                            price={item.price}
+                            price={item.selling_price}
                             title={item.name}
                             deleteOnClick={() => {
                                 props.setSelectedItem(item)
@@ -47,7 +47,7 @@ export default function ItemList(props: I_Props){
                                 props.setSelectedItem(item)
                                 props.setOpenModal(prev => ({ ...prev, editItem: true }))
                             }}
-                            stock={item.stock}
+                            stock={item.stock ?? 0}
                         />
                     </View>
                 )

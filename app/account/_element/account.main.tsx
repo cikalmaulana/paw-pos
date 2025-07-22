@@ -240,7 +240,7 @@ export default function AccountMain(props: I_Props) {
                         <Suspense fallback={<CE_Loading />}>
                             <AccountReport 
                                 storeId={props.storeData.id}
-                                lang={props.lang}
+                                lang={lang}
                                 handleBack={() => handleBack()}
                                 setupAlert={(msg, isSuccess) => {
                                     setAlertMsg(msg)
@@ -252,21 +252,21 @@ export default function AccountMain(props: I_Props) {
                     ) : manageOpen === 'privacypolicy' ? (
                         <Suspense fallback={<CE_Loading />}>
                             <PrivacyPolicy 
-                                lang={props.lang}
+                                lang={lang}
                                 handleBack={() => handleBack()}
                             />
                         </Suspense>
                     ) : manageOpen === 'cs' ? (
                         <Suspense fallback={<CE_Loading />}>
                             <ContactSupport 
-                                lang={props.lang}
+                                lang={lang}
                                 handleBack={() => handleBack()}
                             />
                         </Suspense>
                     ) : manageOpen === 'about' ? (
                         <Suspense fallback={<CE_Loading />}>
                             <AboutPage 
-                                lang={props.lang}
+                                lang={lang}
                                 handleBack={() => handleBack()}
                             />
                         </Suspense>

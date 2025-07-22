@@ -6,10 +6,13 @@ import { I_Lang } from "@/services/api/other/api.language.int";
 import { I_Report } from "@/services/api/report/api.report.int";
 import { priceFormat } from "@/services/function/formatPrice";
 import { useLocale } from "@/services/function/useLocale";
-import { Suspense, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Image, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
-import ReportTransaction from "./_element/report.transaction";
 import { locales } from "./locales";
+
+const ReportProduct = lazy(() => import('./_element/report.product'))
+const ReportProfitLoss = lazy(() => import('./_element/report.profit.loss'))
+const ReportTransaction = lazy(() => import('./_element/report.transaction'))
 
 interface I_Props {
     storeId: string
@@ -19,10 +22,9 @@ interface I_Props {
 }
 
 export default function AccountReport(props: I_Props){
-    const [lang, setLang] = useState(props.lang);
     const [refreshing, setRefreshing] = useState(false)
     const [manageOpen, setManageOpen] = useState('')
-    const language = useLocale(lang, locales);
+    const language = useLocale(props.lang, locales);
     const reportMenus = Object.entries(language.main.menu); 
     const [reportData, setReportData] = useState<I_Report>({
         total:{
@@ -107,6 +109,24 @@ export default function AccountReport(props: I_Props){
                         storeId={props.storeId}
                         handleBack={() => setManageOpen('')}
                         setUpAlert={props.setupAlert}
+                    />
+                </Suspense>
+            ) : manageOpen === 'product' ? (
+                <Suspense fallback={<CE_Loading />}>
+                    <ReportProduct 
+                        storeId={props.storeId}
+                        handleBack={() => setManageOpen('')}
+                        setUpAlert={props.setupAlert}
+                        lang={props.lang}
+                    />
+                </Suspense>
+            ) : manageOpen === 'profitloss' ? (
+                <Suspense fallback={<CE_Loading />}>
+                    <ReportProfitLoss 
+                        storeId={props.storeId}
+                        handleBack={() => setManageOpen('')}
+                        setUpAlert={props.setupAlert}
+                        lang={props.lang}
                     />
                 </Suspense>
             ) : <></>}
