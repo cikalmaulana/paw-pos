@@ -2,6 +2,7 @@ import { CE_Card } from "@/components/Card";
 import { Image, Pressable, Text, View } from "react-native";
 
 interface I_Props{
+    title:string
     setManageItemOpen:(manage: string)=>void
     manageItemList: { key: string; label: string, image: number }[]
 }
@@ -12,7 +13,7 @@ export function ManageItemList(props: I_Props) {
             className="flex flex-col gap-3"
         >
             <Text className="text-description mb-2 font-semibold">
-                Manage Account Items & Stock
+                {props.title}
             </Text>
             <CE_Card className="bg-white !shadow-none p-3">
                 <View className="flex flex-col">

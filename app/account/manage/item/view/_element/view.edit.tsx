@@ -3,9 +3,11 @@ import { Input } from "@/components/Input";
 import { I_Menu } from "@/services/api/item/api.item.get.int";
 import React from "react";
 import { Dimensions, Image, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { locales } from "../../locales";
 import { EditData, EditDataWarn } from "../view.main";
 
 interface I_Props{
+    language: typeof locales["id"]
     modalOpen: boolean
     selectedItem: I_Menu
     editData: EditData
@@ -40,9 +42,9 @@ export default function ItemEdit(props: I_Props) {
                             keyboardShouldPersistTaps="handled"
                             showsVerticalScrollIndicator={false}
                         >
-                            <Text className="text-xl text-primary font-bold mb-4">Edit Item</Text>
+                            <Text className="text-xl text-primary font-bold mb-4">{props.language.view.modal.edit.title}</Text>
 
-                            <Text className="text-primary text-lg font-semibold mb-2">Image</Text>
+                            <Text className="text-primary text-lg font-semibold mb-2">{props.language.view.modal.edit.image}</Text>
                             <View className="relative w-full h-56 mb-4">
                                 <Image
                                     source={typeof props.editData.currentItemImg === 'string' ? { uri: props.editData.currentItemImg } : props.editData.currentItemImg}
@@ -54,7 +56,7 @@ export default function ItemEdit(props: I_Props) {
                                     className="absolute inset-0 items-center justify-center"
                                 >
                                     <Text className="text-secondary border border-secondary px-3 py-1 rounded-full bg-white/60 text-lg">
-                                        Change Image
+                                        {props.language.view.modal.edit.change}
                                     </Text>
                                 </Pressable>
                             </View>
@@ -64,8 +66,8 @@ export default function ItemEdit(props: I_Props) {
 
                             <View className="flex flex-col gap-4 mb-4">
                                 <Input
-                                    label="Name"
-                                    placeholder="Item Name"
+                                    label={props.language.view.modal.edit.name}
+                                    placeholder={props.language.view.modal.edit.name}
                                     value={props.editData.currentItemName}
                                     onChangeText={(text) => props.setEditData(prev => ({
                                         ...prev,
@@ -77,8 +79,8 @@ export default function ItemEdit(props: I_Props) {
                                 )}
 
                                 <Input
-                                    label="Price"
-                                    placeholder="Price"
+                                    label={props.language.view.modal.edit.price}
+                                    placeholder={props.language.view.modal.edit.price}
                                     keyboardType="numeric"
                                     value={props.editData.currentItemPrice}
                                     onChangeText={(text) => props.setEditData(prev => ({
@@ -91,8 +93,8 @@ export default function ItemEdit(props: I_Props) {
                                 )}
 
                                 <Input
-                                    label="Description"
-                                    placeholder="Description"
+                                    label={props.language.view.modal.edit.description}
+                                    placeholder={props.language.view.modal.edit.description}
                                     multiline
                                     numberOfLines={3}
                                     value={props.editData.currentItemDesc}
@@ -104,14 +106,14 @@ export default function ItemEdit(props: I_Props) {
                             </View>
                             <View className="flex-row gap-3 mt-4">
                                 <CE_Button
-                                    title="Cancel"
+                                    title={props.language.button.cancel}
                                     bgColor="bg-primary"
                                     onPress={props.closeModal}
                                     className="flex-1 py-2"
                                     btnClassName="text-sm"
                                 />
                                 <CE_Button
-                                    title="Save"
+                                    title={props.language.button.save}
                                     onPress={() => props.doEditItem(props.selectedItem.id)}
                                     className="flex-1 py-2"
                                     btnClassName="text-sm"

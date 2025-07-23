@@ -1,3 +1,4 @@
+import { locales } from "@/app/account/manage/item/locales"
 import { priceFormat } from "@/services/function/formatPrice"
 import React from "react"
 import { Image, Text, View } from "react-native"
@@ -56,6 +57,7 @@ export function CE_ItemCard({
 }
 
 interface I_HorizontalCardProps{
+    language: typeof locales["id"]
     image: number 
     title: string
     price: string
@@ -67,6 +69,7 @@ interface I_HorizontalCardProps{
 }
 
 export function CE_ItemCardHorizontal({
+    language,
     image,
     title,
     price,
@@ -77,9 +80,9 @@ export function CE_ItemCardHorizontal({
     stock,
 }: I_HorizontalCardProps) {
     let stockWarning: string | null = null
-    if (stock === 0) stockWarning = "Empty"
-    else if (stock < 5) stockWarning = "Very Low"
-    else if (stock < 10) stockWarning = "Low Stock"
+    if (stock === 0) stockWarning = language.flag.stock.empty
+    else if (stock <= 5) stockWarning = language.flag.stock.lower
+    else if (stock <= 10) stockWarning = language.flag.stock.low
 
     return (
         <View className={`bg-white rounded-2xl p-4 h-36 relative ${className}`}>
@@ -121,7 +124,7 @@ export function CE_ItemCardHorizontal({
                         {deleteOnClick && (
                             <View className="flex-1">
                                 <CE_Button
-                                    title="Delete"
+                                    title={language.button.delete}
                                     className="!py-2 justify-center items-center"
                                     btnClassName="!text-sm"
                                     bgColor="bg-danger"
@@ -131,7 +134,7 @@ export function CE_ItemCardHorizontal({
                         )}
                         <View className="flex-1">
                             <CE_Button
-                                title={editLabel ?? "Edit Item"}
+                                title={editLabel ?? language.button.edit}
                                 className="!py-2 justify-center items-center"
                                 btnClassName="!text-sm"
                                 onPress={editOnClick}

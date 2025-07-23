@@ -11,8 +11,8 @@ interface Props {
 
 export function CE_Checkbox({ checked, label, className, onChange }: Props) {
     return (
-        <Pressable onPress={onChange} className={`flex-row items-center space-x-2 ${className}`}>
-            <View className="w-5 h-5 rounded-sm border border-gray-400 items-center justify-center bg-white">
+        <Pressable onPress={onChange} className={`flex-row items-center space-x-2 gap-1 ${className}`}>
+            <View className="w-5 h-5 rounded-full border border-gray-400 items-center justify-center bg-white">
                 {checked && <Ionicons name="checkmark" size={16} color="black" />}
             </View>
             <Text className="text-sm text-black">{label}</Text>

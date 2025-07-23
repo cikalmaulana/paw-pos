@@ -8,6 +8,7 @@ import { API_GetAllItem } from "@/services/api/item/api.item.get"
 import { I_Menu } from "@/services/api/item/api.item.get.int"
 import { useEffect, useState } from "react"
 import { View } from "react-native"
+import { locales } from "../locales"
 import ItemDelete from "./_element/view.delete"
 import ItemEdit from "./_element/view.edit"
 import ItemList from "./_element/view.list"
@@ -15,6 +16,7 @@ import { pickImage } from "./_function/do.pickImage"
 import { searchItemByName } from "./_function/do.searchItem"
 
 interface I_Props{
+    language: typeof locales["id"]
     handleBack:()=>void
     setShowAlert:(open: boolean)=>void
     setAlertMsg:(msg: string)=>void
@@ -221,10 +223,11 @@ export default function ManageItemView(props: I_Props) {
 
     return (
         <View>
-            <CE_BackButton lable="View All Item" onPress={() => props.handleBack()}/>
+            <CE_BackButton lable={props.language.view.title} onPress={() => props.handleBack()}/>
             <View className="flex flex-row items-center mb-4 gap-4">
                 <View className="flex-1">
                     <CE_Search
+                        placeholder={props.language.view.search}
                         value={filterState.search}
                         onChangeText={(text) => {
                             setFilterState(prev => ({
@@ -238,6 +241,7 @@ export default function ManageItemView(props: I_Props) {
 
             {filterState.isLoading ? <CE_Loading /> : (
                 <ItemList 
+                    language={props.language}
                     refreshing={refreshing}
                     totalData={filterState.totalData}
                     filteredItems={filterState.filteredItems}
@@ -249,6 +253,7 @@ export default function ManageItemView(props: I_Props) {
 
             {selectedItem && (
                 <ItemDelete 
+                    language={props.language}
                     modalOpen={openModal.deleteItem}
                     selectedItem={selectedItem}
                     doDelete={doDelete}
@@ -259,6 +264,7 @@ export default function ManageItemView(props: I_Props) {
             {selectedItem && (
                 <>
                     <ItemEdit 
+                        language={props.language}
                         modalOpen={openModal.editItem}
                         selectedItem={selectedItem}
                         editDataWarn={editDataWarn}

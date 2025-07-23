@@ -2,8 +2,10 @@ import { CE_Button } from "@/components/Button";
 import { I_Menu } from "@/services/api/item/api.item.get.int";
 import React from "react";
 import { Image, Modal, Pressable, Text, View } from "react-native";
+import { locales } from "../../locales";
 
 interface I_Props{
+    language: typeof locales["id"]
     modalOpen: boolean
     selectedItem: I_Menu
     doDelete:(id: string)=>void
@@ -41,19 +43,19 @@ export default function ItemDelete(props: I_Props) {
                     </Text>
         
                     <Text className="text-base text-center font-medium text-black mb-6">
-                        Are you sure you want to delete this item?
+                        {props.language.view.modal.delete}
                     </Text>
         
                     <View className="flex-row gap-3">
                         <CE_Button
-                            title="Delete"
+                            title={props.language.button.delete}
                             bgColor="bg-danger"
                             onPress={() => props.doDelete(props.selectedItem.id)}
                             className="flex-1 py-2"
                             btnClassName="text-sm"
                         />
                         <CE_Button 
-                            title="Cancel" 
+                            title={props.language.button.cancel}
                             onPress={() => props.setOpenModal(prev => ({ ...prev, deleteItem: false }))} 
                             className="flex-1 py-2"
                             btnClassName="text-sm"

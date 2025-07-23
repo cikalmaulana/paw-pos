@@ -7,11 +7,13 @@ import { API_GetAllItem } from "@/services/api/item/api.item.get";
 import { I_Menu } from "@/services/api/item/api.item.get.int";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
+import { locales } from "../locales";
 import StockEdit from "./_element/stock.item.edit";
 import StockItemList from "./_element/stock.item.list";
 import { searchItemByName } from "./_function/do.searchItem";
 
 interface I_Props{
+    language: typeof locales["id"]
     handleBack:()=>void
     setShowAlert:(open: boolean)=>void
     setAlertMsg:(msg: string)=>void
@@ -164,7 +166,7 @@ export default function ManageItemEditStock(props: I_Props) {
 
     return (
         <View>
-            <CE_BackButton lable="Edit Stock" onPress={() => props.handleBack()}/>
+            <CE_BackButton lable={props.language.edit.title} onPress={() => props.handleBack()}/>
             <View className="flex flex-row items-center mb-4 gap-4">
                 <View className="flex-1">
                     <CE_Search
@@ -176,6 +178,7 @@ export default function ManageItemEditStock(props: I_Props) {
 
             {itemState.isLoading ? <CE_Loading /> : (
                 <StockItemList 
+                    language={props.language}
                     refreshing={itemState.refreshing}
                     totalData={itemState.totalData}
                     filteredItems={itemState.filteredItems}
@@ -187,6 +190,7 @@ export default function ManageItemEditStock(props: I_Props) {
 
             {selectedItem && (
                 <StockEdit 
+                    language={props.language}
                     id={selectedItem.id}
                     editItemModalOpen={editStockState.editItemModalOpen}
                     currentItemImg={editStockState.currentItemImg}

@@ -1,7 +1,9 @@
 import CE_ModalConfirmation from "@/components/ModalConfirmation"
 import { I_User } from "@/services/api/user/api.user.get.int"
+import { locales } from "../locales"
 
 interface I_Props {
+    language: typeof locales["id"]
     isOpen: boolean
     adminData: I_User | undefined
     setIsOpen: (open: boolean) => void
@@ -20,11 +22,12 @@ export default function ViewAdminDelete(props: I_Props) {
         <>
             <CE_ModalConfirmation 
                 isOpen={props.isOpen}
-                title="Delete Admin"
-                description="This action is permanent and cannot be undone.
-                            Are you sure you want to delete this admin?"
+                title={props.language.modal.delete.title}
+                description={props.language.modal.delete.hint}
                 setIsOpen={props.setIsOpen}
                 onConfirm={doDeleteAdmin}
+                cancelText={props.language.button.cancel}
+                confirmText={props.language.button.confirm}
                 danger={true}
             />
         </>

@@ -1,8 +1,10 @@
 import { CE_Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { Dimensions, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { locales } from "../../locales";
 
 interface I_Props{
+    language: typeof locales["id"]
     editCategoryOpen: boolean
     currentCategoryName: string
     currentCategoryNameWarn: string
@@ -40,12 +42,12 @@ export default function CategoryEdit(props: I_Props){
                             contentContainerStyle={{ paddingBottom: 16 }}
                             keyboardShouldPersistTaps="handled"
                         >
-                            <Text className="text-xl text-primary font-bold mb-4">Edit Category</Text>
+                            <Text className="text-xl text-primary font-bold mb-4">{props.language.cat.list.modal.title}</Text>
 
                             <View className="flex flex-col justify-center gap-4 mb-4">
                                 <Input
-                                    label="Category Name"
-                                    placeholder="Category name"
+                                    label={props.language.cat.list.modal.name}
+                                    placeholder={props.language.cat.list.modal.name}
                                     stepperButtons 
                                     value={props.currentCategoryName}
                                     onChangeText={(text) =>
@@ -61,14 +63,14 @@ export default function CategoryEdit(props: I_Props){
 
                         <View className="flex-row gap-3 mt-4">
                             <CE_Button
-                                title="Cancel"
+                                title={props.language.button.cancel}
                                 bgColor="bg-primary"
                                 onPress={props.cancelEdit}
                                 className="flex-1 py-2"
                                 btnClassName="text-sm"
                             />
                             <CE_Button
-                                title="Save"
+                                title={props.language.button.save}
                                 onPress={() => props.saveEditCategory(props.id)}
                                 className="flex-1 py-2"
                                 btnClassName="text-sm"

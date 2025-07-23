@@ -1,5 +1,5 @@
 import { LoginRegisterLayout } from "@/components/LoginRegisterHeader";
-import { I_User } from "@/services/api/api.user.get.int";
+import { I_User } from "@/services/api/user/api.user.get.int";
 import { View } from "react-native";
 
 interface I_Props{

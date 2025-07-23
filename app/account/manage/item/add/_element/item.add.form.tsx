@@ -10,6 +10,7 @@ import { useCameraPermissions } from 'expo-camera';
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import CategoryAddNew from "../../category/_element/category.add";
+import { locales } from "../../locales";
 import { pickImage } from "../_function/do.pickImage";
 
 export interface ItemAddFormHandles {
@@ -17,6 +18,7 @@ export interface ItemAddFormHandles {
 }
 
 interface I_Props {
+    language: typeof locales["id"]
     onSubmit: (data: {
         name: string,
         sellingPrice: string,
@@ -195,7 +197,7 @@ const ItemAddForm = forwardRef<ItemAddFormHandles, I_Props>((props, ref) => {
                     showsVerticalScrollIndicator={false}
                 >
                     <View className="flex flex-row">
-                        <Text className="text-primary font-bold mb-4">Add Image</Text>
+                        <Text className="text-primary font-bold mb-4">{props.language.add.image}</Text>
                         <Text className="text-xs text-gray-500">*Optional</Text>
                     </View>
                     <View className="relative w-full h-56 mb-4">
@@ -211,42 +213,42 @@ const ItemAddForm = forwardRef<ItemAddFormHandles, I_Props>((props, ref) => {
                             className="absolute inset-0 items-center justify-center"
                         >
                             <Text className="text-secondary border border-secondary px-3 py-1 rounded-full bg-white/60 text-lg">
-                                {form.image === '' ? "Choose Image" : "Change Image"}
+                                {form.image === '' ? props.language.add.choose : props.language.add.change}
                             </Text>
                         </Pressable>
                     </View>
 
                     <View className="gap-4 mb-4">
                         <Input 
-                            label="Name" 
-                            placeholder="Name"
+                            label={props.language.add.name} 
+                            placeholder={props.language.add.name}
                             value={form.name} 
                             onChangeText={text => updateForm("name", text)} 
                         />
                         {form.nameWarn && <Text className="text-danger -mt-3">{form.nameWarn}</Text>}
 
                         <Input 
-                            label="Cost Price" 
-                            placeholder="Cost Price"
+                            label={props.language.add.costp} 
+                            placeholder={props.language.add.costp}
                             value={form.cost_price} 
                             keyboardType="numeric" 
                             onChangeText={text => updateForm("cost_price", text)} 
-                            hint="Hanya berisi angka. Contoh 20000 untuk Rp20.000"
+                            hint={props.language.add.hint}
                         />
                         {form.priceWarn && <Text className="text-danger -mt-3">{form.priceWarn}</Text>}
 
                         <Input 
-                            label="Selling Price" 
-                            placeholder="Selling Price"
+                            label={props.language.add.sellingp} 
+                            placeholder={props.language.add.sellingp}
                             value={form.selling_price} 
                             keyboardType="numeric" 
                             onChangeText={text => updateForm("selling_price", text)} 
-                            hint="Hanya berisi angka. Contoh 20000 untuk Rp20.000"
+                            hint={props.language.add.hint}
                         />
                         {form.priceWarn && <Text className="text-danger -mt-3">{form.priceWarn}</Text>}
 
                         <Input 
-                            label="Unit" 
+                            label={props.language.add.unit} 
                             placeholder="cth: pcs / kg"
                             value={form.unit_type} 
                             onChangeText={text => updateForm("unit_type", text)} 
@@ -256,7 +258,7 @@ const ItemAddForm = forwardRef<ItemAddFormHandles, I_Props>((props, ref) => {
                         <View className="flex flex-row gap-3 items-end">
                             <View className="flex-1">
                                 <CE_Dropdown
-                                    label="Category" // hilangkan label atasnya
+                                    label={props.language.add.category}
                                     selected={
                                         categoryData?.find(cat => cat.id === form.category?.id)?.name ?? ''
                                     }
@@ -274,7 +276,7 @@ const ItemAddForm = forwardRef<ItemAddFormHandles, I_Props>((props, ref) => {
                             </View>
 
                             <CE_Button
-                                title="Add"
+                                title={props.language.button.add}
                                 bgColor="bg-secondary"
                                 className="px-4"
                                 onPress={() => setAddNewCategory(prev => ({
@@ -285,8 +287,8 @@ const ItemAddForm = forwardRef<ItemAddFormHandles, I_Props>((props, ref) => {
                         </View>
 
                         <Input 
-                            label="Description" 
-                            placeholder="Description"
+                            label={props.language.add.description} 
+                            placeholder={props.language.add.description}
                             value={form.desc} 
                             multiline={true}
                             numberOfLines={3} 
@@ -295,8 +297,8 @@ const ItemAddForm = forwardRef<ItemAddFormHandles, I_Props>((props, ref) => {
                         />
 
                         <Input 
-                            label="Stock" 
-                            placeholder="Stock"
+                            label={props.language.add.stock} 
+                            placeholder={props.language.add.stock}
                             value={form.stock} 
                             keyboardType="numeric" 
                             type="number"
@@ -309,14 +311,14 @@ const ItemAddForm = forwardRef<ItemAddFormHandles, I_Props>((props, ref) => {
                         <View className="flex-row gap-2 items-center">
                             <Pressable onPress={openScanner} className="flex-row items-center gap-2 bg-white px-3 py-2 rounded-2xl border border-primary">
                                 <Image source={require('@/assets/icons/scan.png')} style={{ width: 24, height: 24 }} />
-                                <Text>{form.code ? "Change Barcode" : "Add Barcode"}</Text>
+                                <Text>{form.code ? props.language.add.editbarcode : props.language.add.barcode}</Text>
                                 <Text className="text-xs text-gray-500 -ms-1">*Optional</Text>
                             </Pressable>
                             {form.code && <Text className="text-primary font-semibold">Code: {form.code}</Text>}
                         </View>
                     </View>
 
-                    <CE_Button title="Save" onPress={handleSubmit} className="py-2" />
+                    <CE_Button title={props.language.button.save} onPress={handleSubmit} className="py-2" />
 
                     <CategoryAddNew 
                         addCatModalOpen={addNewCategory.addCatModalOpen}

@@ -2,17 +2,21 @@ import { CE_BackButton } from "@/components/BackButton";
 import { CE_Card } from "@/components/Card";
 import { CE_Loading } from "@/components/Loading";
 import { API_GetTotalItem } from "@/services/api/item/api.item.get";
+import { I_Lang } from "@/services/api/other/api.language.int";
 import { I_Store } from "@/services/api/store/api.store.int";
+import { useLocale } from "@/services/function/useLocale";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { ManageItemList } from "./_element/manage.item.list";
 import AddNewItem from "./add/item.add.main";
+import { locales } from "./locales";
 
 const ManageItemView = lazy(() => import("./view/view.main"));
 const ManageItemEditStock = lazy(() => import("./stock/stock.main"))
 const ManageItemCategories = lazy(() => import("./category/category.main"))
 
 interface I_Props {
+    lang: I_Lang
     handleBack:()=>void
     storeData: I_Store
     setShowAlert:(open: boolean)=>void
@@ -21,11 +25,13 @@ interface I_Props {
 }
 
 export default function ManageItem(props: I_Props){
+    const language = useLocale(props.lang, locales);
+    
     const itemList = [
-        { key: 'viewItem', label: 'View all item', image:require("@/assets/icons/viewItem.png") },
-        { key: 'addItem', label: 'Add new item', image:require("@/assets/icons/addItem.png") },
-        { key: 'editStock', label: 'Edit stock', image:require("@/assets/icons/editStock.png")  },
-        { key: 'categories', label: 'Categories', image:require("@/assets/icons/categories.png")  }
+        { key: 'viewItem', label: language.list.view, image:require("@/assets/icons/viewItem.png") },
+        { key: 'addItem', label: language.list.add, image:require("@/assets/icons/addItem.png") },
+        { key: 'editStock', label: language.list.edit, image:require("@/assets/icons/editStock.png")  },
+        { key: 'categories', label: language.list.categories, image:require("@/assets/icons/categories.png")  }
     ]
 
     const [manageItemOpen, setManageItemOpen] = useState('')
@@ -58,7 +64,7 @@ export default function ManageItem(props: I_Props){
 
             {manageItemOpen === '' ? (
                 <>
-                    <CE_BackButton lable="Manage Item" onPress={props.handleBack}/>
+                    <CE_BackButton lable={language.title} onPress={props.handleBack}/>
                     <ScrollView
                         refreshControl={
                             <RefreshControl
@@ -84,7 +90,7 @@ export default function ManageItem(props: I_Props){
                             </CE_Card>
                         </View>
 
-                        <ManageItemList setManageItemOpen={setManageItemOpen} manageItemList={itemList}/>
+                        <ManageItemList setManageItemOpen={setManageItemOpen} manageItemList={itemList} title={language.list.title}/>
                     </ScrollView>
                 </>
             ) : manageItemOpen === 'viewItem' ? (
@@ -92,6 +98,7 @@ export default function ManageItem(props: I_Props){
                     <CE_Loading />
                 }>
                     <ManageItemView 
+                        language={language}
                         handleBack={() => setManageItemOpen('')}
                         setShowAlert={props.setShowAlert}
                         setAlertMsg={props.setAlertMsg}
@@ -100,6 +107,7 @@ export default function ManageItem(props: I_Props){
                 </Suspense>
             ) : manageItemOpen === 'addItem' ? (
                 <AddNewItem 
+                    language={language}
                     hahandleBack={() => setManageItemOpen('')}
                     setShowAlert={props.setShowAlert}
                     setAlertMsg={props.setAlertMsg}
@@ -110,6 +118,7 @@ export default function ManageItem(props: I_Props){
                     <CE_Loading />
                 }>
                     <ManageItemEditStock 
+                        language={language}
                         handleBack={() => setManageItemOpen('')}
                         setShowAlert={props.setShowAlert}
                         setAlertMsg={props.setAlertMsg}
@@ -121,6 +130,7 @@ export default function ManageItem(props: I_Props){
                     <CE_Loading />
                 }>
                     <ManageItemCategories 
+                        language={language}
                         handleBack={() => setManageItemOpen('')}
                         setShowAlert={props.setShowAlert}
                         setAlertMsg={props.setAlertMsg}

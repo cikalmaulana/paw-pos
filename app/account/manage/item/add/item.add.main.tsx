@@ -3,9 +3,11 @@ import { API_AddItem } from "@/services/api/item/api.item.add";
 import { I_AddItemRequest } from "@/services/api/item/api.item.add.int";
 import { useRef } from "react";
 import { View } from "react-native";
+import { locales } from "../locales";
 import ItemAddForm, { ItemAddFormHandles } from "./_element/item.add.form";
 
 interface I_Props {
+    language: typeof locales["id"]
     hahandleBack: (item: string) => void
     setShowAlert: (open: boolean) => void
     setAlertMsg: (msg: string) => void
@@ -57,8 +59,13 @@ export default function AddNewItem(props: I_Props) {
 
     return (
         <View>
-            <CE_BackButton lable="Add New Item" onPress={safetyBack} />
-            <ItemAddForm ref={formRef} onSubmit={saveItem} alertSetup={alertSetup}/>
+            <CE_BackButton lable={props.language.add.title} onPress={safetyBack} />
+            <ItemAddForm 
+                language={props.language}
+                ref={formRef} 
+                onSubmit={saveItem} 
+                alertSetup={alertSetup}
+            />
         </View>
     );
 }

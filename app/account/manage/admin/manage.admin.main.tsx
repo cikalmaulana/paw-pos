@@ -1,20 +1,26 @@
 import { CE_BackButton } from "@/components/BackButton";
 import { CE_Button } from "@/components/Button";
 import { CE_Card } from "@/components/Card";
+import { I_Lang } from "@/services/api/other/api.language.int";
 import { API_GetStoreAdmin } from "@/services/api/store/api.store.get";
 import { I_User } from "@/services/api/user/api.user.get.int";
+import { useLocale } from "@/services/function/useLocale";
 import { useEffect, useState } from "react";
 import { Image, KeyboardAvoidingView, Platform, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import AddAdmin from "./_element/manage.admin.add";
 import ViewAdminDelete from "./_element/manage.admin.delete";
+import { locales } from "./locales";
 
 interface I_Props {
+    lang: I_Lang
     storeId: string
     handleBack:()=>void
     setUpAlert:(msg: string, isSuccess: boolean)=>void
 }
 
 export default function ManageAdmin(props: I_Props){
+    const language = useLocale(props.lang, locales)
+    
     const [adminList, setAdminList] = useState<I_User[]>([])
     const [deleteAdminOpen, setDeleteAdminOpen] = useState(false)
     const [adminOnSelect, setAdminOnSelect] = useState<I_User | undefined>()
@@ -58,7 +64,7 @@ export default function ManageAdmin(props: I_Props){
 
     return (
         <View>
-            <CE_BackButton lable="View Admin" onPress={props.handleBack}/>
+            <CE_BackButton lable={language.title} onPress={props.handleBack}/>
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -80,7 +86,7 @@ export default function ManageAdmin(props: I_Props){
                     keyboardShouldPersistTaps="handled"
                     className="min-h-screen"
                 >
-                    <CE_Button title="Add Admin" onPress={() => setAddAdminModalOpen(true)}/>
+                    <CE_Button title={language.button.add} onPress={() => setAddAdminModalOpen(true)}/>
 
                     <CE_Card className="bg-white !shadow-none p-3 mt-5">
                         <View className="flex flex-col">
@@ -118,6 +124,7 @@ export default function ManageAdmin(props: I_Props){
 
             {deleteAdminOpen && (
                 <ViewAdminDelete 
+                    language={language}
                     adminData={adminOnSelect} 
                     isOpen={deleteAdminOpen} 
                     setIsOpen={(open) => setDeleteAdminOpen(open)}
@@ -127,6 +134,7 @@ export default function ManageAdmin(props: I_Props){
 
             {addAdminModalOpen && (
                 <AddAdmin 
+                    language={language}
                     isOpen={addAdminModalOpen}
                     setIsOpen={setAddAdminModalOpen}
                 />

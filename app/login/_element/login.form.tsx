@@ -2,7 +2,7 @@ import { CE_Alert } from "@/components/Alert";
 import { CE_Button } from "@/components/Button";
 import { CE_Checkbox } from "@/components/Checkbox";
 import { Input } from "@/components/Input";
-import { I_User } from "@/services/api/api.user.get.int";
+import { I_User } from "@/services/api/user/api.user.get.int";
 import { isPhoneValid } from "@/services/function/isPhoneValid";
 import { CommonActions } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
@@ -106,6 +106,7 @@ export function LoginForm(props: I_Props) {
                         label="Password"
                         placeholder="password"
                         value={password}
+                        type="password"
                         onChangeText={setPassword}
                     />
                 </View>

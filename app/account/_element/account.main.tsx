@@ -205,6 +205,7 @@ export default function AccountMain(props: I_Props) {
                     ) : manageOpen === 'item' ? (
                         <Suspense fallback={<CE_Loading />}>
                             <ManageItem 
+                                lang={lang}
                                 handleBack={() => handleBack()}
                                 storeData={storeData}
                                 setShowAlert={setShowAlert}
@@ -215,6 +216,7 @@ export default function AccountMain(props: I_Props) {
                     ) : manageOpen === 'admin' ? (
                         <Suspense fallback={<CE_Loading />}>
                             <ManageAdmin 
+                                lang={lang}
                                 storeId={props.storeData.id}
                                 handleBack={() => handleBack()}
                                 setUpAlert={(msg, isSuccess) => {

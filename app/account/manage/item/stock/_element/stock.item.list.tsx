@@ -2,8 +2,10 @@ import { CE_ItemCardHorizontal } from "@/components/ItemCard"
 import { I_Menu } from "@/services/api/item/api.item.get.int"
 import { useState } from "react"
 import { Image, Pressable, RefreshControl, ScrollView, Text, View } from "react-native"
+import { locales } from "../../locales"
 
 interface I_Props{
+    language: typeof locales["id"]
     refreshing: boolean
     totalData: number
     filteredItems: I_Menu[]
@@ -22,8 +24,11 @@ export default function StockItemList(props: I_Props) {
     const [sortBy, setSortBy] = useState<"default" | "asc" | "desc">("default")
 
     const sortedItems = [...props.filteredItems]
-    if (sortBy === "asc") sortedItems.sort((a, b) => a.stock - b.stock)
-    else if (sortBy === "desc") sortedItems.sort((a, b) => b.stock - a.stock)
+    if (sortBy === "asc") {
+        sortedItems.sort((a, b) => (a.stock ?? 0) - (b.stock ?? 0));
+    } else if (sortBy === "desc") {
+        sortedItems.sort((a, b) => (b.stock ?? 0) - (a.stock ?? 0));
+    }
 
     return (
         <ScrollView 
@@ -43,7 +48,7 @@ export default function StockItemList(props: I_Props) {
         >
             <View className="flex flex-row justify-between items-center mb-2">
                 <Text className="text-primary text-lg font-semibold">
-                    Total : {props.totalData} {props.totalData > 1 ? "items" : "item"}
+                    Total : {props.totalData} {props.totalData > 1 ? props.language.edit.unit.unit : props.language.edit.unit.units}
                 </Text>
 
                 <Pressable 
@@ -56,7 +61,7 @@ export default function StockItemList(props: I_Props) {
                         })
                     }}
                 >
-                    <Text className="text-primary font-semibold text-lg"> Sort </Text>
+                    <Text className="text-primary font-semibold text-lg"> {props.language.edit.sort} </Text>
                     {sortBy === "default" ? (
                         <Image 
                             source={require("@/assets/icons/sort.png")}
@@ -80,19 +85,20 @@ export default function StockItemList(props: I_Props) {
                 return (
                     <View key={index} className="mb-4">
                         <CE_ItemCardHorizontal 
+                            language={props.language}
                             image={item.image}
-                            price={item.price}
+                            price={item.selling_price}
                             title={item.name}
-                            editLabel="Edit Stock"
+                            editLabel={props.language.edit.btnedit}
                             editOnClick={() => {
                                 props.setSelectedItem(item)
                                 props.setEditStockState(prev => ({
                                     ...prev,
-                                    currentStock: item.stock.toString(),
+                                    currentStock: item.stock ? item.stock.toString() : "0",
                                     editItemModalOpen: true,
                                 }))
                             }}                                    
-                            stock={item.stock}
+                            stock={item.stock ?? 0}
                         />
                     </View>
                 )

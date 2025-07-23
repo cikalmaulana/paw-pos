@@ -8,12 +8,14 @@ import { API_AddCategory, API_EditCategory } from "@/services/api/category/api.c
 import { I_EditCategoryRequest, I_EditCategoryResponse } from "@/services/api/category/api.category.set.int";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
+import { locales } from "../locales";
 import CategoryAddNew from "./_element/category.add";
 import CategoryEdit from "./_element/category.edit";
 import CategoryList from "./_element/category.list";
 import { searchCategoryByName } from "./_function/do.searchItem";
 
 interface I_Props{
+    language: typeof locales["id"]
     handleBack:()=>void
     setShowAlert:(open: boolean)=>void
     setAlertMsg:(msg: string)=>void
@@ -172,7 +174,7 @@ export default function ManageItemCategories(props: I_Props){
 
     return (
         <View>
-            <CE_BackButton lable="Manage Categories" onPress={() => props.handleBack()}/>
+            <CE_BackButton lable={props.language.cat.title} onPress={() => props.handleBack()}/>
             <View className="flex flex-row items-center mb-4 gap-4">
                 <View className="flex-1">
                     <CE_Search
@@ -183,7 +185,7 @@ export default function ManageItemCategories(props: I_Props){
             </View>
 
             <CE_Button
-                title="Add New Category"
+                title={props.language.cat.btnadd}
                 className="mb-3"
                 onPress={() => setAddNewCategory(prev => ({
                     ...prev,
@@ -193,6 +195,7 @@ export default function ManageItemCategories(props: I_Props){
 
             {isLoading ? <CE_Loading /> : (
                 <CategoryList 
+                    language={props.language.cat}
                     refreshing={refreshing}
                     filteredCategory={filteredCategory}
                     setSelectedCategory={setSelectedCategory}
@@ -203,6 +206,7 @@ export default function ManageItemCategories(props: I_Props){
             
             {selectedCategory && (
                 <CategoryEdit 
+                    language={props.language}
                     editCategoryOpen={editCategory.editCategoryOpen}
                     currentCategoryName={editCategory.currentCategoryName}
                     currentCategoryNameWarn={editCategory.currentCategoryNameWarn}

@@ -1,6 +1,6 @@
 import { CE_Button } from "@/components/Button";
 import { LoginRegisterLayout } from "@/components/LoginRegisterHeader";
-import { I_User } from "@/services/api/api.user.get.int";
+import { I_User } from "@/services/api/user/api.user.get.int";
 import { useState } from "react";
 import { ForgotForm } from "./login.forgot.main";
 import { LoginForm } from "./login.form";

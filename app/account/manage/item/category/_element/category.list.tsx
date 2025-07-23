@@ -1,8 +1,10 @@
 import { CE_Card } from "@/components/Card";
 import { I_Category } from "@/services/api/category/api.category.get.int";
 import { Image, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import { locales } from "../../locales";
 
 interface I_Props{
+    language: typeof locales["id"]["cat"]
     refreshing: boolean
     filteredCategory: I_Category[]
     setSelectedCategory:(category: I_Category)=>void
@@ -31,7 +33,7 @@ export default function CategoryList(props: I_Props){
             contentContainerStyle={{ paddingBottom: 700 }}
         >
                 
-            <Text className="text-primary font-bold text-xl mb-3">Category List</Text>
+            <Text className="text-primary font-bold text-xl mb-3">{props.language.list.title}</Text>
             <CE_Card className="bg-white !shadow-none p-3">
                 <View className="flex flex-col">
                     {props.filteredCategory && props.filteredCategory.map((item, index) => {

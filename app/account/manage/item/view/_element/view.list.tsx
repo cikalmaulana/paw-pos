@@ -1,8 +1,10 @@
 import { CE_ItemCardHorizontal } from "@/components/ItemCard"
 import { I_Menu } from "@/services/api/item/api.item.get.int"
 import { RefreshControl, ScrollView, Text, View } from "react-native"
+import { locales } from "../../locales"
 
 interface I_Props{
+    language: typeof locales["id"]
     refreshing: boolean
     filteredItems: I_Menu[]
     totalData: number
@@ -31,11 +33,12 @@ export default function ItemList(props: I_Props){
             contentContainerStyle={{ paddingBottom: 700 }}
             showsVerticalScrollIndicator={false}
         >
-            <Text className="text-primary text-lg font-semibold mb-2">Total : {props.totalData} {props.totalData > 1 ? "items" : "item"}</Text>
+            <Text className="text-primary text-lg font-semibold mb-2">Total : {props.totalData} {props.totalData > 1 ? props.language.view.unit.units : props.language.view.unit.unit}</Text>
             {props.filteredItems !== null && props.filteredItems.map((item, index) => {
                 return (
                     <View key={index} className="mb-4">
                         <CE_ItemCardHorizontal 
+                            language={props.language}
                             image={item.image}
                             price={item.selling_price}
                             title={item.name}
