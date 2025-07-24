@@ -1,7 +1,7 @@
 import { CE_BackButton } from "@/components/BackButton";
 import { I_Lang } from "@/services/api/other/api.language.int";
+import { useLang } from "@/services/function/LangContext";
 import { useLocale } from "@/services/function/useLocale";
-import { useState } from "react";
 import { Linking, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { locales } from "./locales";
 
@@ -11,8 +11,8 @@ interface I_Props {
 }
 
 export default function AboutPage(props: I_Props) {
-    const [lang] = useState(props.lang);
-    const language = useLocale(lang, locales);
+    const { lang, setLang } = useLang()
+    const language = useLocale(lang, locales)
 
     const handleOpenLink = (value: string) => {
         if (value.startsWith("http") || value.startsWith("mailto")) {

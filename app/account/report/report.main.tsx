@@ -107,7 +107,6 @@ export default function AccountReport(props: I_Props){
             ) : manageOpen === 'transcation' ? (
                 <Suspense fallback={<CE_Loading />}>
                     <ReportTransaction 
-                        lang={props.lang}
                         storeId={props.storeId}
                         handleBack={() => setManageOpen('')}
                         setUpAlert={props.setupAlert}

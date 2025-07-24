@@ -2,10 +2,10 @@ import { CE_BackButton } from "@/components/BackButton"
 import { CE_Button } from "@/components/Button"
 import { CE_Loading } from "@/components/Loading"
 import { CE_Search } from "@/components/Search"
-import { I_Lang } from "@/services/api/other/api.language.int"
 import { API_GetTransactionReport } from "@/services/api/report/api.report"
 import { I_TransactionReport } from "@/services/api/report/api.report.int"
 import { priceFormat } from "@/services/function/formatPrice"
+import { useLang } from "@/services/function/LangContext"
 import { useLocale } from "@/services/function/useLocale"
 import moment from "moment"; // untuk formatting tanggal, opsional
 import { useEffect, useState } from "react"
@@ -14,13 +14,13 @@ import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { locales } from "../locales"
 
 interface I_Props {
-    lang: I_Lang
     storeId: string
     setUpAlert: (msg: string, isSuccess: boolean) => void
     handleBack: () => void
 }
 
-export default function ReportTransaction({ storeId, lang, setUpAlert, handleBack }: I_Props) {
+export default function ReportTransaction({ storeId, setUpAlert, handleBack }: I_Props) {
+    const { lang, setLang } = useLang()
     const language = useLocale(lang, locales)
     const [transactionData, setTransactionData] = useState<I_TransactionReport[]>([])
     const [filteredData, setFilteredData] = useState<I_TransactionReport[]>([])

@@ -2,9 +2,9 @@
 import { I_LoginData } from "@/services/api/auth/api.login.int";
 import { I_Category } from "@/services/api/category/api.category.get.int";
 import { I_GetMenuResponse } from "@/services/api/item/api.item.get.int";
-import { I_Lang } from "@/services/api/other/api.language.int";
 import { I_Store } from "@/services/api/store/api.store.int";
 import { I_User } from "@/services/api/user/api.user.get.int";
+import { useLang } from "@/services/function/LangContext";
 import { useLocale } from "@/services/function/useLocale";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from '@react-navigation/native';
@@ -23,7 +23,7 @@ export default function Home() {
     const [userData, setUserData] = useState<I_User | null>(null)
     const [categoryData, setCategoryData] = useState<I_Category[] | null>(null)
     const [itemData, setItemData] = useState<I_GetMenuResponse | null>(null)
-    const [lang, setLang] = useState<I_Lang>({name: "ID"})
+    const { lang, setLang } = useLang()
     const language = useLocale(lang, locales)
 
     useFocusEffect(

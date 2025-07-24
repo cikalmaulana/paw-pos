@@ -6,6 +6,7 @@ import { I_Lang } from "@/services/api/other/api.language.int"
 import { I_Store } from "@/services/api/store/api.store.int"
 import { I_User } from "@/services/api/user/api.user.get.int"
 import { priceFormat } from "@/services/function/formatPrice"
+import { useLang } from "@/services/function/LangContext"
 import { doLogout } from "@/services/function/logout"
 import { updateStoreData } from "@/services/function/updateStoreData"
 import { updateUserData } from "@/services/function/updateUserData"
@@ -34,7 +35,6 @@ interface I_Props {
 }
 
 export default function AccountMain(props: I_Props) {
-    const [lang, setLang] = useState(props.lang)
     const [userData, setUserData] = useState<I_User>(props.userData)
     const [storeData, setStoreData] = useState<I_Store>(props.storeData)
     const [balance, setBalance] = useState(props.storeData.balance)
@@ -48,6 +48,7 @@ export default function AccountMain(props: I_Props) {
 
     const screenHeight = Dimensions.get("window").height
 
+    const { lang, setLang } = useLang()
     const language = useLocale(lang, locales)
 
     const onRefresh = async () => {
@@ -141,14 +142,12 @@ export default function AccountMain(props: I_Props) {
                         {manageOpen === 'lang' && (
                             <ModalChangeLanguage 
                                 isModalOpen={manageOpen === 'lang'}
-                                doRefresh={refreshLang}
                                 setIsModalOpen={() => setManageOpen('')}
                                 setUpAlert={(msg: string, isSuccess: boolean) => {
                                     setShowAlert(true)
                                     setAlertMsg(msg)
                                     setAlertSuccess(isSuccess)
                                 }}
-                                lang={lang}
                             />
                         )}
                         <View className="flex flex-row gap-2 items-center mb-4 mt-4">

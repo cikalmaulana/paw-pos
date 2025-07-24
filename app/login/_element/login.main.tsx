@@ -1,8 +1,8 @@
 import { CE_Alert } from "@/components/Alert";
 import { CE_Button } from "@/components/Button";
 import { LoginRegisterLayout } from "@/components/LoginRegisterHeader";
-import { I_Lang } from "@/services/api/other/api.language.int";
 import { I_User } from "@/services/api/user/api.user.get.int";
+import { useLang } from "@/services/function/LangContext";
 import { useLocale } from "@/services/function/useLocale";
 import { useState } from "react";
 import { View } from "react-native";
@@ -14,7 +14,7 @@ import LoginMembership from "./login.membership";
 import LoginMembershipExpired from "./login.membership.expired";
 
 export function LoginMain(){
-    const [lang, setLang] = useState<I_Lang>({name: "EN"})
+    const { lang, setLang } = useLang()
     const language = useLocale(lang, locales)
     
     const [isForgotOpen, setForgotOpen] = useState(false)

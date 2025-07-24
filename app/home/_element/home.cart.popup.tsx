@@ -53,19 +53,19 @@ export default function HomeCartPopup(props: I_Props) {
                     behavior={Platform.OS === "ios" ? "padding" : "height"}
                     className="w-full items-center"
                 >
+                    <Pressable onPress={props.setClose} className="flex flex-row items-center gap-2 absolute top-3 right-12 z-10">
+                        <Text className="text-danger text-sm font-bold">{props.language.button.close}</Text>
+                        <Image 
+                            source={require("@/assets/icons/cross.png")}
+                            style={{width:28, height: 28}}
+                        />
+                    </Pressable>
                     <ScrollView
                         style={{ width: width * 0.85, maxHeight: height * 0.8 }}
                         contentContainerStyle={{ padding: 16 }}
                         className="bg-white rounded-2xl"
                         keyboardShouldPersistTaps="handled"
                     >
-                        <Pressable onPress={props.setClose} className="flex flex-row items-center gap-2 absolute top-3 right-3 z-10">
-                            <Text className="text-danger text-sm font-bold">{props.language.button.close}</Text>
-                            <Image 
-                                source={require("@/assets/icons/cross.png")}
-                                style={{width:28, height: 28}}
-                            />
-                        </Pressable>
 
                         <Text className="text-primary font-bold text-xl mb-2 mt-6">
                             Total: {props.cartItem.items.length} {props.language.cart.item}
