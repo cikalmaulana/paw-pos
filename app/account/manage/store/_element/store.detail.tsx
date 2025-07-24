@@ -5,8 +5,10 @@ import { Input } from "@/components/Input";
 import { I_Store } from "@/services/api/store/api.store.int";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, RefreshControl, ScrollView, View } from "react-native";
+import { locales } from "../locales";
 
 interface I_Props{
+    language: typeof locales["id"]
     storeData: I_Store
     refreshing: boolean
     handleBack:()=>void
@@ -35,7 +37,7 @@ export default function StoreDetail(props: I_Props) {
 
     return (
         <View>
-            <CE_BackButton lable="Edit Store Detail" onPress={props.handleBack}/>
+            <CE_BackButton lable={props.language.detail.title} onPress={props.handleBack}/>
             <KeyboardAvoidingView 
                 behavior={Platform.OS === "ios" ? "padding" : "height"} 
                 keyboardVerticalOffset={100}
@@ -56,25 +58,25 @@ export default function StoreDetail(props: I_Props) {
                 >
                     <View className="flex flex-col gap-3">
                         <Input 
-                            label="Store Name"
-                            placeholder="Store Name"
+                            label={props.language.detail.name}
+                            placeholder={props.language.detail.name}
                             value={inputName}
                             onChangeText={setInputName}
                         />
                         <Input 
-                            label="Store Address"
-                            placeholder="Store Address"
+                            label={props.language.detail.address}
+                            placeholder={props.language.detail.address}
                             value={inputAddress}
                             onChangeText={setInputAddress}
                         />
                         <Input 
-                            label="Store Phone"
-                            placeholder="Store Phone"
+                            label={props.language.detail.phone}
+                            placeholder={props.language.detail.phone}
                             value={inputPhone}
                             onChangeText={setInputPhone}
                         />
                         <CE_Dropdown
-                            label="Store Type"
+                            label={props.language.detail.type}
                             selected={
                                 storeTypeList.find(opt => opt.value === inputStoreType)?.label ?? "-"
                             }
@@ -82,7 +84,7 @@ export default function StoreDetail(props: I_Props) {
                             onSelect={(val) => setStoreType(val)}
                         />
                         <CE_Button 
-                            title="Save"
+                            title={props.language.button.save}
                             onPress={doUpdateStoreDetail}
                             className="mt-3"
                         />

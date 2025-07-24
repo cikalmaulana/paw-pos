@@ -4,8 +4,10 @@ import { I_Menu } from "@/services/api/item/api.item.get.int";
 import { I_Cart } from "@/services/api/transactional/api.cart.int";
 import { priceFormat } from "@/services/function/formatPrice";
 import { FlatList, View } from "react-native";
+import { locales } from "../locales";
 
 interface I_Props{
+    language: typeof locales["id"]
     item: I_Menu[]
     selectedItem:(item: I_Menu)=>void
     cartItem: I_Cart
@@ -33,7 +35,7 @@ export default function HomeItemList(props: I_Props) {
                             title={item.name}
                             price={priceFormat(item.selling_price, "IDR")}
                             description={item.description}
-                            buttonLabel={isInCart ? "Edit" : "Add"}
+                            buttonLabel={isInCart ? props.language.button.edit : props.language.button.add}
                             onPressButton={() => props.selectedItem(item)}
                         />
                     </View>

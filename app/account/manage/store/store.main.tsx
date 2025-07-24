@@ -1,9 +1,11 @@
 import { CE_BackButton } from "@/components/BackButton";
 import { CE_Card } from "@/components/Card";
 import { CE_Loading } from "@/components/Loading";
+import { I_Lang } from "@/services/api/other/api.language.int";
 import { I_Store } from "@/services/api/store/api.store.int";
 import { priceFormat } from "@/services/function/formatPrice";
 import { updateStoreData } from "@/services/function/updateStoreData";
+import { useLocale } from "@/services/function/useLocale";
 import { lazy, Suspense, useState } from "react";
 import { KeyboardAvoidingView, Platform, RefreshControl, ScrollView, Text, View } from "react-native";
 import StoreBalance from "./_element/store.balance";
@@ -13,10 +15,12 @@ import StoreManagementList from "./_element/store.list.mgm";
 import StoreTransactionMgmList from "./_element/store.list.transaction.mgm";
 import StoreSetting from "./_element/store.setting";
 import StoreStockManagement from "./_element/store.stock.mgm";
+import { locales } from "./locales";
 
 const StoreReceipt = lazy(() => import('../store/_element/store.receipt'))
 
 interface I_Props {
+    lang: I_Lang
     storeData:I_Store
     balance: string
     handleBack:()=>void
@@ -27,6 +31,8 @@ interface I_Props {
 }
 
 export default function ManageStore(props: I_Props){
+    const language = useLocale(props.lang, locales)
+    
     const [balance, setBalance] = useState(props.storeData.balance)
     const [manageOpen, setManageOpen] = useState('')
     const [refreshing, setRefreshing] = useState(false)
@@ -59,6 +65,7 @@ export default function ManageStore(props: I_Props){
                 <View>
                     {manageOpen === 'balance' && (
                         <StoreBalance 
+                            language={language}
                             balance={balance}
                             setBalance={setBalance}
                             onClose={() => setManageOpen('')}
@@ -66,7 +73,7 @@ export default function ManageStore(props: I_Props){
                         />
                     )}
                     <View>
-                        <CE_BackButton lable="Manage Store" onPress={props.handleBack}/>
+                        <CE_BackButton lable={language.title} onPress={props.handleBack}/>
                         <KeyboardAvoidingView 
                             behavior={Platform.OS === "ios" ? "padding" : "height"} 
                             keyboardVerticalOffset={100}
@@ -88,19 +95,22 @@ export default function ManageStore(props: I_Props){
                             >
                                 <Text className="text-secondary text-3xl font-bold mb-3">{props.storeData.name}</Text>
                                 <CE_Card className="bg-primary p-5 flex justify-center mb-8">
-                                    <Text className="text-white font-semibold text-lg">Store Balance</Text>
+                                    <Text className="text-white font-semibold text-lg">{language.balance}</Text>
                                     <Text className="text-white font-bold text-3xl">{priceFormat(balance, "IDR")}</Text>
                                 </CE_Card>
 
                                 <StoreManagementList 
+                                    language={language}
                                     handleSelect={(key) => setManageOpen(key)}
                                 />
 
                                 <StoreSetting 
+                                    language={language}
                                     setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
                                 />
 
                                 <StoreTransactionMgmList 
+                                    language={language}
                                     tax="10"
                                     service="10"
                                     handleSelect={(key) => setManageOpen(key)}
@@ -108,6 +118,7 @@ export default function ManageStore(props: I_Props){
                                 />
 
                                 <StoreStockManagement 
+                                    language={language}
                                     lowStock="10"
                                     veryLowStock="5"
                                 />
@@ -119,6 +130,7 @@ export default function ManageStore(props: I_Props){
 
             {manageOpen === 'detail' && (
                 <StoreDetail 
+                    language={language}
                     storeData={props.storeData}
                     refreshing={refreshing}
                     handleBack={() => setManageOpen('')}
@@ -135,6 +147,7 @@ export default function ManageStore(props: I_Props){
                     <CE_Loading />
                 }>
                     <StoreReceipt
+                        language={language}
                         storeData={props.storeData}
                         handleBack={() => setManageOpen('')}
                         setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
@@ -147,6 +160,7 @@ export default function ManageStore(props: I_Props){
                     <CE_Loading />
                 }>
                     <StoreDiscount
+                        language={language}
                         storeData={props.storeData}
                         refreshing={refreshing}
                         handleBack={() => setManageOpen('')}

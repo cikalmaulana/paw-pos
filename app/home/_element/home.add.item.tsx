@@ -4,8 +4,10 @@ import { I_Menu } from "@/services/api/item/api.item.get.int";
 import { priceFormat } from "@/services/function/formatPrice";
 import { useEffect, useState } from "react";
 import { Dimensions, Image, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { locales } from "../locales";
 
 interface I_Props {
+    language: typeof locales["id"]
     isOpen: boolean
     item: I_Menu | null
     setClose: () => void
@@ -69,7 +71,7 @@ export default function HomeAddItem(props: I_Props) {
                                     >
                                         {props.item?.name}
                                     </Text>
-                                    <Text className="text-black text-lg font-bold mb-1">{priceFormat(props.item?.price ?? "", "IDR")}</Text>
+                                    <Text className="text-black text-lg font-bold mb-1">{priceFormat(props.item?.selling_price ?? "", "IDR")}</Text>
                                     <Text
                                         className="text-gray-500 text-base"
                                         numberOfLines={2}
@@ -90,13 +92,13 @@ export default function HomeAddItem(props: I_Props) {
                                 {props.cartItem ? (
                                     <View className="flex-row justify-between gap-2 mt-2">
                                         <CE_Button
-                                            title="Update"
+                                            title={props.language.button.update}
                                             onPress={() => props.item && props.setItem(props.item.id, qty || '')}
                                             disabled={qty === ''}
                                             className="flex-1"
                                         />
                                         <CE_Button
-                                            title="Delete"
+                                            title={props.language.button.delete}
                                             onPress={() => props.item && props.removeItem(props.item.id)}
                                             className="flex-1"
                                             bgColor="bg-danger"
@@ -104,7 +106,7 @@ export default function HomeAddItem(props: I_Props) {
                                     </View>
                                 ) : (
                                     <CE_Button 
-                                        title="Add to Cart"
+                                        title={props.language.button.addtocart}
                                         onPress={() => {
                                             props.item && props.setItem(props.item.id, qty || '')
                                         }}

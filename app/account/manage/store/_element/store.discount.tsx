@@ -8,8 +8,10 @@ import { API_UpdateDiscountSetting } from "@/services/api/store/api.store.set"
 import { I_UpdateDiscountRequest } from "@/services/api/store/api.store.set.int"
 import { useEffect, useState } from "react"
 import { KeyboardAvoidingView, Platform, Pressable, RefreshControl, ScrollView, Switch, Text, View } from "react-native"
+import { locales } from "../locales"
 
 interface I_Props{
+    language: typeof locales["id"]
     storeData: I_Store
     refreshing: boolean
     handleBack:()=>void
@@ -71,7 +73,7 @@ export default function StoreDiscount(props: I_Props) {
     
     return (
         <View>
-            <CE_BackButton lable="Discount Setting" onPress={props.handleBack}/>
+            <CE_BackButton lable={props.language.discount.title} onPress={props.handleBack}/>
             <KeyboardAvoidingView 
                 behavior={Platform.OS === "ios" ? "padding" : "height"} 
                 keyboardVerticalOffset={100}
@@ -95,7 +97,7 @@ export default function StoreDiscount(props: I_Props) {
                             className={`flex flex-row items-center justify-between py-3 border-b border-b-gray-200`}
                         >
                             <View className="flex flex-row items-center gap-3">
-                                <Text className="text-primary font-semibold text-lg">Is Discount Active?</Text>
+                                <Text className="text-primary font-semibold text-lg">{props.language.discount.isactive}</Text>
                             </View>
                             <Switch
                                 value={isDiscountActive}
@@ -106,14 +108,14 @@ export default function StoreDiscount(props: I_Props) {
                         </Pressable>
 
                         <Input 
-                            label="Discount Name"
+                            label={props.language.discount.form.name}
                             value={discountName}
                             onChangeText={setDiscountName}
                             disabled={!isDiscountActive}
                         />
 
                         <CE_Dropdown
-                            label="Discount Type"
+                            label={props.language.discount.form.type}
                             selected={
                                 discountTypeList.find(opt => opt.value === discountType)?.label ?? "-"
                             }
@@ -127,7 +129,7 @@ export default function StoreDiscount(props: I_Props) {
                         />
                         
                         <Input 
-                            label="Value"
+                            label={props.language.discount.form.value}
                             keyboardType="numeric"
                             value={discountNominal?.toString()}
                             onChangeText={(e) => setDiscountNominal(Number(e))}
@@ -136,7 +138,7 @@ export default function StoreDiscount(props: I_Props) {
                         />
 
                         <Input 
-                            label="Min Order"
+                            label={props.language.discount.form.min}
                             value={discountMinimal?.toString()}
                             onChangeText={(e) => setDiscountMinimal(Number(e))}
                             disabled={!isDiscountActive}
@@ -144,7 +146,7 @@ export default function StoreDiscount(props: I_Props) {
                         />
 
                         <Input 
-                            label="Description"
+                            label={props.language.discount.form.description}
                             optional={true}
                             value={discountDescription}
                             onChangeText={(e) => setDiscountDescription(e)}
@@ -152,7 +154,7 @@ export default function StoreDiscount(props: I_Props) {
                         />
 
                         <CE_Button 
-                            title="Save"
+                            title={props.language.button.save}
                             onPress={saveDiscount}
                         />
 

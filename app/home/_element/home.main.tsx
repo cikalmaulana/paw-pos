@@ -4,9 +4,11 @@ import { CE_Search } from "@/components/Search";
 import { I_Category } from "@/services/api/category/api.category.get.int";
 import { API_GetItemByCode } from "@/services/api/item/api.item.get";
 import { I_GetMenuResponse, I_Menu } from "@/services/api/item/api.item.get.int";
+import { I_Lang } from "@/services/api/other/api.language.int";
 import { I_Store } from "@/services/api/store/api.store.int";
 import { I_Cart } from "@/services/api/transactional/api.cart.int";
 import { I_User } from "@/services/api/user/api.user.get.int";
+import { useLocale } from "@/services/function/useLocale";
 import { useCameraPermissions } from 'expo-camera';
 import { useEffect, useState } from "react";
 import {
@@ -16,6 +18,7 @@ import {
     View
 } from "react-native";
 import { searcHItemByCategory, searchItemByName } from "../_function/do.searchItem";
+import { locales } from "../locales";
 import HomeAddItem from "./home.add.item";
 import HomeCartPopup from "./home.cart.popup";
 import HomeCatgeoryList from "./home.category.list";
@@ -23,6 +26,7 @@ import HomeItemList from "./home.item.list";
 import HomeScanner from "./home.scanner";
 
 interface I_Props {
+    lang: I_Lang
     userData: I_User
     storeData: I_Store
     itemData: I_GetMenuResponse | null
@@ -30,6 +34,7 @@ interface I_Props {
 }
 
 export default function HomeMain(props: I_Props) {
+    const language = useLocale(props.lang, locales)
     const [search, setSearch] = useState("");
     const [item, setItem] = useState<I_GetMenuResponse["data"]>(props.itemData?.data ?? []);
     const [selectedCategoryId, setSelectedCategoryId] = useState('')
@@ -84,7 +89,7 @@ export default function HomeMain(props: I_Props) {
             if (result.granted) {
                 setScannerOpen(true)
             } else {
-                alert("Akses kamera ditolak. Aktifkan izin kamera untuk menggunakan scanner.")
+                alert(language.scannererror)
             }
         }
     }
@@ -156,7 +161,7 @@ export default function HomeMain(props: I_Props) {
                     </Text>
                     <Text>|</Text>
                     <Text className="text-secondary font-semibold text-lg">
-                        {props.userData.id === props.storeData.owner_id ? "Owner" : "Cashier"}
+                        {props.userData.id === props.storeData.owner_id ? language.acctype.owner : language.acctype.cashier}
                     </Text>
                 </View>
                 <Pressable onPress={() => setCartOpen(true)} className="relative">
@@ -201,6 +206,7 @@ export default function HomeMain(props: I_Props) {
             ) : 
                 (item && item.length > 0) ? (
                     <HomeItemList 
+                        language={language}
                         item={item} 
                         selectedItem={(data) => setSelectedItem(data)}
                         cartItem={cart}    
@@ -216,11 +222,13 @@ export default function HomeMain(props: I_Props) {
             }
 
             <HomeCartPopup 
+                language={language}
                 isOpen={isCartOpen} 
                 setClose={() => setCartOpen(false)}
                 cartItem={cart}
             />
             <HomeAddItem 
+                language={language}
                 item={selectedItem} 
                 isOpen={isAddItemOpen} 
                 setClose={() => {
@@ -238,6 +246,7 @@ export default function HomeMain(props: I_Props) {
 
             {(scannerOpen && permission?.granted) && (
                 <HomeScanner 
+                    language={language}
                     visible={scannerOpen} 
                     onClose={() => setScannerOpen(false)}
                     onScan={(data) => onProductScanned(data)}

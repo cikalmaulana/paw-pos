@@ -9,7 +9,7 @@ interface I_Props {
     title: string
     price: string
     description: string
-    buttonLabel: "Add" | "Edit"
+    buttonLabel: string
     onPressButton: () => void
     className?: string
     stock?: string

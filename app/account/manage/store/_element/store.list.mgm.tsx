@@ -1,7 +1,9 @@
 import { CE_Card } from "@/components/Card";
 import { Image, Pressable, Text, View } from "react-native";
+import { locales } from "../locales";
 
 interface I_Props{
+    language: typeof locales["id"]
     handleSelect:(key: string) => void
 }
 
@@ -13,7 +15,7 @@ export default function StoreManagementList(props: I_Props) {
 
     return (
         <View>
-            <Text className="text-description mb-2 font-semibold">Store Management</Text>
+            <Text className="text-description mb-2 font-semibold">{props.language.list.mgm.title}</Text>
             <CE_Card className="bg-white !shadow-none p-3">
                 <View className="flex flex-col ">
                     {storeSettingList.map((item, index) => {

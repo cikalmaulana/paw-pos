@@ -2,8 +2,10 @@ import { CE_Button } from "@/components/Button"
 import { Input } from "@/components/Input"
 import { useState } from "react"
 import { Modal, View } from "react-native"
+import { locales } from "../locales"
 
 interface I_Props{
+    language: typeof locales["id"]
     balance: string
     setBalance: (balance: string) => void
     onClose: () => void
@@ -32,19 +34,19 @@ export default function StoreBalance(props: I_Props){
             <View className="flex-1 bg-black/50 justify-center items-center px-6">
                 <View className="bg-white p-5 rounded-xl w-full">
                     <Input 
-                        label="Adjust Balance"
+                        label={props.language.balancesetting.adjust}
                         value={balanceInput}
                         onChangeText={setBalanceINput}
                     />
                     
                     <View className="flex flex-row justify-between gap-3 mt-3">
                         <CE_Button 
-                            title="Cancel" 
+                            title={props.language.button.cancel}
                             onPress={() => props.onClose()} 
                             className="flex-1" 
                         />
                         <CE_Button
-                            title="Save"
+                            title={props.language.button.save}
                             bgColor="bg-secondary"
                             onPress={() => doUpdateBalance()}
                             className="flex-1"

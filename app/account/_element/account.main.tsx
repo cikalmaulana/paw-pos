@@ -229,6 +229,7 @@ export default function AccountMain(props: I_Props) {
                     ) : manageOpen === 'store' ? (
                         <Suspense fallback={<CE_Loading />}>
                             <ManageStore 
+                                lang={lang}
                                 handleBack={() => handleBack()}
                                 storeData={storeData}
                                 balance={balance}

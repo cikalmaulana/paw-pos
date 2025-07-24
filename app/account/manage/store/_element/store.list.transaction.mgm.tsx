@@ -4,8 +4,10 @@ import { CE_Dropdown } from "@/components/Dropdown";
 import { Input } from "@/components/Input";
 import { useEffect, useState } from "react";
 import { Image, Pressable, Text, View } from "react-native";
+import { locales } from "../locales";
 
 interface I_Props{
+    language: typeof locales["id"]
     tax: string
     service: string
     handleSelect:(key: string)=>void
@@ -21,10 +23,10 @@ export default function StoreTransactionMgmList(props:I_Props){
     const [firsOpen, setFirstOpen] = useState(true)
 
     const transactionSettingList = [
-        { key: 'tax', label: 'Tax & Service' }, //extend
-        { key: 'receipt', label: 'Receipt Setting' },
-        { key: 'discount', label: 'Discount Setting' },
-        { key: 'currency', label: 'Set Currency' }, //extend
+        { key: 'tax', label: props.language.list.transaction.label.tax}, //extend
+        { key: 'receipt', label: props.language.list.transaction.label.receipt },
+        { key: 'discount', label: props.language.list.transaction.label.discount },
+        { key: 'currency', label: props.language.list.transaction.label.currency }, //extend
     ]
 
     useEffect(() => {
@@ -45,7 +47,7 @@ export default function StoreTransactionMgmList(props:I_Props){
 
     return (
         <View>
-            <Text className="text-description mb-2 font-semibold mt-4">Transaction Management</Text>
+            <Text className="text-description mb-2 font-semibold mt-4">{props.language.list.transaction.title}</Text>
             <CE_Card className="bg-white !shadow-none p-3">
                 <View className="flex flex-col ">
                     {transactionSettingList.map((item, index) => {
@@ -93,7 +95,7 @@ export default function StoreTransactionMgmList(props:I_Props){
                                 {isCurrency && currencyOpen && (
                                     <View className="mt-3 space-y-4">
                                         <CE_Dropdown
-                                            label="Currency"
+                                            label={props.language.list.transaction.currency}
                                             selected={currency}
                                             options={[
                                                 { label: "Rupiah", value: "IDR" },
@@ -107,19 +109,19 @@ export default function StoreTransactionMgmList(props:I_Props){
                                 {isTax && taxOpen && (
                                     <View className="flex flex-col mt-3 gap-3">
                                         <Input 
-                                            label="Tax" 
-                                            placeholder="Tax"
+                                            label={props.language.list.transaction.tax} 
+                                            placeholder={props.language.list.transaction.tax}
                                             value={tax} 
                                             onChangeText={val => setTax(val)} 
                                         />
                                         <Input 
-                                            label="Service" 
-                                            placeholder="Service"
+                                            label={props.language.list.transaction.service} 
+                                            placeholder={props.language.list.transaction.service}
                                             value={service} 
                                             onChangeText={val => setService(val)} 
                                         />
                                         <CE_Button 
-                                            title="Save"
+                                            title={props.language.button.save}
                                             onPress={() => doUpdateTaxService()}
                                             className="my-3"
                                         />

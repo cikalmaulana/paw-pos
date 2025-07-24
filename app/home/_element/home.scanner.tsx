@@ -9,14 +9,16 @@ import {
   Text,
   View
 } from "react-native";
+import { locales } from "../locales";
 
 interface I_Props {
+  language: typeof locales["id"]
   visible: boolean;
   onClose: () => void;
   onScan: (data: string) => void;
 }
 
-export default function HomeScanner({ visible, onClose, onScan }: I_Props) {
+export default function HomeScanner({ visible, language, onClose, onScan }: I_Props) {
   const [scanned, setScanned] = useState(false);
 
   const handleScan = ({ data }: { data: string }) => {
@@ -56,7 +58,7 @@ export default function HomeScanner({ visible, onClose, onScan }: I_Props) {
           onPress={onClose}
           className="absolute top-12 right-5 bg-black/60 px-4 py-2 rounded-lg"
         >
-          <Text className="text-white font-semibold text-sm">Close</Text>
+          <Text className="text-white font-semibold text-sm">{language.button.close}</Text>
         </Pressable>
       </View>
     </Modal>

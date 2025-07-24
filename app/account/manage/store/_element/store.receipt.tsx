@@ -6,9 +6,11 @@ import { API_GetReceiptSetting, API_SetReceiptSetting } from "@/services/api/tra
 import { I_Receipt, I_SetReceiptSettingRequest } from "@/services/api/transactional/api.receipt.int";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform, RefreshControl, ScrollView, Text, View } from "react-native";
+import { locales } from "../locales";
 import StorePreviewReceipt from "./store.receipt.preview";
 
 interface I_Props{
+    language: typeof locales["id"]
     storeData: I_Store
     handleBack:()=>void
     setUpAlert:(msg: string, isSuccess: boolean)=>void
@@ -116,7 +118,7 @@ export default function StoreReceipt(props: I_Props) {
     return (
         <View>
             <CE_BackButton 
-                lable={previewMode ? "Back to Form" : "Receipt Setting"}
+                lable={previewMode ? props.language.receipt.title.preview : props.language.receipt.title.receipt}
                 onPress={() => {
                     if (previewMode) {
                         setPreviewMode(false)
@@ -146,7 +148,7 @@ export default function StoreReceipt(props: I_Props) {
                     >
                         <View className="flex flex-col gap-3">
                             <Input 
-                                label="Title"
+                                label={props.language.receipt.edit.title}
                                 value={receiptInput.title}
                                 multiline={true}
                                 onChangeText={(text) => {
@@ -159,7 +161,7 @@ export default function StoreReceipt(props: I_Props) {
                             {receiptInputWarn.title !== '' && (<Text className="text-sm text-danger font-semibold -mt-2">{receiptInputWarn.title}</Text>)}
 
                             <Input 
-                                label="Footer"
+                                label={props.language.receipt.edit.footer}
                                 value={receiptInput.footer}
                                 multiline={true}
                                 onChangeText={(text) => {
@@ -172,7 +174,7 @@ export default function StoreReceipt(props: I_Props) {
                             {receiptInputWarn.footer !== '' && (<Text className="text-sm text-danger font-semibold -mt-2">{receiptInputWarn.footer}</Text>)}
 
                             <Input 
-                                label="Note"
+                                label={props.language.receipt.edit.note}
                                 value={receiptInput.note}
                                 multiline={true}
                                 onChangeText={(text) => {
@@ -185,7 +187,7 @@ export default function StoreReceipt(props: I_Props) {
                             {receiptInputWarn.note !== '' && (<Text className="text-sm text-danger font-semibold -mt-2">{receiptInputWarn.note}</Text>)}
 
                             <Input 
-                                label="Promo"
+                                label={props.language.receipt.edit.promo}
                                 value={receiptInput.promo}
                                 multiline={true}
                                 numberOfLines={4}
@@ -199,12 +201,12 @@ export default function StoreReceipt(props: I_Props) {
                             />
                             <View className="flex flex-row gap-2">
                                 <CE_Button 
-                                    title="Preview Receipt"
+                                    title={props.language.button.preview}
                                     onPress={() => setPreviewMode(true)}
                                     bgColor="bg-secondary"
                                 />
                                 <CE_Button 
-                                    title="Save"
+                                    title={props.language.button.save}
                                     onPress={() => saveReceiptSetting()}
                                     isLoading={loading}
                                 />

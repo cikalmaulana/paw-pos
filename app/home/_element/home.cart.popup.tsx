@@ -5,10 +5,11 @@ import { I_Cart } from "@/services/api/transactional/api.cart.int";
 import { priceFormat } from "@/services/function/formatPrice";
 import { useState } from "react";
 import { Dimensions, Image, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, View } from "react-native";
-
+import { locales } from "../locales";
 
 
 interface I_Props {
+    language: typeof locales["id"]
     isOpen: boolean;
     cartItem: I_Cart
     setClose: () => void;
@@ -27,11 +28,11 @@ export default function HomeCartPopup(props: I_Props) {
 
     const checkout = () => {
         if(customerName === '') {
-            setWarningName('Please input customer name first!')
+            setWarningName(props.language.cart.warning.name)
             return
         }
         if(paymentMethod === '') {
-            setWarningPayment('Please select payment method first!')
+            setWarningPayment(props.language.cart.warning.payment)
             return
         }
     }
@@ -59,7 +60,7 @@ export default function HomeCartPopup(props: I_Props) {
                         keyboardShouldPersistTaps="handled"
                     >
                         <Pressable onPress={props.setClose} className="flex flex-row items-center gap-2 absolute top-3 right-3 z-10">
-                            <Text className="text-danger text-sm font-bold">Close</Text>
+                            <Text className="text-danger text-sm font-bold">{props.language.button.close}</Text>
                             <Image 
                                 source={require("@/assets/icons/cross.png")}
                                 style={{width:28, height: 28}}
@@ -67,7 +68,7 @@ export default function HomeCartPopup(props: I_Props) {
                         </Pressable>
 
                         <Text className="text-primary font-bold text-xl mb-2 mt-6">
-                            Total: {props.cartItem.items.length} item
+                            Total: {props.cartItem.items.length} {props.language.cart.item}
                         </Text>
 
                         {props.cartItem.items.map((item) => (
@@ -79,7 +80,7 @@ export default function HomeCartPopup(props: I_Props) {
                                 />
                                 <View className="flex flex-col">
                                     <Text className="text-lg text-primary font-semibold" numberOfLines={1}>{item.name}</Text>
-                                    <Text className="text-sm font-semibold">Price: {priceFormat(item.price, "IDR")}</Text>
+                                    <Text className="text-sm font-semibold">{props.language.cart.price}: {priceFormat(item.price, "IDR")}</Text>
                                     <Text className="text-sm text-gray-600">Qty: {item.qty}</Text>
                                     <Text className="text-sm font-semibold">Total: {priceFormat(item.total_price, "IDR")}</Text>
                                 </View>
@@ -87,8 +88,8 @@ export default function HomeCartPopup(props: I_Props) {
                         ))}
 
                         <Input
-                            label="Customer Name"
-                            placeholder="Enter name"
+                            label={props.language.cart.name}
+                            placeholder={props.language.cart.name}
                             value={customerName}
                             onChangeText={(text) => setCustomerName(text)}
                         />
@@ -115,10 +116,10 @@ export default function HomeCartPopup(props: I_Props) {
 
                         <View className="flex flex-row justify-between gap-2 mt-2">
                             <View className="flex-1">
-                                <CE_Button title="Delete" onPress={deleteCart} bgColor="bg-danger" className="w-full" />
+                                <CE_Button title={props.language.button.delete} onPress={deleteCart} bgColor="bg-danger" className="w-full" />
                             </View>
                             <View className="flex-1">
-                                <CE_Button title="Checkout" onPress={checkout} className="w-full" />
+                                <CE_Button title={props.language.button.checkout} onPress={checkout} className="w-full" />
                             </View>
                         </View>
                         </ScrollView>
