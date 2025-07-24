@@ -35,8 +35,6 @@ export const API_UpdateLanguage = async (lang: I_Lang): Promise<boolean> => {
             lang: lang
         }
 
-        console.log("API_UpdateLanguage LOGIN DATA: ", loginData)
-
         await AsyncStorage.setItem(KEY_LOGIN, JSON.stringify(loginData));
 
         return true

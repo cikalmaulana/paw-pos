@@ -9,8 +9,10 @@ import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { doLogin } from "../_function/do.login";
+import { locales } from "../locales";
 
 interface I_Props{
+    language: typeof locales["id"]
     setMemberExpired:(data: boolean) => void
     setIsMembershipOpen:(isOpen: boolean) => void
     setUserData:(user: I_User) => void
@@ -95,7 +97,7 @@ export function LoginForm(props: I_Props) {
             <View className="flex-1">
                 <View className="flex flex-col gap-2 mb-3">
                     <Input
-                        label="Phone Number"
+                        label={props.language.form.phone}
                         keyboardType="numeric"
                         placeholder="081xxx"
                         value={phoneNumber}
@@ -103,21 +105,21 @@ export function LoginForm(props: I_Props) {
                     />
                     {phoneNumebrWarning && (<Text className="text-danger">{phoneNumebrWarning}</Text>)}
                     <Input
-                        label="Password"
+                        label={props.language.form.password}
                         placeholder="password"
                         value={password}
                         type="password"
                         onChangeText={setPassword}
                     />
                 </View>
-                <CE_Checkbox checked={remember} onChange={() => setRemember(prev => !prev)} label="Remember me" className="mb-2"/>
-                <CE_Button title="sign in" disabled={!isPhoneValid(phoneNumber) || !password} onPress={() => login()} isLoading={isLoading}/>
+                <CE_Checkbox checked={remember} onChange={() => setRemember(prev => !prev)} label={props.language.form.remember} className="mb-2"/>
+                <CE_Button title={props.language.button.signin} disabled={!isPhoneValid(phoneNumber) || !password} onPress={() => login()} isLoading={isLoading}/>
                 <View className="flex-row items-center w-full my-4">
                     <View className="flex-1 h-px bg-gray-300" />
-                    <Text className="mx-4 text-gray-500">Or</Text>
+                    <Text className="mx-4 text-gray-500">{props.language.form.or}</Text>
                     <View className="flex-1 h-px bg-gray-300" />
                 </View>
-                <CE_Button title="Register" bgColor="bg-secondary" onPress={() => router.replace("/register")}/>
+                <CE_Button title={props.language.button.register} bgColor="bg-secondary" onPress={() => router.replace("/register")}/>
             </View>
         </>
     )

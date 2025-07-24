@@ -41,7 +41,6 @@ export default function StoreReceipt(props: I_Props) {
 
     const getReceiptData = async () => {
         const result = await API_GetReceiptSetting(props.storeData.id)
-        console.log("RESULT: ", result)
         if(result && result.meta.status === 'success') {
             setReceiptData(result.data)
             setReceiptInput(result.data)

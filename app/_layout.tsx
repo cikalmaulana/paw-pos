@@ -1,6 +1,11 @@
-import { Stack } from "expo-router";
-import './global.css';
+import { LangProvider } from "@/services/function/LangContext"
+import { Stack } from "expo-router"
+import './global.css'
 
 export default function RootLayout() {
-    return <Stack screenOptions={{ headerShown: false }} />
+    return (
+        <LangProvider>
+            <Stack screenOptions={{ headerShown: false }} />
+        </LangProvider>
+    )
 }

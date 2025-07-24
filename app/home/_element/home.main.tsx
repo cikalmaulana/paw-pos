@@ -182,6 +182,7 @@ export default function HomeMain(props: I_Props) {
             <View className="flex flex-row items-center mx-5 mb-2 gap-4">
                 <View className="flex-1">
                     <CE_Search
+                        placeholder={language.search}
                         value={search}
                         onChangeText={(text) => setSearch(text)}
                     />
@@ -194,12 +195,14 @@ export default function HomeMain(props: I_Props) {
                 </Pressable>
             </View>
 
-            <HomeCatgeoryList 
-                categoryData={props.categoryData}
-                categoryList={categoryList}
-                selectedCategoryId={selectedCategoryId}
-                selectItemByCategory={(id) => selectItemByCategory(id)}
-            />
+            {props.categoryData && (
+                <HomeCatgeoryList 
+                    categoryData={props.categoryData}
+                    categoryList={categoryList}
+                    selectedCategoryId={selectedCategoryId}
+                    selectItemByCategory={(id) => selectItemByCategory(id)}
+                />
+            )}
 
             {isLoading ? (
                 <CE_Loading />

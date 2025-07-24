@@ -11,15 +11,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { Tabs, useRouter } from "expo-router"
 import React, { useEffect, useState } from 'react'
 
+import { I_LoginData } from "@/services/api/auth/api.login.int"
+import { I_Lang } from "@/services/api/other/api.language.int"
 import { I_Store } from "@/services/api/store/api.store.int"
+import { I_User } from "@/services/api/user/api.user.get.int"
+import { useLang } from "@/services/function/LangContext"
+import { useLocale } from "@/services/function/useLocale"
 import { Image } from "react-native"
 import { TAB_HEIGHT } from "./constant"
+import { locales } from "./locales"
 
 
 const _Layout = () => {
     const [needOngoingOrder, setNeedOngoingOrder] = useState(true)
     const [checking, setChecking] = useState(true)
     const [loggedIn, setLoggedIn] = useState(false)
+    const { lang, setLang } = useLang()
+    const language = useLocale(lang, locales)
+    
     const router = useRouter()
     const KEY_LOGIN = process.env.KEY_LOGIN
 
@@ -33,10 +42,12 @@ const _Layout = () => {
             }
 
             try {
-                const parsed = JSON.parse(stored) as {
-                    store: I_Store
+                const parsed: I_LoginData = JSON.parse(stored) as {
                     token: string
-                    expiredAt?: number
+                    user: I_User
+                    store: I_Store
+                    expiredAt: number
+                    lang: I_Lang
                 }
 
                 if (isSessionExpired(parsed.expiredAt)) {
@@ -48,6 +59,8 @@ const _Layout = () => {
                 if(!parsed.store.setting.need_ongoing_order) setNeedOngoingOrder(false)
 
                 setLoggedIn(true)
+                setLang(parsed.lang)
+
             } catch {
                 await AsyncStorage.removeItem(KEY_LOGIN ?? "KEY_LOGIN")
                 router.replace("../welcome" as const)
@@ -83,14 +96,14 @@ const _Layout = () => {
                 tabBarLabelStyle: {
                     fontSize: 12,
                     fontWeight: "700",
-                    marginBottom: 4,
+                    marginBottom: 4
                 },
             }}
         >
             <Tabs.Screen 
                 name="index"
                 options={{
-                    title: "Home",
+                    title: language.home,
                     headerShown: false,
                     tabBarIcon: ({ focused }) => (
                         <Image
@@ -106,7 +119,7 @@ const _Layout = () => {
                 <Tabs.Screen 
                     name="order"
                     options={{
-                        title: "Order",
+                        title: language.order,
                         headerShown: false,
                         tabBarIcon: ({ focused }) => (
                             <Image
@@ -122,7 +135,7 @@ const _Layout = () => {
             <Tabs.Screen 
                 name="history"
                 options={{
-                    title: "History",
+                    title: language.history,
                     headerShown: false,
                     tabBarIcon: ({ focused }) => (
                         <Image
@@ -137,7 +150,7 @@ const _Layout = () => {
             <Tabs.Screen 
                 name="account"
                 options={{
-                    title: "Account",
+                    title: language.account,
                     headerShown: false,
                     tabBarIcon: ({ focused }) => (
                         <Image

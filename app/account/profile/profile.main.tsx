@@ -82,7 +82,6 @@ export default function AccountDetails(props: I_Props){
     }
 
     const handleChangePass = async () => {
-        console.log("handleChangePass clicked")
         if (oldPass === '') {
             setOldPassWarn("Fill old password!")
             return

@@ -2,6 +2,8 @@ export const locales = {
     en: {
         error: "Error! Please re-open application!",
         scannererror: "Camera access denied. Please enable camera permissions to use the scanner.",
+        search: "Search product...",
+        noitem: "There is no item",
         acctype: {
             owner: "Owner",
             cashier: "Cashier"
@@ -28,6 +30,8 @@ export const locales = {
     id: {
         error: "Error! Tutup dan buka kembali aplikasi!",
         scannererror: "Akses kamera ditolak. Aktifkan izin kamera untuk menggunakan scanner.",
+        search: "Cari produk...",
+        noitem: "Tidak ada produk",
         acctype: {
             owner: "Pemilik",
             cashier: "Kasir"

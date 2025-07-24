@@ -24,7 +24,7 @@ export default function Home() {
     const [categoryData, setCategoryData] = useState<I_Category[] | null>(null)
     const [itemData, setItemData] = useState<I_GetMenuResponse | null>(null)
     const [lang, setLang] = useState<I_Lang>({name: "ID"})
-    const [language, setLanguage] = useState(useLocale(lang, locales))
+    const language = useLocale(lang, locales)
 
     useFocusEffect(
         useCallback(() => {
@@ -40,7 +40,6 @@ export default function Home() {
                         setStoreData(datas.store)
                         setUserData(datas.user)
                         setLang(datas.lang)
-                        setLanguage(useLocale(datas.lang, locales))
 
                         if (categoriesResponse?.data) {
                             setCategoryData(categoriesResponse.data)
