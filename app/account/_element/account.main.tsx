@@ -151,15 +151,13 @@ export default function AccountMain(props: I_Props) {
                             />
                         )}
                         <View className="flex flex-row gap-2 items-center mb-4 mt-4">
-                            <Text className="text-primary font-bold text-2xl">
-                                {userData.name.length > 20
-                                    ? userData.name.slice(0, 20) + '...'
-                                    : userData.name}
-                            </Text>
-                            <Text>|</Text>
-                            <Text className="text-secondary font-semibold text-lg">
-                            {userData.id === storeData.owner_id ? language.role.owner : language.role.cashier}
-                            </Text>
+                            <View className="flex flex-row justify-between items-center">
+                                <View className="flex flex-row gap-2 items-center">
+                                    <Text className="text-primary font-bold text-2xl">
+                                        {language.title}
+                                    </Text>
+                                </View>
+                            </View>
                         </View>
                         
                         <ScrollView

@@ -1,5 +1,6 @@
 export const locales = {
     en: {
+        title: "Account",
         role: {
             owner: "Owner",
             cashier: "Admin",
@@ -40,6 +41,7 @@ export const locales = {
         }
     },
     id: {
+        title: "Akun",
         role: {
             owner: "Pemilik",
             cashier: "Admin",

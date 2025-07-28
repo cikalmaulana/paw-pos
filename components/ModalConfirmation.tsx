@@ -78,7 +78,7 @@ export default function CE_ModalConfirmation(props: I_Props) {
                             title={props.confirmText || "Confirm"}
                             onPress={props.onConfirm}
                             className="flex-1"
-                            bgColor={props.danger ? "bg-danger" : undefined}
+                            bgColor={props.danger ? "bg-danger" : "bg-secondary"}
                         />
                     </View>
                 </View>

@@ -1,9 +1,7 @@
-import { Text, View } from "react-native";
+import OrderPage from "../order";
 
 export default function Order() {
     return (
-        <View>
-            <Text>Order Page</Text>
-        </View>
+        <OrderPage />
     )
 }
