@@ -2,8 +2,10 @@ import { CE_Button } from "@/components/Button"
 import { OTPInput } from "@/components/OTP"
 import { useEffect, useState } from "react"
 import { ActivityIndicator, Text, View } from "react-native"
+import { locales } from "../locales"
 
 interface Props {
+    language: typeof locales["id"]
     setNext: (step: number) => void
     isLoading: boolean
 }
@@ -28,7 +30,7 @@ export function RegisterOTP(props: Props) {
 
     const matchingOTP = () => {
         if(otpInput !== otp) {
-            setWarning("Wrong OTP")
+            setWarning(props.language.hint.wrongotp)
             return
         }
 
@@ -40,14 +42,14 @@ export function RegisterOTP(props: Props) {
             {loadingSendSMS ? (
                 <View className="flex flex-col items-center justify-center mb-10 mt-6">
                     <ActivityIndicator size="large" color="#16B8A8" />
-                    <Text className="mt-4 text-base text-primary font-semibold">Sending OTP to SMS...</Text>
+                    <Text className="mt-4 text-base text-primary font-semibold">{props.language.hint.sendingotp}</Text>
                 </View>
             ) : (
                 <View className="flex flex-col gap-2 mb-10 items-center justify-center">
                     {warning !== '' ? (
                         <Text className="text-danger font-semibold">{warning}</Text>
                     ) : (
-                        <Text className="text-primary font-semibold">OTP Sent to SMS</Text>
+                        <Text className="text-primary font-semibold">{props.language.hint.otpsent}</Text>
                     )}
                     
                     <OTPInput setOtp={(otp) => setOtpInput(otp)} isLoading={props.isLoading}/>
@@ -55,7 +57,7 @@ export function RegisterOTP(props: Props) {
             )}
 
             <CE_Button
-                title="Next"
+                title={props.language.button.next}
                 disabled={otpInput.length < 4 || loadingSendSMS}
                 isLoading={props.isLoading}
                 onPress={() => matchingOTP()}
@@ -63,7 +65,7 @@ export function RegisterOTP(props: Props) {
             />
 
             <CE_Button
-                title="Cancel"
+                title={props.language.button.cancel}
                 bgColor="bg-secondary"
                 onPress={() => props.setNext(1)}
                 disabled={loadingSendSMS || props.isLoading}

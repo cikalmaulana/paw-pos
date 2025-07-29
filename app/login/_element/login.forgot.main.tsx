@@ -1,9 +1,12 @@
-import { CE_Alert } from "@/components/Alert";
+import { ALERT_NAME } from "@/app/constant/constant";
 import { globalEmitter } from "@/services/function/globalEmitter";
+import { useLang } from "@/services/function/LangContext";
+import { useLocale } from "@/services/function/useLocale";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Dimensions, View } from "react-native";
+import { View } from "react-native";
 import { doForgot } from "../_function/do.forgot";
+import { locales } from "../locales";
 import { ForgotCaptcha } from "./login.forgot.captcha";
 import { ForgotNew } from "./login.forgot.new";
 import { ForgotOtp } from "./login.forgot.otp";
@@ -13,11 +16,10 @@ interface Props{
     setOpen:(isOpen: boolean) => void
 }
 
-const ALERT_NAME = 'alert-forgot'
-
 export function ForgotForm(props: Props) {
-    const screenHeight = Dimensions.get("window").height
     
+    const { lang, setLang } = useLang()
+    const language = useLocale(lang, locales)
     const router = useRouter()
     const [phoneNumber, setPhoneNumber] = useState('')
     const [captcha, setCaptcha] = useState('')
@@ -63,20 +65,10 @@ export function ForgotForm(props: Props) {
 
     return (
         <>
-            <View
-                style={{
-                    position: 'absolute',
-                    top: screenHeight * -0.1,
-                    left: 0,
-                    right: 0,
-                    zIndex: 999,
-                }}
-            >
-                <CE_Alert name={ALERT_NAME} />
-            </View>
             <View className="flex-1">
                 {step === 1 && (
                     <ForgotPhone
+                        language={language}
                         phoneNumber={phoneNumber}
                         setOpen={(isOpen) => props.setOpen(isOpen)} 
                         setStep={(step) => goToStep(step)}
@@ -86,18 +78,21 @@ export function ForgotForm(props: Props) {
 
                 {step === 2 && (
                     <ForgotCaptcha 
+                        language={language}
                         setStep={(step) => goToStep(step)}
                     />
                 )}
 
                 {step === 3 && (
                     <ForgotOtp 
+                        language={language}
                         setStep={(step) => goToStep(step)}
                     />
                 )}
 
                 {step === 4 && (
                     <ForgotNew 
+                        language={language}
                         setStep={(step) => goToStep(step)}
                     />
                 )}

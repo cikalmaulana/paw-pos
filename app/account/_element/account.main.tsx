@@ -1,5 +1,4 @@
-import { MODAL_NAME } from "@/app/constant/constant"
-import { CE_Alert } from "@/components/Alert"
+import { ALERT_NAME, MODAL_NAME } from "@/app/constant/constant"
 import { CE_Card } from "@/components/Card"
 import { CE_Loading } from "@/components/Loading"
 import { I_Lang } from "@/services/api/other/api.language.int"
@@ -14,7 +13,7 @@ import { updateUserData } from "@/services/function/updateUserData"
 import { useLocale } from "@/services/function/useLocale"
 import { CommonActions, useNavigation } from "@react-navigation/native"
 import { lazy, Suspense, useEffect, useState } from "react"
-import { Dimensions, RefreshControl, ScrollView, Text, View } from "react-native"
+import { RefreshControl, ScrollView, Text, View } from "react-native"
 import AboutPage from "../about/about.main"
 import ContactSupport from "../cs/cs.main"
 import { locales } from "../locales"
@@ -34,8 +33,6 @@ interface I_Props {
     storeData: I_Store
 }
 
-const ALERT_NAME = 'alert-account'
-
 export default function AccountMain(props: I_Props) {
     const [userData, setUserData] = useState<I_User>(props.userData)
     const [storeData, setStoreData] = useState<I_Store>(props.storeData)
@@ -43,8 +40,6 @@ export default function AccountMain(props: I_Props) {
     const navigation = useNavigation<any>();
     const [manageOpen, setManageOpen] = useState('')
     const [refreshing, setRefreshing] = useState(false)
-
-    const screenHeight = Dimensions.get("window").height
 
     const { lang, setLang } = useLang()
     const language = useLocale(lang, locales)
@@ -128,18 +123,6 @@ export default function AccountMain(props: I_Props) {
 
     return (
         <View className="min-h-screen mx-5" >
-            <View
-                style={{
-                    position: 'absolute',
-                    top: screenHeight * -0.1,
-                    left: 0,
-                    right: 0,
-                    zIndex: 999,
-                }}
-            >
-                <CE_Alert name={ALERT_NAME} />
-            </View>
-
             {manageOpen === '' || manageOpen === 'lang' ? (
                 <View>
                     {manageOpen === 'lang' && (

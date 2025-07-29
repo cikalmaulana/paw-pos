@@ -4,8 +4,10 @@ import { Input } from "@/components/Input"
 import { generateCaptcha } from "@/services/function/generateCaptcha"
 import { useEffect, useState } from "react"
 import { Text, View } from "react-native"
+import { locales } from "../locales"
 
 interface I_Props{
+    language: typeof locales["id"]
     setNext:(newStep: number) => void
 }
 
@@ -20,7 +22,7 @@ export function RegisterCaptcha(props: I_Props) {
 
     const captchaChecker = () => {
         if(captcha !== captchaCode) {
-            setWarning('Wrong Captcha!')
+            setWarning(props.language.hint.wrongcaptcha)
             setCaptchaCode(generateCaptcha())
             setCaptcha('')
             return
@@ -51,12 +53,12 @@ export function RegisterCaptcha(props: I_Props) {
             </View>
 
             <CE_Button
-                title="Next"
+                title={props.language.button.next}
                 disabled={!captcha}
                 onPress={() => captchaChecker()}
                 className="mb-2"
             />
-            <CE_Button title="Back" onPress={() => props.setNext(1)} bgColor="bg-secondary" />
+            <CE_Button title={props.language.button.back} onPress={() => props.setNext(1)} bgColor="bg-secondary" />
         </View>
     )
 }

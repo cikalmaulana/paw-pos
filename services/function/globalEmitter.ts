@@ -1,5 +1,10 @@
 type Listener<T> = (data: T) => void
 
+export type TAlertPayload = {
+    message: string;
+    isSuccess?: boolean;
+};
+
 class GlobalEmitter {
     private listeners: Record<string, Listener<any>[]> = {}
 

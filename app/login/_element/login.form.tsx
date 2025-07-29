@@ -1,4 +1,4 @@
-import { CE_Alert } from "@/components/Alert";
+import { ALERT_NAME } from "@/app/constant/constant";
 import { CE_Button } from "@/components/Button";
 import { CE_Checkbox } from "@/components/Checkbox";
 import { Input } from "@/components/Input";
@@ -18,8 +18,6 @@ interface I_Props{
     setIsMembershipOpen:(isOpen: boolean) => void
     setUserData:(user: I_User) => void
 }
-
-const ALERT_NAME = 'alert-login'
 
 export function LoginForm(props: I_Props) {
     const screenHeight = Dimensions.get("window").height
@@ -94,17 +92,6 @@ export function LoginForm(props: I_Props) {
 
     return (
         <>
-            <View
-                style={{
-                    position: 'absolute',
-                    top: screenHeight * -0.1,
-                    left: 0,
-                    right: 0,
-                    zIndex: 999,
-                }}
-            >
-                <CE_Alert name={ALERT_NAME} />
-            </View>
             <View className="flex-1">
                 <View className="flex flex-col gap-2 mb-3">
                     <Input

@@ -2,6 +2,7 @@ import { globalEmitter, TAlertPayload } from "@/services/function/globalEmitter"
 import { useEffect, useRef, useState } from "react";
 import {
     Animated,
+    Dimensions,
     Easing,
     Image,
     Pressable,
@@ -15,6 +16,7 @@ interface I_Props{
 }
 
 export function CE_Alert(props: I_Props) {
+    const screenHeight = Dimensions.get("window").height
     const opacity = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(-20)).current;
 
@@ -76,7 +78,16 @@ export function CE_Alert(props: I_Props) {
     if (!visible) return null;
 
     return (
-        <SafeAreaView className="absolute top-0 left-0 right-0 z-50">
+        <SafeAreaView 
+                style={{
+                    position: "absolute",
+                    top: -screenHeight * 0.001,
+                    left: 0,
+                    right: 0,
+                    zIndex: 999,
+                }}
+            className="absolute top-0 left-0 right-0 z-50"
+        >
             <Animated.View
                 style={{
                     opacity,

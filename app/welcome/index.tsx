@@ -3,15 +3,18 @@ import { CE_Button } from "@/components/Button";
 import { LoginRegisterLayout } from "@/components/LoginRegisterHeader";
 import { globalEmitter } from "@/services/function/globalEmitter";
 import { useLang } from "@/services/function/LangContext";
+import { useLocale } from "@/services/function/useLocale";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { BackHandler, Dimensions, View } from "react-native";
 import ModalChangeLanguage from "../login/_element/login.change.lang";
+import { locales } from "./locales";
 
 const ALERT_NAME = 'alert-welcome'
 
 export default function Welcome() {
     const { lang, setLang } = useLang()
+    const language = useLocale(lang, locales)
     const screenHeight = Dimensions.get("window").height
     const router = useRouter()
     const goToLogin = () => { router.navigate("/login") }
@@ -63,12 +66,12 @@ export default function Welcome() {
                 <CE_Alert name={ALERT_NAME} />
             </View>
             <LoginRegisterLayout 
-                title="Welcome Back!"
+                title={language.title}
                 modalOpen={modalLangOpen}
                 openModalChangeLang={(open) => setModalLangOpen(open)}
             >
-                <CE_Button title="Sign In" onPress={() => goToLogin()} className="mt-20 mb-4"/>
-                <CE_Button title="Register" onPress={() => goToRegister()} bgColor="bg-secondary"/>
+                <CE_Button title={language.button.signin} onPress={() => goToLogin()} className="mt-20 mb-4"/>
+                <CE_Button title={language.button.register} onPress={() => goToRegister()} bgColor="bg-secondary"/>
             </LoginRegisterLayout>
 
             {modalLangOpen && (

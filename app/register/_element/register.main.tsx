@@ -1,22 +1,21 @@
+import { ALERT_NAME } from "@/app/constant/constant";
 import ModalChangeLanguage from "@/app/login/_element/login.change.lang";
-import { CE_Alert } from "@/components/Alert";
 import { LoginRegisterLayout } from "@/components/LoginRegisterHeader";
 import { globalEmitter } from "@/services/function/globalEmitter";
 import { useLang } from "@/services/function/LangContext";
+import { useLocale } from "@/services/function/useLocale";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Dimensions, View } from "react-native";
 import { doRegister } from "../_function/do.register";
+import { locales } from "../locales";
 import { RegisterCaptcha } from "./register.captcha";
 import { RegisterForm } from "./register.form";
 import { RegisterOTP } from "./register.otp";
 
-const ALERT_NAME = 'alert-register'
-
 export function RegisterMain(){
-    const screenHeight = Dimensions.get("window").height
     const router = useRouter()
     const { lang, setLang } = useLang()
+    const language = useLocale(lang, locales)
     const [name, setName] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [password, setPassword] = useState('')
@@ -31,6 +30,9 @@ export function RegisterMain(){
             setTimeout(async () => {
                 const result = await doRegister({ name, password, phone: phoneNumber });
                 if (result.meta.status === "success") {
+                    setTimeout(() => {
+                        setupAlert(language.hint.successregister,true)
+                    },200)
                     router.replace({
                         pathname: "../welcome",
                         params: {
@@ -57,25 +59,14 @@ export function RegisterMain(){
 
     return (
         <>
-            <View
-                style={{
-                    position: 'absolute',
-                    top: screenHeight * -0.1,
-                    left: 0,
-                    right: 0,
-                    zIndex: 999,
-                }}
-            >
-                <CE_Alert name={ALERT_NAME} />
-            </View>
-
             <LoginRegisterLayout 
-                title="Register"
+                title={language.title}
                 modalOpen={modalLangOpen}
                 openModalChangeLang={(open) => setModalLangOpen(open)}
             >
                 {step === 1 && (
                     <RegisterForm 
+                        language={language}
                         name={name}
                         phoneNumber={phoneNumber}
                         password={password}
@@ -89,11 +80,13 @@ export function RegisterMain(){
                 )}
                 {step === 2 && (
                     <RegisterCaptcha 
+                        language={language}
                         setNext={(newStep) => nextStep(newStep)}
                     />
                 )}
                 {step === 3 && (
                     <RegisterOTP
+                        language={language}
                         setNext={(newStep) => nextStep(newStep)}
                         isLoading={isLoading}
                     />
