@@ -45,26 +45,20 @@ export default function CE_ModalConfirmation({ eventName }: I_Props) {
 
     useEffect(() => {
         const listener = (data: ModalData) => {
-            // If a modal is currently closing, we need to ensure its data is cleared
-            // before we attempt to show a new one.
             if (isClosing) {
-                console.log("Modal is closing, handling new modal event...");
-                // Immediately clear the old modal data to prevent flicker
                 setModalData(null);
-                setVisible(false); // Ensure visibility is false for the brief moment the old data is null
-                setIsClosing(false); // Reset closing state for the new modal
-                setLastModalId(null); // Clear last ID
+                setVisible(false); 
+                setIsClosing(false);
+                setLastModalId(null);
 
-                // Then, open the new modal after a short delay to allow UI to settle
                 setTimeout(() => {
                     setModalData(data);
                     setVisible(true);
                     setLastModalId(data.id || null);
-                }, 100); // A shorter delay might be sufficient here, test this value.
+                }, 100);
                 return;
             }
 
-            // Prevent opening the same modal again if it's already visible and has the same ID
             if (data.id && data.id === lastModalId && visible) {
                 console.log("Preventing duplicate modal open while visible");
                 return;
@@ -77,26 +71,23 @@ export default function CE_ModalConfirmation({ eventName }: I_Props) {
 
         globalEmitter.on(eventName, listener);
         return () => globalEmitter.off(eventName, listener);
-    }, [eventName, isClosing, visible, lastModalId]); // Dependencies remain the same
+    }, [eventName, isClosing, visible, lastModalId]);
 
     const closeModal = () => {
-        if (isClosing) return; // Prevent multiple close calls
+        if (isClosing) return; 
         setIsClosing(true);
-        setVisible(false); // Start the fade-out animation
+        setVisible(false); 
 
-        // After the animation duration, clear the data and reset states
         setTimeout(() => {
-            setModalData(null); // This is the crucial part that removes the content
+            setModalData(null); 
             setLoadingConfirm(false);
             setLoadingCancel(false);
-            setIsClosing(false); // Reset isClosing after all clean-up
+            setIsClosing(false)
             setLastModalId(null);
-        }, 300); // This duration should match your animationOut duration if you had one.
-    };
+        }, 300)
+    }
 
-    // Render the modal only if visible is true, even if modalData is temporarily null
-    // This allows the animationType="fade" to work correctly during close.
-    if (!visible && !isClosing) return null; // Only return null if totally inactive
+    if (!visible && !isClosing) return null
 
     const {
         title,
@@ -108,18 +99,17 @@ export default function CE_ModalConfirmation({ eventName }: I_Props) {
         variant,
         onConfirm,
         onCancel,
-    } = modalData || {}; // Use optional chaining or default empty object for destructuring
+    } = modalData || {}
 
     const imageSource = getImageSource(variant);
 
     return (
         <Modal
-            visible={visible} // Use the `visible` state directly for the Modal prop
+            visible={visible}
             transparent
             animationType="fade"
             onRequestClose={closeModal}
         >
-            {/* Only render content if modalData exists to prevent rendering null/undefined properties */}
             {modalData && (
                 <View className="flex-1 bg-black/50 justify-center items-center px-6">
                     <View className="bg-white p-6 rounded-xl w-full max-w-md">
