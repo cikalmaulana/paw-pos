@@ -1,14 +1,15 @@
+import { MODAL_NAME } from "@/app/constant/constant";
 import { CE_BackButton } from "@/components/BackButton";
 import { CE_Button } from "@/components/Button";
 import { CE_Card } from "@/components/Card";
 import { I_Lang } from "@/services/api/other/api.language.int";
 import { API_GetStoreAdmin } from "@/services/api/store/api.store.get";
 import { I_User } from "@/services/api/user/api.user.get.int";
+import { globalEmitter } from "@/services/function/globalEmitter";
 import { useLocale } from "@/services/function/useLocale";
 import { useEffect, useState } from "react";
 import { Image, KeyboardAvoidingView, Platform, Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
 import AddAdmin from "./_element/manage.admin.add";
-import ViewAdminDelete from "./_element/manage.admin.delete";
 import { locales } from "./locales";
 
 interface I_Props {
@@ -22,8 +23,6 @@ export default function ManageAdmin(props: I_Props){
     const language = useLocale(props.lang, locales)
     
     const [adminList, setAdminList] = useState<I_User[]>([])
-    const [deleteAdminOpen, setDeleteAdminOpen] = useState(false)
-    const [adminOnSelect, setAdminOnSelect] = useState<I_User | undefined>()
     const [addAdminModalOpen, setAddAdminModalOpen] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
 
@@ -42,12 +41,22 @@ export default function ManageAdmin(props: I_Props){
     }
 
     const openDelete = (admin: I_User) => {
-        setDeleteAdminOpen(true)
-        setAdminOnSelect(admin)
+        globalEmitter.emit(MODAL_NAME, {
+            id: "moda:delete:admin",
+            title: language.modal.delete.title,
+            description: language.modal.delete.hint,
+            confirmText: language.button.confirm,
+            cancelText: language.button.cancel,
+            danger: true,
+            name: admin.name,
+            onConfirm: async (close: () => void ) => {
+                await doDeleteAdmin(admin.id)
+                close()
+            },
+        })
     }
 
     const doDeleteAdmin = async (id: string) => {
-        setDeleteAdminOpen(false)
         await getAdminList()
     }
 
@@ -121,16 +130,6 @@ export default function ManageAdmin(props: I_Props){
                     </CE_Card>
                 </ScrollView> 
             </KeyboardAvoidingView>
-
-            {deleteAdminOpen && (
-                <ViewAdminDelete 
-                    language={language}
-                    adminData={adminOnSelect} 
-                    isOpen={deleteAdminOpen} 
-                    setIsOpen={(open) => setDeleteAdminOpen(open)}
-                    deleteAdmin={(id) => doDeleteAdmin(id)}
-                />
-            )}
 
             {addAdminModalOpen && (
                 <AddAdmin 

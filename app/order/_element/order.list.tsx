@@ -1,7 +1,8 @@
+import { MODAL_NAME } from "@/app/constant/constant";
 import { CE_Button } from "@/components/Button";
-import CE_ModalConfirmation from "@/components/ModalConfirmation";
 import { I_Order } from "@/services/api/order/api.order.int";
 import { priceFormat } from "@/services/function/formatPrice";
+import { globalEmitter } from "@/services/function/globalEmitter";
 import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { locales } from "../locales";
@@ -14,40 +15,17 @@ interface I_Props {
 export default function OrderList(props: I_Props) {
     const { orderData } = props
     const [expanded, setExpanded] = useState(false)
-    const [modalDoneOpen, setModalDoneOpen] = useState(false)
-    const [modalCancelOpen, setModalCancelOpen] = useState(false)
 
     const cancelOrder = (id: string) => {
         // do api thing
-        setModalCancelOpen(false)
     }
 
     const doneOrder = (id: string) => {
         // do api thing
-        setModalDoneOpen(false)
     }
 
     return (
         <View>
-            {modalCancelOpen && (
-                <CE_ModalConfirmation 
-                    isOpen={modalCancelOpen}
-                    title={props.language.modal.cancel.title}
-                    description={props.language.modal.cancel.description}
-                    setIsOpen={setModalCancelOpen}
-                    onConfirm={() => cancelOrder(props.orderData.id)}
-                    danger={true}
-                />
-            )}
-            {modalDoneOpen && (
-                <CE_ModalConfirmation 
-                    isOpen={modalDoneOpen}
-                    title={props.language.modal.done.title}
-                    description={props.language.modal.done.description}
-                    setIsOpen={setModalDoneOpen}
-                    onConfirm={() => doneOrder(props.orderData.id)}
-                />
-            )}
             <TouchableOpacity
                 onPress={() => setExpanded(!expanded)}
                 activeOpacity={0.9}
@@ -99,12 +77,44 @@ export default function OrderList(props: I_Props) {
                                 title={props.language.button.cancel}
                                 className="flex-1"
                                 bgColor="bg-danger"
-                                onPress={() => setModalCancelOpen(true)}
+                                onPress={() => {
+                                    globalEmitter.emit(MODAL_NAME, {
+                                        id: "moda:order:cancel",
+                                        title: props.language.modal.cancel.title,
+                                        description: props.language.modal.cancel.description,
+                                        confirmText: props.language.button.done,
+                                        cancelText: props.language.button.cancel,
+                                        danger: true,
+                                        onConfirm: async (close: () => void) => {
+                                            cancelOrder(props.orderData.id)
+                                            await close()
+                                        },
+                                        onCancel: (close: () => void) => {
+                                            close()
+                                        }
+                                    })
+                                }}
+
                             />
                             <CE_Button 
                                 title={props.language.button.done}
                                 className="flex-1"
-                                onPress={() => setModalDoneOpen(true)}
+                                onPress={() => {
+                                    globalEmitter.emit(MODAL_NAME, {
+                                        id: "moda:order:done",
+                                        title: props.language.modal.done.title,
+                                        description: props.language.modal.done.description,
+                                        confirmText: props.language.button.done,
+                                        cancelText: props.language.button.cancel,
+                                        onConfirm: async (close: () => void) => {
+                                            doneOrder(props.orderData.id)
+                                            await close()
+                                        },
+                                        onCancel: (close: () => void) => {
+                                            close()
+                                        }
+                                    })
+                                }}
                             />
                         </View>
                     </View>

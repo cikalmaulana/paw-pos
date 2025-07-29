@@ -1,3 +1,4 @@
+import { MODAL_NAME } from "@/app/constant/constant"
 import { CE_Alert } from "@/components/Alert"
 import { CE_Card } from "@/components/Card"
 import { CE_Loading } from "@/components/Loading"
@@ -19,7 +20,6 @@ import ContactSupport from "../cs/cs.main"
 import { locales } from "../locales"
 import PrivacyPolicy from "../policy/policy.main"
 import ModalChangeLanguage from "./account.modal.language"
-import { LogoutModal } from "./account.modal.logout"
 import AccountSettingList from "./account.setting.list"
 
 const ManageItem = lazy(() => import("../manage/item/manage.item.main"));
@@ -42,13 +42,27 @@ export default function AccountMain(props: I_Props) {
     const [balance, setBalance] = useState(props.storeData.balance)
     const navigation = useNavigation<any>();
     const [manageOpen, setManageOpen] = useState('')
-    const [isModalOpen, setIsModalOpen] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
 
     const screenHeight = Dimensions.get("window").height
 
     const { lang, setLang } = useLang()
     const language = useLocale(lang, locales)
+
+    const showLogoutModal = (
+        logoutFn: (close: () => void, setLoading: (val: boolean) => void) => void,
+        language: typeof locales["en"]
+    ) => {
+        globalEmitter.emit(MODAL_NAME, {
+            id: "moda:logout",
+            title: language.logout.title,
+            description: language.logout.description,
+            confirmText: language.logout.buttonLogout,
+            cancelText: language.logout.buttonCancel,
+            danger: true,
+            onConfirm: logoutFn,
+        })
+    }
 
     const onRefresh = async () => {
         setRefreshing(true)
@@ -91,11 +105,13 @@ export default function AccountMain(props: I_Props) {
 
     }
 
-    const logout = async () => {
-        const result = await doLogout();
+    const logout = async (close: () => void) => {
+        const result = await doLogout()
+
         if (!result.success) {
             setupAlert("Failed to logout. Please try again in 5 minutes.", false)
         } else {
+            close()
             navigation.dispatch(
                 CommonActions.reset({
                     index: 0,
@@ -135,7 +151,7 @@ export default function AccountMain(props: I_Props) {
                             }}
                         />
                     )}
-                    <View className="flex flex-row gap-2 items-center mb-4 mt-4">
+                    <View className="flex flex-row gap-2 items-center mb-4">
                         <View className="flex flex-row justify-between items-center">
                             <View className="flex flex-row gap-2 items-center">
                                 <Text className="text-primary font-bold text-2xl">
@@ -167,7 +183,7 @@ export default function AccountMain(props: I_Props) {
                         <AccountSettingList 
                             lang={lang}
                             setManageOpen={(page) => setManageOpen(page)} 
-                            doLogout={() => setIsModalOpen(true)}
+                            doLogout={() => showLogoutModal(logout, language)}
                         />
                     </ScrollView>
                 </View>
@@ -247,13 +263,6 @@ export default function AccountMain(props: I_Props) {
                     </Suspense>
                 ) : <></>
             }
-
-            <LogoutModal 
-                language={language}
-                isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
-                logout={logout}
-            />
         </View>
     )
 }

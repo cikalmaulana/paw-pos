@@ -1,0 +1,1 @@
+export const MODAL_NAME = 'modal:global'
