@@ -15,9 +15,7 @@ import { searchItemByName } from "./_function/do.searchItem";
 interface I_Props{
     language: typeof locales["id"]
     handleBack:()=>void
-    setShowAlert:(open: boolean)=>void
-    setAlertMsg:(msg: string)=>void
-    setAlertSuccess:(success:boolean)=>void
+    setupAlert:(msg: string, isSuccess: boolean)=>void
 }
 
 type EditStockState = {
@@ -85,7 +83,7 @@ export default function ManageItemEditStock(props: I_Props) {
         try {
             const result = await API_GetAllItem()
             if (result?.meta.status !== 'success' || !result.data) {
-                return alertSetup("Connection lost.", false)
+                return props.setupAlert("Connection lost.", false)
             }
         
             setItemState(prev => ({
@@ -96,7 +94,7 @@ export default function ManageItemEditStock(props: I_Props) {
             }))
         } catch {
             console.error("Failed to get item data.")
-            alertSetup("Connection lost.", false)
+            props.setupAlert("Connection lost.", false)
         }
     }
 
@@ -138,19 +136,13 @@ export default function ManageItemEditStock(props: I_Props) {
     
         const result = await API_EditStock(payload)
         if (result?.meta.status === 'success') {
-            alertSetup('Edit stock success!', true)
+            props.setupAlert('Edit stock success!', true)
         } else {
-            alertSetup('Connection lost.', false)
+            props.setupAlert('Connection lost.', false)
         }
     
         onRefresh()
         safetyClose()
-    }
-
-    const alertSetup = (msg: string, isSuccess: boolean) => {
-        props.setAlertMsg(msg)
-        props.setAlertSuccess(isSuccess)
-        props.setShowAlert(true)
     }
 
     const cancelEdit = () => safetyClose()

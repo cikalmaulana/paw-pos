@@ -3,11 +3,12 @@ import { CE_Button } from "@/components/Button";
 import { CE_Checkbox } from "@/components/Checkbox";
 import { Input } from "@/components/Input";
 import { I_User } from "@/services/api/user/api.user.get.int";
+import { globalEmitter } from "@/services/function/globalEmitter";
 import { isPhoneValid } from "@/services/function/isPhoneValid";
 import { CommonActions } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Dimensions, Text, View } from "react-native";
 import { doLogin } from "../_function/do.login";
 import { locales } from "../locales";
 
@@ -18,7 +19,11 @@ interface I_Props{
     setUserData:(user: I_User) => void
 }
 
+const ALERT_NAME = 'alert-login'
+
 export function LoginForm(props: I_Props) {
+    const screenHeight = Dimensions.get("window").height
+    
     const router = useRouter()
     const navigation = useNavigation();
     const [phoneNumber, setPhoneNumber] = useState('')
@@ -26,8 +31,6 @@ export function LoginForm(props: I_Props) {
     const [phoneNumebrWarning, setPhoneNumberWarning] = useState('')
     const [first, setFirst] = useState(true)
     const [isLoading, setIsLoading] = useState(false)
-    const [showAlert, setShowAlert] = useState(false)
-    const [loginMsg, setLoginMsg] = useState('')
     const [remember, setRemember] = useState(false)
 
     useEffect(() => {
@@ -54,8 +57,7 @@ export function LoginForm(props: I_Props) {
             const result = await doLogin(loginPayload, remember)
 
             if (!result || (result.user && !result.user.membership)) {
-                setShowAlert(true)
-                setLoginMsg("Connection error. Please try again in 5 minutes.")
+                setupAlert("Connection error. Please try again in 5 minutes.", false)
                 return
             }
             
@@ -77,23 +79,32 @@ export function LoginForm(props: I_Props) {
                     )
                 }
             } else {
-                setShowAlert(true)
-                setLoginMsg(result.meta.message)
+                setupAlert(result.meta.message, false)
             }
             setIsLoading(false)
         }, 2000)
     }
 
+    const setupAlert = (msg: string, isSuccess: boolean) => {
+        globalEmitter.emit(ALERT_NAME, {
+            message: msg,
+            isSuccess: isSuccess,
+        });
+    }
+
     return (
         <>
-            {showAlert && (
-                <CE_Alert 
-                    showAlert={showAlert}
-                    message={loginMsg}
-                    isSuccess={false}
-                    onClose={() => setShowAlert(false)}
-                />
-            )}
+            <View
+                style={{
+                    position: 'absolute',
+                    top: screenHeight * -0.1,
+                    left: 0,
+                    right: 0,
+                    zIndex: 999,
+                }}
+            >
+                <CE_Alert name={ALERT_NAME} />
+            </View>
             <View className="flex-1">
                 <View className="flex flex-col gap-2 mb-3">
                     <Input

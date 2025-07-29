@@ -24,9 +24,7 @@ interface I_Props {
     storeData:I_Store
     balance: string
     handleBack:()=>void
-    setShowAlert:(open: boolean)=>void
-    setAlertMsg:(msg: string)=>void
-    setAlertSuccess:(success:boolean)=>void
+    setupAlert:(msg: string, isSuccess: boolean)=>void
     setStoreData:(data: I_Store) => void
 }
 
@@ -49,14 +47,8 @@ export default function ManageStore(props: I_Props){
             setBalance(result.balance)
             props.setStoreData(result)
         } else {
-            setupAlert("Failed to refresh user data. Please try again.", false)
+            props.setupAlert("Failed to refresh user data. Please try again.", false)
         }
-    }
-
-    const setupAlert = (msg: string, isSuccess: boolean) => {
-        props.setAlertMsg(msg)
-        props.setAlertSuccess(isSuccess)
-        props.setShowAlert(true)
     }
 
     return (
@@ -69,7 +61,7 @@ export default function ManageStore(props: I_Props){
                             balance={balance}
                             setBalance={setBalance}
                             onClose={() => setManageOpen('')}
-                            setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
+                            setUpAlert={(msg: string, isSuccess: boolean) => props.setupAlert(msg, isSuccess)}
                         />
                     )}
                     <View>
@@ -106,7 +98,7 @@ export default function ManageStore(props: I_Props){
 
                                 <StoreSetting 
                                     language={language}
-                                    setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
+                                    setUpAlert={(msg: string, isSuccess: boolean) => props.setupAlert(msg, isSuccess)}
                                 />
 
                                 <StoreTransactionMgmList 
@@ -114,7 +106,7 @@ export default function ManageStore(props: I_Props){
                                     tax="10"
                                     service="10"
                                     handleSelect={(key) => setManageOpen(key)}
-                                    setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
+                                    setUpAlert={(msg: string, isSuccess: boolean) => props.setupAlert(msg, isSuccess)}
                                 />
 
                                 <StoreStockManagement 
@@ -135,7 +127,7 @@ export default function ManageStore(props: I_Props){
                     refreshing={refreshing}
                     handleBack={() => setManageOpen('')}
                     setStoreData={props.setStoreData}
-                    setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
+                    setUpAlert={(msg: string, isSuccess: boolean) => props.setupAlert(msg, isSuccess)}
                     doRefresh={async () => {
                         await onRefresh()
                     }}
@@ -150,7 +142,7 @@ export default function ManageStore(props: I_Props){
                         language={language}
                         storeData={props.storeData}
                         handleBack={() => setManageOpen('')}
-                        setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
+                        setUpAlert={(msg: string, isSuccess: boolean) => props.setupAlert(msg, isSuccess)}
                     />
                 </Suspense>
             )}
@@ -165,7 +157,7 @@ export default function ManageStore(props: I_Props){
                         refreshing={refreshing}
                         handleBack={() => setManageOpen('')}
                         setStoreData={props.setStoreData}
-                        setUpAlert={(msg: string, isSuccess: boolean) => setupAlert(msg, isSuccess)}
+                        setUpAlert={(msg: string, isSuccess: boolean) => props.setupAlert(msg, isSuccess)}
                         doRefresh={async () => {
                             await onRefresh()
                         }}

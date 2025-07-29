@@ -1,22 +1,29 @@
+import ModalChangeLanguage from "@/app/login/_element/login.change.lang";
 import { CE_Alert } from "@/components/Alert";
 import { LoginRegisterLayout } from "@/components/LoginRegisterHeader";
+import { globalEmitter } from "@/services/function/globalEmitter";
+import { useLang } from "@/services/function/LangContext";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { Dimensions, View } from "react-native";
 import { doRegister } from "../_function/do.register";
 import { RegisterCaptcha } from "./register.captcha";
 import { RegisterForm } from "./register.form";
 import { RegisterOTP } from "./register.otp";
 
+const ALERT_NAME = 'alert-register'
+
 export function RegisterMain(){
+    const screenHeight = Dimensions.get("window").height
     const router = useRouter()
+    const { lang, setLang } = useLang()
     const [name, setName] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [password, setPassword] = useState('')
     const [rePassword, setRePassword] = useState('')
     const [step, setStep] = useState(1)
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertMsg, setAlertMsg] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const [modalLangOpen, setModalLangOpen] = useState(false)
 
     const nextStep = async (newStep: number) => {
         if (newStep === 4) {
@@ -32,8 +39,7 @@ export function RegisterMain(){
                         },
                     } as const);
                 } else {
-                    setAlertMsg(result.meta.message);
-                    setShowAlert(true);
+                    setupAlert(result.meta.message,false)
                 }
                 setIsLoading(false)
             }, 2000)
@@ -42,17 +48,32 @@ export function RegisterMain(){
         }
     };
 
+    const setupAlert = (msg: string, isSuccess: boolean) => {
+        globalEmitter.emit(ALERT_NAME, {
+            message: msg,
+            isSuccess: isSuccess,
+        });
+    }
+
     return (
         <>
-            {showAlert && (
-                <CE_Alert
-                    message={alertMsg}
-                    isSuccess={false}
-                    showAlert={showAlert}
-                    onClose={() => setShowAlert(false)}
-                />
-            )}
-            <LoginRegisterLayout title="Register">
+            <View
+                style={{
+                    position: 'absolute',
+                    top: screenHeight * -0.1,
+                    left: 0,
+                    right: 0,
+                    zIndex: 999,
+                }}
+            >
+                <CE_Alert name={ALERT_NAME} />
+            </View>
+
+            <LoginRegisterLayout 
+                title="Register"
+                modalOpen={modalLangOpen}
+                openModalChangeLang={(open) => setModalLangOpen(open)}
+            >
                 {step === 1 && (
                     <RegisterForm 
                         name={name}
@@ -78,6 +99,18 @@ export function RegisterMain(){
                     />
                 )}
             </LoginRegisterLayout>
+
+            {modalLangOpen && (
+                <ModalChangeLanguage 
+                    isOpen={modalLangOpen}
+                    setIsModalOpen={(open) => setModalLangOpen(open)}
+                    setUpAlert={(msg: string, isSuccess: boolean) => {
+                        setupAlert(msg, isSuccess)
+                    }}
+                    langNow={lang.name}
+                    changeLang={(newLang) => setLang({ name: newLang })}
+                />
+            )}
         </>
     )
 }

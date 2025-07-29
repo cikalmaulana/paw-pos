@@ -9,9 +9,7 @@ import ItemAddForm, { ItemAddFormHandles } from "./_element/item.add.form";
 interface I_Props {
     language: typeof locales["id"]
     hahandleBack: (item: string) => void
-    setShowAlert: (open: boolean) => void
-    setAlertMsg: (msg: string) => void
-    setAlertSuccess: (success: boolean) => void
+    setupAlert:(msg: string, isSuccess: boolean)=>void
 }
 
 export default function AddNewItem(props: I_Props) {
@@ -38,23 +36,17 @@ export default function AddNewItem(props: I_Props) {
 
         const result = await API_AddItem(payload);
         if (result && result.meta.status === "success") {
-            alertSetup("Add new item success!", true)
+            props.setupAlert("Add new item success!", true)
             safetyBack()
             return
         }
 
-        alertSetup("Connection lost.", false)
+        props.setupAlert("Connection lost.", false)
     }
 
     const safetyBack = () => {
         formRef.current?.resetForm()
         props.hahandleBack("")
-    }
-
-    const alertSetup = (msg: string, isSuccess: boolean) => {
-        props.setAlertMsg(msg);
-        props.setAlertSuccess(isSuccess)
-        props.setShowAlert(true)
     }
 
     return (
@@ -64,7 +56,7 @@ export default function AddNewItem(props: I_Props) {
                 language={props.language}
                 ref={formRef} 
                 onSubmit={saveItem} 
-                alertSetup={alertSetup}
+                alertSetup={props.setupAlert}
             />
         </View>
     );

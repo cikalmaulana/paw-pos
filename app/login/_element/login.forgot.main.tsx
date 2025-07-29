@@ -1,7 +1,8 @@
 import { CE_Alert } from "@/components/Alert";
+import { globalEmitter } from "@/services/function/globalEmitter";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 import { doForgot } from "../_function/do.forgot";
 import { ForgotCaptcha } from "./login.forgot.captcha";
 import { ForgotNew } from "./login.forgot.new";
@@ -12,15 +13,17 @@ interface Props{
     setOpen:(isOpen: boolean) => void
 }
 
+const ALERT_NAME = 'alert-forgot'
+
 export function ForgotForm(props: Props) {
+    const screenHeight = Dimensions.get("window").height
+    
     const router = useRouter()
     const [phoneNumber, setPhoneNumber] = useState('')
     const [captcha, setCaptcha] = useState('')
     const [newPhoneNumber, setNewPhoneNumber] = useState('')
     const [otp, setOtp] = useState('')
     const [step, setStep] = useState(1)
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertMsg, setAlertMsg] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
     const goToStep = (step: number) => {
@@ -45,23 +48,32 @@ export function ForgotForm(props: Props) {
                     },
                 } as const);
             } else {
-                setAlertMsg(result.message);
-                setShowAlert(true);
+                setupAlert(result.message, true)
             }
             setIsLoading(false)
         }
     }
 
+    const setupAlert = (msg: string, isSuccess: boolean) => {
+        globalEmitter.emit(ALERT_NAME, {
+            message: msg,
+            isSuccess: isSuccess,
+        });
+    }
+
     return (
         <>
-            {showAlert && (
-                <CE_Alert
-                    message={alertMsg}
-                    isSuccess={false}
-                    showAlert={showAlert}
-                    onClose={() => setShowAlert(false)}
-                />
-            )}
+            <View
+                style={{
+                    position: 'absolute',
+                    top: screenHeight * -0.1,
+                    left: 0,
+                    right: 0,
+                    zIndex: 999,
+                }}
+            >
+                <CE_Alert name={ALERT_NAME} />
+            </View>
             <View className="flex-1">
                 {step === 1 && (
                     <ForgotPhone

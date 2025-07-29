@@ -1,11 +1,11 @@
 import { CE_Alert } from "@/components/Alert"
 import { CE_Card } from "@/components/Card"
 import { CE_Loading } from "@/components/Loading"
-import { API_GetLanguage } from "@/services/api/other/api.language"
 import { I_Lang } from "@/services/api/other/api.language.int"
 import { I_Store } from "@/services/api/store/api.store.int"
 import { I_User } from "@/services/api/user/api.user.get.int"
 import { priceFormat } from "@/services/function/formatPrice"
+import { globalEmitter } from "@/services/function/globalEmitter"
 import { useLang } from "@/services/function/LangContext"
 import { doLogout } from "@/services/function/logout"
 import { updateStoreData } from "@/services/function/updateStoreData"
@@ -34,16 +34,15 @@ interface I_Props {
     storeData: I_Store
 }
 
+const ALERT_NAME = 'alert-account'
+
 export default function AccountMain(props: I_Props) {
     const [userData, setUserData] = useState<I_User>(props.userData)
     const [storeData, setStoreData] = useState<I_Store>(props.storeData)
     const [balance, setBalance] = useState(props.storeData.balance)
     const navigation = useNavigation<any>();
-    const [showAlert, setShowAlert] = useState(false)
-    const [alertMsg, setAlertMsg] = useState('')
     const [manageOpen, setManageOpen] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [alertSuccess, setAlertSuccess] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
 
     const screenHeight = Dimensions.get("window").height
@@ -59,33 +58,24 @@ export default function AccountMain(props: I_Props) {
         setRefreshing(false)
     }
 
-    const refreshLang = async () => {
-        await getNewLang()
-    }
-
     useEffect(() => {
         onRefresh()
     },[])
-
-    const getNewLang = async () => {
-        const result = await API_GetLanguage()
-        if(result) setLang(result)
-        else {
-            setAlertMsg("Failed to change language. Please try again.")
-            setAlertSuccess(false)
-            setShowAlert(true)
-        }
-    }
 
     const getNewUserData = async () => {
         const result = await updateUserData()
         if(result !== null) {
             setUserData(result)
         } else {
-            setAlertMsg("Failed to refresh user data. Please try again.")
-            setAlertSuccess(false)
-            setShowAlert(true)
+            setupAlert("Failed to refresh user data. Please try again.", false)
         }
+    }
+
+    const setupAlert = (msg: string, isSuccess: boolean) => {
+        globalEmitter.emit(ALERT_NAME, {
+            message: msg,
+            isSuccess: isSuccess,
+        });
     }
 
     const getNewStoreData = async () => {
@@ -93,9 +83,7 @@ export default function AccountMain(props: I_Props) {
         if(result !== null) {
             setBalance(result.balance)
         } else {
-            setAlertMsg("Failed to refresh user data. Please try again.")
-            setAlertSuccess(false)
-            setShowAlert(true)
+            setupAlert("Failed to refresh user data. Please try again.", false)
         }
     }
 
@@ -106,9 +94,7 @@ export default function AccountMain(props: I_Props) {
     const logout = async () => {
         const result = await doLogout();
         if (!result.success) {
-            setAlertMsg("Failed to logout. Please try again in 5 minutes.")
-            setShowAlert(true)
-            setAlertSuccess(false)
+            setupAlert("Failed to logout. Please try again in 5 minutes.", false)
         } else {
             navigation.dispatch(
                 CommonActions.reset({
@@ -126,152 +112,141 @@ export default function AccountMain(props: I_Props) {
 
     return (
         <View className="min-h-screen mx-5" >
-            {showAlert && (
-                <View style={{ top: screenHeight * -0.1 }}>
-                    <CE_Alert 
-                        message={alertMsg} 
-                        isSuccess={alertSuccess} 
-                        showAlert={showAlert} 
-                        onClose={() => setShowAlert(false)}         
-                    />
-                </View>
-            )}
+            <View
+                style={{
+                    position: 'absolute',
+                    top: screenHeight * -0.1,
+                    left: 0,
+                    right: 0,
+                    zIndex: 999,
+                }}
+            >
+                <CE_Alert name={ALERT_NAME} />
+            </View>
 
-                {manageOpen === '' || manageOpen === 'lang' ? (
-                    <View>
-                        {manageOpen === 'lang' && (
-                            <ModalChangeLanguage 
-                                isModalOpen={manageOpen === 'lang'}
-                                setIsModalOpen={() => setManageOpen('')}
-                                setUpAlert={(msg: string, isSuccess: boolean) => {
-                                    setShowAlert(true)
-                                    setAlertMsg(msg)
-                                    setAlertSuccess(isSuccess)
-                                }}
-                            />
-                        )}
-                        <View className="flex flex-row gap-2 items-center mb-4 mt-4">
-                            <View className="flex flex-row justify-between items-center">
-                                <View className="flex flex-row gap-2 items-center">
-                                    <Text className="text-primary font-bold text-2xl">
-                                        {language.title}
-                                    </Text>
-                                </View>
+            {manageOpen === '' || manageOpen === 'lang' ? (
+                <View>
+                    {manageOpen === 'lang' && (
+                        <ModalChangeLanguage 
+                            isModalOpen={manageOpen === 'lang'}
+                            setIsModalOpen={() => setManageOpen('')}
+                            setUpAlert={(msg: string, isSuccess: boolean) => {
+                                setupAlert(msg, isSuccess)
+                            }}
+                        />
+                    )}
+                    <View className="flex flex-row gap-2 items-center mb-4 mt-4">
+                        <View className="flex flex-row justify-between items-center">
+                            <View className="flex flex-row gap-2 items-center">
+                                <Text className="text-primary font-bold text-2xl">
+                                    {language.title}
+                                </Text>
                             </View>
                         </View>
-                        
-                        <ScrollView
-                            refreshControl={
-                                <RefreshControl
-                                    refreshing={refreshing}
-                                    onRefresh={onRefresh}
-                                    colors={["#16B8A8"]}       
-                                    tintColor="#16B8A8"        
-                                    title="Loading..."         
-                                    titleColor="#16B8A8"        
-                                />
-                            }
-                            showsVerticalScrollIndicator={false}
-                        >
-                            <Text className="text-secondary text-3xl font-bold mb-3">{storeData.name}</Text>
-                            <CE_Card className="bg-primary p-5 flex justify-center mb-8">
-                                <Text className="text-white font-semibold text-lg">{language.store.balance}</Text>
-                                <Text className="text-white font-bold text-3xl">{priceFormat(balance, "IDR")}</Text>
-                            </CE_Card>
-                
-                            <AccountSettingList 
-                                lang={lang}
-                                setManageOpen={(page) => setManageOpen(page)} 
-                                doLogout={() => setIsModalOpen(true)}
-                            />
-                        </ScrollView>
                     </View>
-                    ) : manageOpen === 'detail' ? (
-                        <Suspense fallback={
-                            <CE_Loading />
-                        }>
-                            <AccountDetails 
-                                lang={lang}
-                                userData={userData} 
-                                handleBack={() => handleBack()}
-                                setShowAlert={setShowAlert}
-                                setAlertMsg={setAlertMsg}
-                                setAlertSuccess={setAlertSuccess}
+                    
+                    <ScrollView
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                                colors={["#16B8A8"]}       
+                                tintColor="#16B8A8"        
+                                title="Loading..."         
+                                titleColor="#16B8A8"        
                             />
-                        </Suspense>
-                    ) : manageOpen === 'item' ? (
-                        <Suspense fallback={<CE_Loading />}>
-                            <ManageItem 
-                                lang={lang}
-                                handleBack={() => handleBack()}
-                                storeData={storeData}
-                                setShowAlert={setShowAlert}
-                                setAlertMsg={setAlertMsg}
-                                setAlertSuccess={setAlertSuccess}
-                            />
-                        </Suspense>
-                    ) : manageOpen === 'admin' ? (
-                        <Suspense fallback={<CE_Loading />}>
-                            <ManageAdmin 
-                                lang={lang}
-                                storeId={props.storeData.id}
-                                handleBack={() => handleBack()}
-                                setUpAlert={(msg, isSuccess) => {
-                                    setAlertMsg(msg)
-                                    setAlertSuccess(isSuccess)
-                                    setShowAlert(true)
-                                }}
-                            />
-                        </Suspense>
-                    ) : manageOpen === 'store' ? (
-                        <Suspense fallback={<CE_Loading />}>
-                            <ManageStore 
-                                lang={lang}
-                                handleBack={() => handleBack()}
-                                storeData={storeData}
-                                balance={balance}
-                                setShowAlert={setShowAlert}
-                                setAlertMsg={setAlertMsg}
-                                setAlertSuccess={setAlertSuccess}
-                                setStoreData={setStoreData}
-                            />
-                        </Suspense>
-                    ) : manageOpen === 'report' ? (
-                        <Suspense fallback={<CE_Loading />}>
-                            <AccountReport 
-                                storeId={props.storeData.id}
-                                lang={lang}
-                                handleBack={() => handleBack()}
-                                setupAlert={(msg, isSuccess) => {
-                                    setAlertMsg(msg)
-                                    setAlertSuccess(isSuccess)
-                                    setShowAlert(true)
-                                }}
-                            />
-                        </Suspense>
-                    ) : manageOpen === 'privacypolicy' ? (
-                        <Suspense fallback={<CE_Loading />}>
-                            <PrivacyPolicy 
-                                lang={lang}
-                                handleBack={() => handleBack()}
-                            />
-                        </Suspense>
-                    ) : manageOpen === 'cs' ? (
-                        <Suspense fallback={<CE_Loading />}>
-                            <ContactSupport 
-                                lang={lang}
-                                handleBack={() => handleBack()}
-                            />
-                        </Suspense>
-                    ) : manageOpen === 'about' ? (
-                        <Suspense fallback={<CE_Loading />}>
-                            <AboutPage 
-                                lang={lang}
-                                handleBack={() => handleBack()}
-                            />
-                        </Suspense>
-                    ) : <></>
-                }
+                        }
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <Text className="text-secondary text-3xl font-bold mb-3">{storeData.name}</Text>
+                        <CE_Card className="bg-primary p-5 flex justify-center mb-8">
+                            <Text className="text-white font-semibold text-lg">{language.store.balance}</Text>
+                            <Text className="text-white font-bold text-3xl">{priceFormat(balance, "IDR")}</Text>
+                        </CE_Card>
+            
+                        <AccountSettingList 
+                            lang={lang}
+                            setManageOpen={(page) => setManageOpen(page)} 
+                            doLogout={() => setIsModalOpen(true)}
+                        />
+                    </ScrollView>
+                </View>
+                ) : manageOpen === 'detail' ? (
+                    <Suspense fallback={
+                        <CE_Loading />
+                    }>
+                        <AccountDetails 
+                            lang={lang}
+                            userData={userData} 
+                            handleBack={() => handleBack()}
+                            setupAlert={(msg, isSuccess) => setupAlert(msg, isSuccess)}
+                        />
+                    </Suspense>
+                ) : manageOpen === 'item' ? (
+                    <Suspense fallback={<CE_Loading />}>
+                        <ManageItem 
+                            lang={lang}
+                            handleBack={() => handleBack()}
+                            storeData={storeData}
+                            setupAlert={(msg, isSuccess) => setupAlert(msg, isSuccess)}
+                        />
+                    </Suspense>
+                ) : manageOpen === 'admin' ? (
+                    <Suspense fallback={<CE_Loading />}>
+                        <ManageAdmin 
+                            lang={lang}
+                            storeId={props.storeData.id}
+                            handleBack={() => handleBack()}
+                            setUpAlert={(msg, isSuccess) => {
+                                setupAlert(msg, isSuccess)
+                            }}
+                        />
+                    </Suspense>
+                ) : manageOpen === 'store' ? (
+                    <Suspense fallback={<CE_Loading />}>
+                        <ManageStore 
+                            lang={lang}
+                            handleBack={() => handleBack()}
+                            storeData={storeData}
+                            balance={balance}
+                            setupAlert={(msg, isSuccess) => setupAlert(msg, isSuccess)}
+                            setStoreData={setStoreData}
+                        />
+                    </Suspense>
+                ) : manageOpen === 'report' ? (
+                    <Suspense fallback={<CE_Loading />}>
+                        <AccountReport 
+                            storeId={props.storeData.id}
+                            lang={lang}
+                            handleBack={() => handleBack()}
+                            setupAlert={(msg, isSuccess) => {
+                                setupAlert(msg, isSuccess)
+                            }}
+                        />
+                    </Suspense>
+                ) : manageOpen === 'privacypolicy' ? (
+                    <Suspense fallback={<CE_Loading />}>
+                        <PrivacyPolicy 
+                            lang={lang}
+                            handleBack={() => handleBack()}
+                        />
+                    </Suspense>
+                ) : manageOpen === 'cs' ? (
+                    <Suspense fallback={<CE_Loading />}>
+                        <ContactSupport 
+                            lang={lang}
+                            handleBack={() => handleBack()}
+                        />
+                    </Suspense>
+                ) : manageOpen === 'about' ? (
+                    <Suspense fallback={<CE_Loading />}>
+                        <AboutPage 
+                            lang={lang}
+                            handleBack={() => handleBack()}
+                        />
+                    </Suspense>
+                ) : <></>
+            }
 
             <LogoutModal 
                 language={language}

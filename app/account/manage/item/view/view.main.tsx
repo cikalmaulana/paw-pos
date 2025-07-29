@@ -18,9 +18,7 @@ import { searchItemByName } from "./_function/do.searchItem"
 interface I_Props{
     language: typeof locales["id"]
     handleBack:()=>void
-    setShowAlert:(open: boolean)=>void
-    setAlertMsg:(msg: string)=>void
-    setAlertSuccess:(success:boolean)=>void
+    setupAlert:(msg: string, isSuccess: boolean)=>void
 }
 
 export type EditData = {
@@ -121,7 +119,7 @@ export default function ManageItemView(props: I_Props) {
             const result = await API_GetAllItem()
             if(result){
                 if(result.meta.status !== 'success' || result.data == null ) {
-                    alertSetup("Connection lost.", false)
+                    props.setupAlert("Connection lost.", false)
                     return
                 }
 
@@ -132,12 +130,12 @@ export default function ManageItemView(props: I_Props) {
                     totalData: result.data?.length ?? 0,
                 }))
             } else {
-                alertSetup("Connection lost.", false)
+                props.setupAlert("Connection lost.", false)
                 return
             }
         } catch(error) {
             console.error("Failed to get item data on Manage Item.")
-            alertSetup("Connection lost.", false)
+            props.setupAlert("Connection lost.", false)
         }
     }
 
@@ -199,14 +197,8 @@ export default function ManageItemView(props: I_Props) {
     
     const doAlert = (result: I_EditItemResponse, msg: string) => {
         const isSuccess = result && result.meta.status === 'success'
-        alertSetup(isSuccess ? msg : "Connection lost.", isSuccess)
+        props.setupAlert(isSuccess ? msg : "Connection lost.", isSuccess)
         closeModal()
-    }
-    
-    const alertSetup = (msg: string, isSuccess: boolean) => {
-        props.setAlertMsg(msg)
-        props.setAlertSuccess(isSuccess)
-        props.setShowAlert(true)
     }
 
     const closeModal = () => {

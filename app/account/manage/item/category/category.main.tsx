@@ -17,9 +17,7 @@ import { searchCategoryByName } from "./_function/do.searchItem";
 interface I_Props{
     language: typeof locales["id"]
     handleBack:()=>void
-    setShowAlert:(open: boolean)=>void
-    setAlertMsg:(msg: string)=>void
-    setAlertSuccess:(success:boolean)=>void
+    setupAlert:(msg: string, isSuccess: boolean)=>void
 }
 
 export default function ManageItemCategories(props: I_Props){
@@ -96,21 +94,15 @@ export default function ManageItemCategories(props: I_Props){
         const result = await API_GetAllCategory()
         if (result && result.meta.status === 'success') {
             if (result.data === null) {
-                alertSetup(result.meta.message, false)
+                props.setupAlert(result.meta.message, false)
                 return
             }
     
             setCategoryData(result.data)
             setFilteredCategory(result.data)
         } else {
-            alertSetup("Connection lost.", false)
+            props.setupAlert("Connection lost.", false)
         }
-    }
-    
-    const alertSetup = (msg: string, isSuccess: boolean) => {
-        props.setAlertMsg(msg)
-        props.setAlertSuccess(isSuccess)
-        props.setShowAlert(true)
     }
     
     const cancelEdit = () => {
@@ -168,7 +160,7 @@ export default function ManageItemCategories(props: I_Props){
     
     const doAlert = (result: I_EditCategoryResponse, msg: string) => {
         const isSuccess = result && result.meta.status === 'success'
-        alertSetup(isSuccess ? msg : "Connection lost.", isSuccess)
+        props.setupAlert(isSuccess ? msg : "Connection lost.", isSuccess)
         safetyClose()
     }
 

@@ -12,9 +12,7 @@ interface I_Props{
     lang: I_Lang
     userData: I_User
     handleBack:()=>void
-    setShowAlert:(open: boolean)=>void
-    setAlertMsg:(msg: string)=>void
-    setAlertSuccess:(success:boolean)=>void
+    setupAlert:(msg: string, isSuccess: boolean)=>void
 }
 
 export default function AccountDetails(props: I_Props){
@@ -45,18 +43,14 @@ export default function AccountDetails(props: I_Props){
         const result = await API_EditUser(payload)
         if(result) {
             if(result.meta.status !== 'success'){
-                props.setAlertMsg(result.meta.message)
-                props.setAlertSuccess(false)
+                props.setupAlert(result.meta.message, false)
             } else {
-                props.setAlertMsg("Update profile success!")
-                props.setAlertSuccess(true)
+                props.setupAlert("Update profile success!", true)
             }
         } else {
-            props.setAlertMsg("UFailed to update profile. Try again in 5 minutes.")
-            props.setAlertSuccess(false)
+            props.setupAlert("Failed to update profile. Try again in 5 minutes.", false)
         }
         
-        props.setShowAlert(true)
         props.handleBack()
     }
 
@@ -106,19 +100,15 @@ export default function AccountDetails(props: I_Props){
         const result = await API_ChangePassword(payload)
         if(result) {
             if(result.meta.status !== 'success') {
-                props.setAlertMsg(result.meta.message)
-                props.setAlertSuccess(false)
+                props.setupAlert(result.meta.message, false)
             } else {
-                props.setAlertMsg("Change password success")
-                props.setAlertSuccess(true)
+                props.setupAlert("Change password success", true)
             }
         } else {
-            props.setAlertMsg("Failed to change password. Please try again in 5 minutes.")
-            props.setAlertSuccess(false)
+            props.setupAlert("Failed to change password. Please try again in 5 minutes.", false)
         }
 
         setChangePasswordOpen(false)
-        props.setShowAlert(true)
 
         setOldPass("")
         setNewPass("")

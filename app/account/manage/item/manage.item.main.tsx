@@ -19,9 +19,7 @@ interface I_Props {
     lang: I_Lang
     handleBack:()=>void
     storeData: I_Store
-    setShowAlert:(open: boolean)=>void
-    setAlertMsg:(msg: string)=>void
-    setAlertSuccess:(success:boolean)=>void
+    setupAlert:(msg: string, isSuccess: boolean)=>void
 }
 
 export default function ManageItem(props: I_Props){
@@ -49,9 +47,7 @@ export default function ManageItem(props: I_Props){
         if(result && result.meta.status === 'success') {
             setTotalItem(result.totalItem)
         } else {
-            props.setAlertMsg("Connection error.")
-            props.setAlertSuccess(false)
-            props.setShowAlert(true)
+            props.setupAlert("Connection error.", false)
         }
     }
 
@@ -100,18 +96,14 @@ export default function ManageItem(props: I_Props){
                     <ManageItemView 
                         language={language}
                         handleBack={() => setManageItemOpen('')}
-                        setShowAlert={props.setShowAlert}
-                        setAlertMsg={props.setAlertMsg}
-                        setAlertSuccess={props.setAlertSuccess}
+                        setupAlert={(msg, isSuccess) => props.setupAlert(msg, isSuccess)}
                     />
                 </Suspense>
             ) : manageItemOpen === 'addItem' ? (
                 <AddNewItem 
                     language={language}
                     hahandleBack={() => setManageItemOpen('')}
-                    setShowAlert={props.setShowAlert}
-                    setAlertMsg={props.setAlertMsg}
-                    setAlertSuccess={props.setAlertSuccess}
+                    setupAlert={(msg, isSuccess) => props.setupAlert(msg, isSuccess)}
                 />
             ) : manageItemOpen === 'editStock' ? (
                 <Suspense fallback={
@@ -120,9 +112,7 @@ export default function ManageItem(props: I_Props){
                     <ManageItemEditStock 
                         language={language}
                         handleBack={() => setManageItemOpen('')}
-                        setShowAlert={props.setShowAlert}
-                        setAlertMsg={props.setAlertMsg}
-                        setAlertSuccess={props.setAlertSuccess}
+                        setupAlert={(msg, isSuccess) => props.setupAlert(msg, isSuccess)}
                     />
                 </Suspense>
             ) : manageItemOpen === 'categories' && (
@@ -132,9 +122,7 @@ export default function ManageItem(props: I_Props){
                     <ManageItemCategories 
                         language={language}
                         handleBack={() => setManageItemOpen('')}
-                        setShowAlert={props.setShowAlert}
-                        setAlertMsg={props.setAlertMsg}
-                        setAlertSuccess={props.setAlertSuccess}
+                        setupAlert={(msg, isSuccess) => props.setupAlert(msg, isSuccess)}
                     />
                 </Suspense>
             )}

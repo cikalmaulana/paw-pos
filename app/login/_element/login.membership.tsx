@@ -6,16 +6,23 @@ import { OTPInput } from "@/components/OTP"
 import { API_GetOwnerOtp } from "@/services/api/membership/api.membership"
 import { API_SetAsAdmin, API_SetStoreDetail } from "@/services/api/store/api.store.set"
 import { I_User } from "@/services/api/user/api.user.get.int"
+import { globalEmitter } from "@/services/function/globalEmitter"
+import { useLang } from "@/services/function/LangContext"
 import { CommonActions } from "@react-navigation/native"
 import { useNavigation } from "expo-router"
 import { useState } from "react"
-import { ScrollView, Text, View } from "react-native"
+import { Dimensions, ScrollView, Text, View } from "react-native"
+import ModalChangeLanguage from "./login.change.lang"
 
 interface I_Props{
     user: I_User
 }
 
+const ALERT_NAME = 'alert-login-membership'
+
 export default function LoginMembership(props: I_Props){
+    const screenHeight = Dimensions.get("window").height
+    const { lang, setLang } = useLang()
     const navigation = useNavigation();
 
     const [step, setStep] = useState('1')
@@ -24,11 +31,10 @@ export default function LoginMembership(props: I_Props){
     const [ownerPhone, setOwnerPhone] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [otpCheckerWarning, setOtpCheckerWarning] = useState('')
-    const [showAlert, setShowAlert] = useState(false)
-    const [alertMsg, setAlertMsg] = useState('')
     const [storePhone, setStorePhone] = useState('')
     const [storeAddress, setStoreAddress] = useState('')
     const [storeName, setStoreName] = useState('')
+    const [modalLangOpen, setModalLangOpen] = useState(false)
 
     const setNewStep = async (newStep: string) => {
         setStep(newStep)
@@ -60,8 +66,8 @@ export default function LoginMembership(props: I_Props){
                                 routes: [{ name: "(tabs)" }],
                             })
                         )
-                    } else setAlertMsg(result.meta.message)
-                } else setAlertMsg("Failed to update store. Please try again in 5 minutes.")
+                    } else setupAlert(result.meta.message, false)
+                } else setupAlert("Failed to update store. Please try again in 5 minutes.", false)
             }
         }
     }
@@ -72,8 +78,7 @@ export default function LoginMembership(props: I_Props){
         
         if (result) {
             if (new Date(result.data.expired) > new Date()) {
-                setAlertMsg("OTP is expired. Ask Owner to generate OTP Again")
-                setShowAlert(true)
+                setupAlert("OTP is expired. Ask Owner to generate OTP Again", false)
                 return
             } 
             
@@ -85,33 +90,41 @@ export default function LoginMembership(props: I_Props){
                 const setAsAdminRes = await API_SetAsAdmin(payload)
                 if(setAsAdminRes){
                     if (setAsAdminRes.meta.status === 'success') setStep("3")
-                    else setAlertMsg("Failed to sign as Admin. Please try again in 5 minutes")
-                    setShowAlert(true)
+                    else setupAlert("Failed to sign as Admin. Please try again in 5 minutes", false)
                 } else {
-                    setAlertMsg("Failed to sign as Admin. Please try again in 5 minutes.")
-                    setShowAlert(true)
+                    setupAlert("Failed to sign as Admin. Please try again in 5 minutes", false)
                 }
             }
             else setOtpCheckerWarning("Wrong OTP")
         }
     }
 
+    const setupAlert = (msg: string, isSuccess: boolean) => {
+        globalEmitter.emit(ALERT_NAME, {
+            message: msg,
+            isSuccess: isSuccess,
+        });
+    }
+
     return (
         <>
-            { showAlert && (
-                    <CE_Alert 
-                        showAlert={showAlert}
-                        message={alertMsg}
-                        isSuccess={false}
-                        onClose={() => {
-                            setShowAlert(false)
-                            setAlertMsg('')
-                        }}
-                    />
-                )
-            }
+            <View
+                style={{
+                    position: 'absolute',
+                    top: screenHeight * -0.1,
+                    left: 0,
+                    right: 0,
+                    zIndex: 999,
+                }}
+            >
+                <CE_Alert name={ALERT_NAME} />
+            </View>
 
-            <LoginRegisterLayout title={title}>
+            <LoginRegisterLayout 
+                title={title} 
+                modalOpen={modalLangOpen}
+                openModalChangeLang={(open) => setModalLangOpen(open)}
+            >
 
                 {step === "1" && ( // set first role
                     <ScrollView className="flex flex-col items-center justify-center w-full min-h-screen">
@@ -146,9 +159,19 @@ export default function LoginMembership(props: I_Props){
                         
                     </View>
                 )}
-
-
             </LoginRegisterLayout>
+
+            {modalLangOpen && (
+                <ModalChangeLanguage 
+                    isOpen={modalLangOpen}
+                    setIsModalOpen={(open) => setModalLangOpen(open)}
+                    setUpAlert={(msg: string, isSuccess: boolean) => {
+                        setupAlert(msg, isSuccess)
+                    }}
+                    langNow={lang.name}
+                    changeLang={(newLang) => setLang({ name: newLang })}
+                />
+            )}
         </>
     )
 }
