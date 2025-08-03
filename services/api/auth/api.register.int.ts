@@ -8,4 +8,6 @@ export interface I_RegisterRequest{
     name: string
     phone: string
     password: string
+    age?: number
+    address?: string
 }

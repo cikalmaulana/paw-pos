@@ -5,12 +5,17 @@ import { Stack } from "expo-router";
 import { ALERT_NAME, MODAL_NAME } from "./constant/constant";
 import './global.css';
 
+import { ApolloProvider } from "@apollo/client";
+import { apolloClient } from "../lib/apollo";
+
 export default function RootLayout() {
     return (
-        <LangProvider>
-            <Stack screenOptions={{ headerShown: false }} />
-            <CE_Alert name={ALERT_NAME} />
-            <CE_ModalConfirmation eventName={MODAL_NAME} />
-        </LangProvider>
+        <ApolloProvider client={apolloClient}>
+            <LangProvider>
+                <Stack screenOptions={{ headerShown: false }} />
+                <CE_Alert name={ALERT_NAME} />
+                <CE_ModalConfirmation eventName={MODAL_NAME} />
+            </LangProvider>
+        </ApolloProvider>
     );
 }

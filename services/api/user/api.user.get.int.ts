@@ -11,11 +11,13 @@ export interface I_GetUserResponse {
 }
 
 export interface I_User {
-    id: string
-    name: string
-    phone: string
-    user_type: string
-    membership: I_Membership
+    id: string;
+    name: string;
+    phone: string;
+    address?: string;
+    age?: number;
+    user_type: string;
+    membership: I_Membership;
 }
 
 export interface I_EditUserRequest {

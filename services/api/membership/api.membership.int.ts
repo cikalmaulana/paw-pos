@@ -1,5 +1,18 @@
 import { I_CommonMeta } from "../api.common.int"
 
+export interface I_GetAllMembershipData {
+    meta: I_CommonMeta
+    data: I_MembershipData[]
+}
+
+export interface I_MembershipData{
+    id: string
+    code: string
+    name: string
+    duration_in_days: number
+    benefit: string[]
+}
+
 export interface I_GetMembershipResponse{
     meta: I_CommonMeta
     data: I_Membership
