@@ -64,10 +64,6 @@ export function LoginForm(props: I_Props) {
                     props.setMemberExpired(true)
                     props.setUserData(result.user)
                     return 
-                } else if (result.user && result.user.membership.member_type === ''){ //firt time login after register (not even a trial member)
-                    props.setIsMembershipOpen(true)
-                    props.setUserData(result.user)
-                    return
                 } else { // isMember true (even a trial member)
                     navigation.dispatch(
                         CommonActions.reset({

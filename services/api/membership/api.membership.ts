@@ -1,7 +1,10 @@
-import { I_GetAllMembershipData, I_GetMembershipResponse, I_GetOwnerOTPResponse, I_MembershipData, I_SetMembershipRequest, I_SetMembershipResponse } from "./api.membership.int";
+import { I_GetAllMembershipData, I_GetOwnerOTPResponse, I_MembershipData, I_SetMembershipRequest, I_SetMembershipResponse } from "./api.membership.int";
+
 
 export async function API_GetAllMembershipData(): Promise<I_GetAllMembershipData> {
-    const uri = "http://192.168.1.5:3000/graphql";
+    const uri = "http://192.168.1.4:3000/graphql";
+    console.log("API_GetAllMembershipData URI: ", uri)
+    
     const response = await fetch(uri, {
         method: "POST",
         headers: {
@@ -10,19 +13,18 @@ export async function API_GetAllMembershipData(): Promise<I_GetAllMembershipData
         body: JSON.stringify({
             query: `
                 query {
-                    getAllMembership {
+                    memberships {
                         meta {
                             status
-                            code
                             message
+                            code
                         }
                         data {
                             _id
                             name
                             code
-                            price
-                            duration_in_days
                             benefit
+                            duration_in_days
                         }
                     }
                 }
@@ -30,17 +32,20 @@ export async function API_GetAllMembershipData(): Promise<I_GetAllMembershipData
         }),
     });
 
+    console.log("API_GetAllMembershipData RESPONSE: ", response)
+    
     if (!response.ok) {
         throw new Error(`HTTP Error ${response.status}`);
     }
-
+    
     const json = await response.json();
-
+    
     if (json.errors) {
         throw new Error(json.errors[0].message);
     }
+    console.log("API_GetAllMembershipData RESPONSE JSON: ", json.data.memberships.data)
 
-    return json.data.getAllMembership;
+    return json.data.memberships
 }
 
 export async function API_GetMembershipDataById(membership_id: string): Promise<I_MembershipData> {
@@ -52,20 +57,19 @@ export async function API_GetMembershipDataById(membership_id: string): Promise<
         },
         body: JSON.stringify({
             query: `
-                query GetMembershipById($id: String!) {
-                    getMembershipById(id: $id) {
+                query($input: GetMembershipDataByIdInput!) {
+                    membership(input: $input) {
                         meta {
                             status
-                            code
                             message
+                            code
                         }
                         data {
                             _id
                             name
                             code
-                            price
-                            duration_in_days
                             benefit
+                            duration_in_days
                         }
                     }
                 }
@@ -89,37 +93,63 @@ export async function API_GetMembershipDataById(membership_id: string): Promise<
     return json.data.getMembershipById;
 }
 
-export async function API_GetMembershipById(id: string): Promise<I_GetMembershipResponse | null>{
-    return {
-        meta: {
-            status: "success",
-            code: 200,
-            message: "Get Memebrship Success"
+export async function API_SetMembership(
+    payload: I_SetMembershipRequest
+): Promise<I_SetMembershipResponse> {
+    const uri = "http://192.168.1.4:3000/graphql"
+    const response = await fetch(uri, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
         },
-        data: {
-            is_member: true,
-            member_type: "basic",
-            date_joined: "2025-07-07T01:13:46.123Z",
-            date_expired: "2025-08-07T01:13:46.123Z",
-        }
-    }
-} 
+        body: JSON.stringify({
+            query: `
+                mutation ($input: RegisterMembershipInput!) {
+                    registerMembership(input: $input) {
+                        meta {
+                            status
+                            code
+                            message
+                        }
+                        data {
+                            _id
+                            name
+                            age
+                            address
+                            phone
+                            user_type
+                            membership {
+                                is_member
+                                member_type
+                                date_joined
+                                date_expired
+                            }
+                        }
+                    }
+                }
+            `,
+            variables: {
+                input: {
+                    user_id: payload.user_id,
+                    membership_id: payload.membership_id
+                }
+            },
+        }),
+    });
 
-export async function API_SetMembership(payload: I_SetMembershipRequest): Promise<I_SetMembershipResponse>{
-    return {
-        meta: {
-            status: "success",
-            code: 200,
-            message: "Set Memebrship Success"
-        },
-        data: {
-            is_member: true,
-            member_type: "basic",
-            date_joined: "2025-07-07T01:13:46.123Z",
-            date_expired: "2025-08-07T01:13:46.123Z",
-        }
+    if (!response.ok) {
+        throw new Error(`HTTP Error ${response.status}`);
     }
+
+    const json = await response.json();
+
+    if (json.errors) {
+        throw new Error(json.errors[0].message);
+    }
+
+    return json.data.registerMembership;
 }
+
 
 export async function API_GetOwnerOtp(owner_phone: string): Promise<I_GetOwnerOTPResponse> {
     return {
@@ -130,8 +160,8 @@ export async function API_GetOwnerOtp(owner_phone: string): Promise<I_GetOwnerOT
         },
         data: {
             store_id: '1',
-            otp: "123456",
-            expired: "2025-07-08T01:13:46.123Z"
+            otp: "1234",
+            expired: "2025-12-12T01:13:46.123Z"
         }
     }
 }

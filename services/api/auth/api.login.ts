@@ -2,12 +2,16 @@ import { I_LoginRequest, I_LoginResponse } from "./api.login.int";
 
 export async function API_Login(params: I_LoginRequest): Promise<I_LoginResponse> {
     console.log("API_Login PARAM: ", params)
-    const uri = "http://192.168.1.5:3000/graphql";
+    const uri = "http://192.168.1.4:3000/graphql";
+    // const uri = "http://192.168.1.4:3000/graphql"
+    
+    console.log("API_Login URI: ", uri)
 
     const response = await fetch(uri, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Accept": "application/json",
         },
         body: JSON.stringify({
             query: `
@@ -40,6 +44,7 @@ export async function API_Login(params: I_LoginRequest): Promise<I_LoginResponse
             },
         }),
     });
+
     console.log("API_Login RESPONSE: ", response)
 
     if (!response.ok) {
@@ -47,8 +52,6 @@ export async function API_Login(params: I_LoginRequest): Promise<I_LoginResponse
     }
 
     const json = await response.json();
-
-    console.log("API_Login RESPONSE JSON: ", json)
 
     if (json.errors) {
         throw new Error(json.errors[0].message);

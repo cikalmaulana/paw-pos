@@ -12,7 +12,6 @@ import ModalChangeLanguage from "./login.change.lang";
 import { ForgotForm } from "./login.forgot.main";
 import { LoginForm } from "./login.form";
 import LoginMembership from "./login.membership";
-import LoginMembershipExpired from "./login.membership.expired";
 
 const ALERT_NAME = 'alert-login-main'
 
@@ -49,9 +48,7 @@ export function LoginMain(){
                 <CE_Alert name={ALERT_NAME} />
             </View>
 
-            {(isMemberExpired && userData) ? (
-                <LoginMembershipExpired user={userData}/>
-            ) : (isMembershipOpen && userData) ? (
+            {((isMemberExpired || isMembershipOpen) && userData) ? (
                 <LoginMembership user={userData}/>
             ) : (
                 <LoginRegisterLayout 

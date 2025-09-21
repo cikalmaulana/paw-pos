@@ -18,11 +18,12 @@ export function LoginRegisterLayout({ title, children, className, modalOpen, ope
                 keyboardVerticalOffset={10}
             >
                 <ScrollView
-                    className="px-6"
-                    contentContainerStyle={{ flexGrow: 1 }}
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                        paddingHorizontal: 24, // px-6
+                    }}
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
-                    
                 >
                     <View className="flex-1 pt-32 pb-10">
                     <View className="absolute top-6 right-6 z-10">

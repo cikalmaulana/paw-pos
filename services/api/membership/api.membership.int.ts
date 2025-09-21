@@ -1,4 +1,5 @@
 import { I_CommonMeta } from "../api.common.int"
+import { I_User } from "../user/api.user.get.int"
 
 export interface I_GetAllMembershipData {
     meta: I_CommonMeta
@@ -27,12 +28,12 @@ export interface I_Membership {
 
 export interface I_SetMembershipRequest {
     user_id: string
-    member_type: string
+    membership_id: string
 }
 
 export interface I_SetMembershipResponse {
-    meta: I_CommonMeta
-    data: I_Membership
+    meta: I_CommonMeta;
+    data: I_User
 }
 
 export interface I_GetOwnerOTPResponse {

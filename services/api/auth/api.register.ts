@@ -1,7 +1,8 @@
 import { I_RegisterRequest, I_RegisterResponse } from "./api.register.int";
 
 export async function API_Register(params: I_RegisterRequest): Promise<I_RegisterResponse> {
-    const uri = "http://192.168.1.5:3000/graphql"
+    const uri = "http://192.168.1.4:3000/graphql"
+    
     const response = await fetch(uri, {
         method: "POST",
         headers: {

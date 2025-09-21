@@ -1,8 +1,9 @@
 import { I_CommonMeta } from "../api.common.int"
-import { I_Discount } from "./api.store.int"
+import { I_Discount, I_Store } from "./api.store.int"
 
 //Request
 export interface I_SetStoreDetailRequest{
+    user_id: string
     name: string
     address: string
     phone?: string
@@ -16,6 +17,7 @@ export interface I_SetAsAdminRequest {
 //Response
 export interface I_SetStoreDetailResponse{
     meta: I_CommonMeta
+    data: I_Store
 }
 
 export interface I_SetAsAdminResponse {
